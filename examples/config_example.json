@@ -1,0 +1,63 @@
+{
+  "system": {
+    "debug": false,
+    "log_level": "INFO",
+    "api_port": 8000,
+    "max_workers": 8
+  },
+  "agents": {
+    "planning": {
+      "model": "gpt-4",
+      "temperature": 0.2,
+      "max_tokens": 4096,
+      "planning_depth": 3,
+      "optimization_level": "medium"
+    },
+    "execution": {
+      "model": "gpt-3.5-turbo",
+      "temperature": 0.5,
+      "max_tokens": 2048,
+      "max_retries": 3,
+      "timeout": 300
+    },
+    "review": {
+      "model": "gpt-4",
+      "temperature": 0.1,
+      "max_tokens": 2048,
+      "review_threshold": 0.8,
+      "error_patterns": "path/to/error_patterns.json"
+    },
+    "memory": {
+      "working_memory": {
+        "type": "shared_memory",
+        "size_mb": 1024
+      },
+      "short_term_memory": {
+        "type": "etcd",
+        "endpoints": ["localhost:2379"],
+        "ttl": 86400
+      },
+      "long_term_memory": {
+        "type": "neo4j",
+        "uri": "bolt://localhost:7687",
+        "username": "neo4j",
+        "password": "password"
+      }
+    }
+  },
+  "resources": {
+    "cpu_limit": 8,
+    "memory_limit": 16384,
+    "gpu_limit": 1
+  },
+  "storage": {
+    "type": "local",
+    "path": "./data"
+  },
+  "security": {
+    "enable_audit": true,
+    "audit_log_path": "./logs/audit",
+    "enable_differential_privacy": true,
+    "privacy_epsilon": 0.1
+  }
+}

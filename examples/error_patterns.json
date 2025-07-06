@@ -1,0 +1,152 @@
+{
+  "patterns": [
+    {
+      "id": "EP001",
+      "name": "数据不一致",
+      "type": "DATA_INCONSISTENCY",
+      "description": "任务执行过程中发现数据不一致问题",
+      "detection": {
+        "keywords": ["不一致", "矛盾", "冲突", "不匹配"],
+        "regex": "数据(?:不一致|冲突|矛盾)",
+        "threshold": 0.7
+      },
+      "action": "REPLAN",
+      "correction_strategy": "重新获取数据并验证一致性"
+    },
+    {
+      "id": "EP002",
+      "name": "资源不足",
+      "type": "RESOURCE_EXHAUSTION",
+      "description": "任务执行过程中资源不足",
+      "detection": {
+        "keywords": ["资源不足", "内存不足", "CPU不足", "超时"],
+        "regex": "(资源|内存|CPU|GPU)不足|超时",
+        "threshold": 0.8
+      },
+      "action": "REPLAN",
+      "correction_strategy": "调整资源分配或拆分任务"
+    },
+    {
+      "id": "EP003",
+      "name": "权限错误",
+      "type": "PERMISSION_ERROR",
+      "description": "任务执行过程中遇到权限问题",
+      "detection": {
+        "keywords": ["权限被拒绝", "无权限", "未授权", "access denied"],
+        "regex": "(权限(被拒绝|不足|错误)|无权限|未授权|access denied)",
+        "threshold": 0.8
+      },
+      "action": "REQUEST_CLARIFICATION",
+      "correction_strategy": "请求用户提供正确的权限或凭证"
+    },
+    {
+      "id": "EP004",
+      "name": "逻辑错误",
+      "type": "LOGIC_ERROR",
+      "description": "任务执行过程中的逻辑错误",
+      "detection": {
+        "keywords": ["逻辑错误", "推理错误", "计算错误", "判断错误"],
+        "regex": "(逻辑|推理|计算|判断)错误",
+        "threshold": 0.7
+      },
+      "action": "REPLAN",
+      "correction_strategy": "重新分析任务逻辑并修正"
+    },
+    {
+      "id": "EP005",
+      "name": "外部服务失败",
+      "type": "EXTERNAL_SERVICE_FAILURE",
+      "description": "外部服务或API调用失败",
+      "detection": {
+        "keywords": ["服务不可用", "API错误", "连接失败", "超时"],
+        "regex": "(服务不可用|API错误|连接失败|请求超时)",
+        "threshold": 0.8
+      },
+      "action": "RETRY",
+      "correction_strategy": "重试或使用备选服务"
+    },
+    {
+      "id": "EP006",
+      "name": "数据格式错误",
+      "type": "DATA_FORMAT_ERROR",
+      "description": "数据格式不符合预期",
+      "detection": {
+        "keywords": ["格式错误", "解析失败", "无效格式", "格式不匹配"],
+        "regex": "(格式(错误|无效|不匹配)|解析失败)",
+        "threshold": 0.8
+      },
+      "action": "REQUEST_CLARIFICATION",
+      "correction_strategy": "请求数据格式澄清或转换数据格式"
+    },
+    {
+      "id": "EP007",
+      "name": "任务依赖失败",
+      "type": "DEPENDENCY_FAILURE",
+      "description": "任务依赖的其他任务失败",
+      "detection": {
+        "keywords": ["依赖失败", "前置任务失败", "依赖不满足"],
+        "regex": "(依赖|前置任务)(失败|不满足|错误)",
+        "threshold": 0.8
+      },
+      "action": "REPLAN",
+      "correction_strategy": "重新规划任务依赖或跳过非关键依赖"
+    },
+    {
+      "id": "EP008",
+      "name": "语义理解错误",
+      "type": "SEMANTIC_ERROR",
+      "description": "对任务描述的语义理解错误",
+      "detection": {
+        "keywords": ["理解错误", "语义错误", "歧义", "误解"],
+        "regex": "(理解|语义)(错误|歧义|误解)",
+        "threshold": 0.7
+      },
+      "action": "REQUEST_CLARIFICATION",
+      "correction_strategy": "请求用户澄清任务描述或意图"
+    },
+    {
+      "id": "EP009",
+      "name": "约束违反",
+      "type": "CONSTRAINT_VIOLATION",
+      "description": "违反了任务的约束条件",
+      "detection": {
+        "keywords": ["违反约束", "不满足条件", "超出限制", "违反规则"],
+        "regex": "(违反(约束|规则)|不满足条件|超出限制)",
+        "threshold": 0.8
+      },
+      "action": "REPLAN",
+      "correction_strategy": "调整计划以满足约束或请求放宽约束"
+    },
+    {
+      "id": "EP010",
+      "name": "幻觉或虚构信息",
+      "type": "HALLUCINATION",
+      "description": "智能体生成了不存在或虚构的信息",
+      "detection": {
+        "keywords": ["不存在", "虚构", "幻觉", "无法验证"],
+        "regex": "(不存在|虚构|幻觉|无法验证)",
+        "threshold": 0.7
+      },
+      "action": "REPLAN",
+      "correction_strategy": "重新获取可验证的信息并严格基于事实"
+    }
+  ],
+  "actions": {
+    "REPLAN": "重新规划任务",
+    "RETRY": "重试当前任务",
+    "REQUEST_CLARIFICATION": "请求用户澄清",
+    "ABORT": "终止任务"
+  },
+  "types": {
+    "DATA_INCONSISTENCY": "数据不一致错误",
+    "RESOURCE_EXHAUSTION": "资源不足错误",
+    "PERMISSION_ERROR": "权限错误",
+    "LOGIC_ERROR": "逻辑错误",
+    "EXTERNAL_SERVICE_FAILURE": "外部服务失败",
+    "DATA_FORMAT_ERROR": "数据格式错误",
+    "DEPENDENCY_FAILURE": "依赖失败错误",
+    "SEMANTIC_ERROR": "语义理解错误",
+    "CONSTRAINT_VIOLATION": "约束违反错误",
+    "HALLUCINATION": "幻觉或虚构信息错误"
+  }
+}

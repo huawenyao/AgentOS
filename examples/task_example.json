@@ -1,0 +1,28 @@
+{
+    "name": "数据分析任务",
+    "description": "分析销售数据并生成报告",
+    "priority": "high",
+    "deadline": "2023-12-31T23:59:59",
+    "requester": "user-001",
+    "parameters": {
+        "data_source": "sales_data_2023.csv",
+        "output_format": "pdf",
+        "analysis_type": "trend",
+        "time_range": {
+            "start": "2023-01-01",
+            "end": "2023-11-30"
+        }
+    },
+    "constraints": {
+        "max_execution_time": 3600,
+        "max_resource_usage": {
+            "cpu_cores": 4,
+            "memory_mb": 8192,
+            "gpu_cores": 0
+        }
+    },
+    "callbacks": {
+        "on_complete": "http://example.com/api/callback/complete",
+        "on_error": "http://example.com/api/callback/error"
+    }
+}
