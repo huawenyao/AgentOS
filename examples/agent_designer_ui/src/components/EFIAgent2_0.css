@@ -1,0 +1,591 @@
+/**
+ * EFIAgent 2.0 主界面样式
+ * 现代化、响应式的智能协作平台界面
+ */
+
+/* 主题变量 */
+.efi-agent-2-0 {
+  --primary-color: #1890ff;
+  --primary-color-hover: #40a9ff;
+  --primary-color-active: #096dd9;
+  --success-color: #52c41a;
+  --warning-color: #faad14;
+  --error-color: #ff4d4f;
+  --info-color: #1890ff;
+  --text-color: #262626;
+  --text-color-secondary: #8c8c8c;
+  --text-color-disabled: #bfbfbf;
+  --border-color: #d9d9d9;
+  --border-color-split: #f0f0f0;
+  --background-color: #f5f5f5;
+  --background-color-light: #fafafa;
+  --card-background: #ffffff;
+  --header-background: #001529;
+  --sidebar-background: #001529;
+  --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --shadow-heavy: 0 8px 32px rgba(0, 0, 0, 0.18);
+  --border-radius: 8px;
+  --border-radius-small: 4px;
+  --border-radius-large: 12px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* 主布局 */
+.efi-agent-2-0 {
+  height: 100vh;
+  font-family: var(--font-family);
+  background: var(--background-color);
+}
+
+.efi-agent-2-0 .site-layout {
+  margin-left: 0;
+  transition: var(--transition);
+}
+
+/* 侧边栏 */
+.efi-agent-2-0 .sidebar {
+  position: fixed;
+  height: 100vh;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 200;
+  box-shadow: var(--shadow-medium);
+  background: var(--sidebar-background);
+}
+
+.efi-agent-2-0 .sidebar .ant-layout-sider-children {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Logo区域 */
+.efi-agent-2-0 .logo {
+  display: flex;
+  align-items: center;
+  padding: 16px 24px;
+  background: rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: var(--transition);
+}
+
+.efi-agent-2-0 .logo img {
+  width: 32px;
+  height: 32px;
+  margin-right: 12px;
+}
+
+.efi-agent-2-0 .logo span {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* 侧边栏菜单 */
+.efi-agent-2-0 .ant-menu-dark {
+  background: transparent;
+  border-right: none;
+  flex: 1;
+}
+
+.efi-agent-2-0 .ant-menu-dark .ant-menu-item,
+.efi-agent-2-0 .ant-menu-dark .ant-menu-submenu-title {
+  margin: 4px 8px;
+  border-radius: var(--border-radius-small);
+  transition: var(--transition);
+}
+
+.efi-agent-2-0 .ant-menu-dark .ant-menu-item:hover,
+.efi-agent-2-0 .ant-menu-dark .ant-menu-submenu-title:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(4px);
+}
+
+.efi-agent-2-0 .ant-menu-dark .ant-menu-item-selected {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+.efi-agent-2-0 .ant-menu-dark .ant-menu-item-selected::after {
+  display: none;
+}
+
+/* 顶部导航 */
+.efi-agent-2-0 .header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 240px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background: var(--header-background);
+  box-shadow: var(--shadow-light);
+  transition: var(--transition);
+}
+
+.efi-agent-2-0 .ant-layout-sider-collapsed + .site-layout .header {
+  left: 80px;
+}
+
+.efi-agent-2-0 .header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.efi-agent-2-0 .header-right {
+  display: flex;
+  align-items: center;
+}
+
+/* 面包屑导航 */
+.efi-agent-2-0 .breadcrumb {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.efi-agent-2-0 .breadcrumb .ant-breadcrumb-link {
+  color: rgba(255, 255, 255, 0.8);
+  transition: var(--transition);
+}
+
+.efi-agent-2-0 .breadcrumb .ant-breadcrumb-link:hover {
+  color: #fff;
+}
+
+.efi-agent-2-0 .breadcrumb .ant-breadcrumb-separator {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* 内容区域 */
+.efi-agent-2-0 .content {
+  margin: 64px 0 0 240px;
+  padding: 24px;
+  min-height: calc(100vh - 64px);
+  background: var(--background-color);
+  transition: var(--transition);
+  overflow-y: auto;
+}
+
+.efi-agent-2-0 .ant-layout-sider-collapsed + .site-layout .content {
+  margin-left: 80px;
+}
+
+/* 控制台仪表板 */
+.efi-agent-2-0 .dashboard {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* 统计卡片 */
+.efi-agent-2-0 .stats-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: var(--border-radius-large);
+  box-shadow: var(--shadow-medium);
+  overflow: hidden;
+}
+
+.efi-agent-2-0 .stats-card .ant-card-head {
+  background: rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.efi-agent-2-0 .stats-card .ant-card-head-title {
+  color: #fff;
+  font-weight: 600;
+}
+
+.efi-agent-2-0 .stats-card .ant-card-body {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+.efi-agent-2-0 .stats-card .ant-statistic-title {
+  color: var(--text-color-secondary);
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.efi-agent-2-0 .stats-card .ant-statistic-content {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+/* 性能卡片 */
+.efi-agent-2-0 .performance-card {
+  border-radius: var(--border-radius-large);
+  box-shadow: var(--shadow-light);
+  border: none;
+  transition: var(--transition);
+}
+
+.efi-agent-2-0 .performance-card:hover {
+  box-shadow: var(--shadow-medium);
+  transform: translateY(-2px);
+}
+
+.efi-agent-2-0 .performance-card .ant-card-head-title {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.efi-agent-2-0 .performance-card .ant-progress-text {
+  font-weight: 600;
+}
+
+/* 活动卡片 */
+.efi-agent-2-0 .activity-card {
+  border-radius: var(--border-radius-large);
+  box-shadow: var(--shadow-light);
+  border: none;
+  transition: var(--transition);
+}
+
+.efi-agent-2-0 .activity-card:hover {
+  box-shadow: var(--shadow-medium);
+  transform: translateY(-2px);
+}
+
+.efi-agent-2-0 .activity-card .ant-timeline-item-content {
+  margin-left: 8px;
+}
+
+.efi-agent-2-0 .activity-card .ant-timeline-item-content > div:first-child {
+  font-weight: 500;
+  color: var(--text-color);
+  margin-bottom: 4px;
+}
+
+/* 快速操作卡片 */
+.efi-agent-2-0 .quick-actions-card {
+  border-radius: var(--border-radius-large);
+  box-shadow: var(--shadow-light);
+  border: none;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  overflow: hidden;
+}
+
+.efi-agent-2-0 .quick-actions-card .ant-card-head {
+  background: rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.efi-agent-2-0 .quick-actions-card .ant-card-head-title {
+  color: #fff;
+  font-weight: 600;
+}
+
+.efi-agent-2-0 .quick-actions-card .ant-card-body {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+.efi-agent-2-0 .quick-actions-card .ant-btn {
+  height: 48px;
+  font-weight: 500;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+}
+
+.efi-agent-2-0 .quick-actions-card .ant-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+}
+
+/* 通知下拉菜单 */
+.efi-agent-2-0 .ant-dropdown {
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-heavy);
+  border: none;
+  overflow: hidden;
+}
+
+.efi-agent-2-0 .ant-dropdown .ant-list-item {
+  transition: var(--transition);
+}
+
+.efi-agent-2-0 .ant-dropdown .ant-list-item:hover {
+  background: var(--background-color-light);
+}
+
+/* 卡片通用样式 */
+.efi-agent-2-0 .ant-card {
+  border-radius: var(--border-radius-large);
+  border: none;
+  box-shadow: var(--shadow-light);
+  transition: var(--transition);
+}
+
+.efi-agent-2-0 .ant-card:hover {
+  box-shadow: var(--shadow-medium);
+}
+
+.efi-agent-2-0 .ant-card-head {
+  border-bottom: 1px solid var(--border-color-split);
+}
+
+.efi-agent-2-0 .ant-card-head-title {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+/* 按钮样式增强 */
+.efi-agent-2-0 .ant-btn {
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.efi-agent-2-0 .ant-btn-primary {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-active) 100%);
+  border: none;
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+}
+
+.efi-agent-2-0 .ant-btn-primary:hover {
+  background: linear-gradient(135deg, var(--primary-color-hover) 0%, var(--primary-color) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(24, 144, 255, 0.4);
+}
+
+/* 进度条样式 */
+.efi-agent-2-0 .ant-progress-line {
+  border-radius: var(--border-radius-small);
+}
+
+.efi-agent-2-0 .ant-progress-bg {
+  border-radius: var(--border-radius-small);
+}
+
+/* 徽章样式 */
+.efi-agent-2-0 .ant-badge {
+  font-weight: 500;
+}
+
+.efi-agent-2-0 .ant-badge-count {
+  background: var(--error-color);
+  box-shadow: 0 2px 8px rgba(255, 77, 79, 0.3);
+}
+
+/* 标签样式 */
+.efi-agent-2-0 .ant-tag {
+  border-radius: var(--border-radius-small);
+  font-weight: 500;
+  border: none;
+}
+
+/* 时间轴样式 */
+.efi-agent-2-0 .ant-timeline-item-tail {
+  border-left: 2px solid var(--border-color-split);
+}
+
+.efi-agent-2-0 .ant-timeline-item-head {
+  border: 2px solid var(--card-background);
+  box-shadow: var(--shadow-light);
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .efi-agent-2-0 .content {
+    padding: 16px;
+  }
+  
+  .efi-agent-2-0 .dashboard {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .efi-agent-2-0 .sidebar {
+    position: fixed;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: var(--transition);
+  }
+  
+  .efi-agent-2-0 .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+  
+  .efi-agent-2-0 .header {
+    left: 0;
+    padding: 0 16px;
+  }
+  
+  .efi-agent-2-0 .content {
+    margin-left: 0;
+    padding: 12px;
+  }
+  
+  .efi-agent-2-0 .header-left .breadcrumb {
+    display: none;
+  }
+  
+  .efi-agent-2-0 .quick-actions-card .ant-btn {
+    height: 40px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .efi-agent-2-0 .header {
+    padding: 0 12px;
+  }
+  
+  .efi-agent-2-0 .content {
+    padding: 8px;
+  }
+  
+  .efi-agent-2-0 .stats-card .ant-statistic-content {
+    font-size: 18px;
+  }
+  
+  .efi-agent-2-0 .logo {
+    padding: 12px 16px;
+  }
+  
+  .efi-agent-2-0 .logo span {
+    font-size: 16px;
+  }
+}
+
+/* 暗色主题支持 */
+@media (prefers-color-scheme: dark) {
+  .efi-agent-2-0 {
+    --text-color: #ffffff;
+    --text-color-secondary: #a6a6a6;
+    --text-color-disabled: #666666;
+    --border-color: #434343;
+    --border-color-split: #303030;
+    --background-color: #141414;
+    --background-color-light: #1f1f1f;
+    --card-background: #1f1f1f;
+  }
+}
+
+/* 滚动条样式 */
+.efi-agent-2-0 ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.efi-agent-2-0 ::-webkit-scrollbar-track {
+  background: var(--background-color);
+  border-radius: 3px;
+}
+
+.efi-agent-2-0 ::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+  transition: var(--transition);
+}
+
+.efi-agent-2-0 ::-webkit-scrollbar-thumb:hover {
+  background: var(--text-color-secondary);
+}
+
+/* 动画效果 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.efi-agent-2-0 .dashboard > .ant-row > .ant-col {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.efi-agent-2-0 .dashboard > .ant-row > .ant-col:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.efi-agent-2-0 .dashboard > .ant-row > .ant-col:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.efi-agent-2-0 .dashboard > .ant-row > .ant-col:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.efi-agent-2-0 .dashboard > .ant-row > .ant-col:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+/* 加载状态 */
+.efi-agent-2-0 .loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+}
+
+.efi-agent-2-0 .loading-content {
+  text-align: center;
+  padding: 24px;
+  background: var(--card-background);
+  border-radius: var(--border-radius-large);
+  box-shadow: var(--shadow-heavy);
+}
+
+/* 错误状态 */
+.efi-agent-2-0 .error-boundary {
+  padding: 48px 24px;
+  text-align: center;
+  background: var(--card-background);
+  border-radius: var(--border-radius-large);
+  margin: 24px;
+  box-shadow: var(--shadow-light);
+}
+
+.efi-agent-2-0 .error-boundary h2 {
+  color: var(--error-color);
+  margin-bottom: 16px;
+}
+
+.efi-agent-2-0 .error-boundary p {
+  color: var(--text-color-secondary);
+  margin-bottom: 24px;
+}

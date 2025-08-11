@@ -1,0 +1,551 @@
+/* Agent Playground 样式文件 */
+
+.agent-playground {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #000 100%);
+  position: relative;
+  padding: 24px;
+  overflow: hidden;
+}
+
+/* 粒子画布 */
+.particle-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* 头部区域 */
+.playground-header {
+  text-align: center;
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 1;
+}
+
+.playground-title {
+  color: #fff !important;
+  font-size: 3rem !important;
+  font-weight: 900 !important;
+  background: linear-gradient(45deg, #00f5ff, #ff00ff, #ffff00);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-flow 3s ease infinite;
+  margin-bottom: 16px !important;
+  text-shadow: 0 0 30px rgba(0, 245, 255, 0.5);
+}
+
+.playground-subtitle {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 1.2rem !important;
+  max-width: 600px;
+  margin: 0 auto !important;
+  letter-spacing: 1px;
+}
+
+@keyframes gradient-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 主要内容区域 */
+.playground-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* 场景卡片 */
+.scenario-card {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(0, 245, 255, 0.3) !important;
+  border-radius: 20px !important;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 245, 255, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.scenario-card::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #00f5ff, #ff00ff, #ffff00, #00f5ff);
+  background-size: 400% 400%;
+  border-radius: 20px;
+  z-index: -1;
+  animation: border-glow 4s ease infinite;
+  opacity: 0.6;
+}
+
+.scenario-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(12, 12, 12, 0.9);
+  border-radius: 18px;
+  z-index: -1;
+}
+
+@keyframes border-glow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.scenario-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 245, 255, 0.2);
+}
+
+.scenario-card .ant-card-head {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(0, 245, 255, 0.2) !important;
+}
+
+.scenario-card .ant-card-head-title {
+  color: #fff !important;
+  font-size: 1.3rem !important;
+  font-weight: 600 !important;
+}
+
+.scenario-card .ant-card-body {
+  background: transparent !important;
+}
+
+/* 场景选项 */
+.scenario-option {
+  padding: 8px 0;
+}
+
+.scenario-name {
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.scenario-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.scenario-time {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+}
+
+.scenario-detail {
+  background: rgba(0, 245, 255, 0.1) !important;
+  border: 1px solid rgba(0, 245, 255, 0.3) !important;
+  border-radius: 12px !important;
+}
+
+/* 启动按钮 */
+.start-button {
+  background: linear-gradient(45deg, #00f5ff, #0080ff) !important;
+  border: none !important;
+  box-shadow: 0 4px 15px rgba(0, 245, 255, 0.4) !important;
+  transition: all 0.3s ease !important;
+}
+
+.start-button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(0, 245, 255, 0.6) !important;
+}
+
+/* 沙盒卡片 */
+.sandbox-card {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 0, 255, 0.3) !important;
+  border-radius: 20px !important;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(255, 0, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+  min-height: 600px;
+}
+
+.sandbox-card::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #ff00ff, #00f5ff, #ffff00, #ff00ff);
+  background-size: 400% 400%;
+  border-radius: 20px;
+  z-index: -1;
+  animation: border-glow 4s ease infinite reverse;
+  opacity: 0.6;
+}
+
+.sandbox-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(12, 12, 12, 0.9);
+  border-radius: 18px;
+  z-index: -1;
+}
+
+.sandbox-card .ant-card-head {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(255, 0, 255, 0.2) !important;
+}
+
+.sandbox-card .ant-card-head-title {
+  color: #fff !important;
+  font-size: 1.3rem !important;
+  font-weight: 600 !important;
+}
+
+.sandbox-card .ant-card-body {
+  background: transparent !important;
+}
+
+/* 进度区域 */
+.progress-section {
+  margin-bottom: 24px;
+}
+
+.progress-section .ant-typography {
+  color: #fff !important;
+  margin-bottom: 12px !important;
+}
+
+/* 步骤区域 */
+.steps-section {
+  margin-bottom: 24px;
+}
+
+.steps-section .ant-typography {
+  color: #fff !important;
+  margin-bottom: 16px !important;
+}
+
+.steps-container {
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.steps-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.steps-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.steps-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 245, 255, 0.5);
+  border-radius: 3px;
+}
+
+.step-item {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.step-item.current {
+  border-color: #00f5ff;
+  box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+  background: rgba(0, 245, 255, 0.1);
+}
+
+.step-item.running {
+  border-color: #1890ff;
+  background: rgba(24, 144, 255, 0.1);
+  animation: pulse-blue 2s infinite;
+}
+
+.step-item.completed {
+  border-color: #52c41a;
+  background: rgba(82, 196, 26, 0.1);
+}
+
+.step-item.error {
+  border-color: #ff4d4f;
+  background: rgba(255, 77, 79, 0.1);
+}
+
+@keyframes pulse-blue {
+  0%, 100% { box-shadow: 0 0 10px rgba(24, 144, 255, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(24, 144, 255, 0.6); }
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.step-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.step-pending {
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  background: transparent;
+}
+
+.step-info {
+  flex: 1;
+}
+
+.step-name {
+  color: #fff;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.step-output {
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  border-left: 3px solid #00f5ff;
+}
+
+/* 日志区域 */
+.logs-section {
+  margin-top: 24px;
+}
+
+.logs-section .ant-typography {
+  color: #fff !important;
+  margin-bottom: 16px !important;
+}
+
+.logs-container {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 245, 255, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  max-height: 200px;
+  overflow-y: auto;
+  font-family: 'Courier New', monospace;
+}
+
+.logs-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.logs-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.logs-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 245, 255, 0.5);
+  border-radius: 3px;
+}
+
+.log-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.log-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.log-timestamp {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
+.log-content {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* 空状态 */
+.empty-sandbox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  color: rgba(255, 255, 255, 0.3);
+  margin-bottom: 16px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+/* 自定义Ant Design组件样式 */
+.agent-playground .ant-select {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.agent-playground .ant-select-selector {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(0, 245, 255, 0.3) !important;
+  color: #fff !important;
+}
+
+.agent-playground .ant-select-selection-placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.agent-playground .ant-input {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(0, 245, 255, 0.3) !important;
+  color: #fff !important;
+}
+
+.agent-playground .ant-input::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.agent-playground .ant-btn {
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+}
+
+.agent-playground .ant-btn:not(.ant-btn-primary) {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+}
+
+.agent-playground .ant-btn:not(.ant-btn-primary):hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(0, 245, 255, 0.5) !important;
+  transform: translateY(-1px) !important;
+}
+
+.agent-playground .ant-progress-text {
+  color: #fff !important;
+}
+
+.agent-playground .ant-tag {
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .playground-title {
+    font-size: 2rem !important;
+  }
+  
+  .playground-subtitle {
+    font-size: 1rem !important;
+  }
+  
+  .agent-playground {
+    padding: 16px;
+  }
+  
+  .scenario-card,
+  .sandbox-card {
+    margin-bottom: 16px;
+  }
+  
+  .steps-container {
+    max-height: 250px;
+  }
+  
+  .logs-container {
+    max-height: 150px;
+  }
+}
+
+@media (max-width: 576px) {
+  .playground-header {
+    margin-bottom: 24px;
+  }
+  
+  .step-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .log-item {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .log-timestamp {
+    min-width: auto;
+  }
+}
+
+/* 动画增强 */
+.agent-playground * {
+  transition: all 0.3s ease;
+}
+
+/* 选择器下拉菜单样式 */
+.ant-select-dropdown {
+  background: rgba(12, 12, 12, 0.95) !important;
+  border: 1px solid rgba(0, 245, 255, 0.3) !important;
+  border-radius: 12px !important;
+  backdrop-filter: blur(20px);
+}
+
+.ant-select-item {
+  color: #fff !important;
+}
+
+.ant-select-item-option-selected {
+  background: rgba(0, 245, 255, 0.2) !important;
+}
+
+.ant-select-item-option-active {
+  background: rgba(0, 245, 255, 0.1) !important;
+}

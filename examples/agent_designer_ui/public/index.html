@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EFIAgent 可视化Agent开发模块</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background-color: #f0f2f5;
+      color: #333;
+    }
+    
+    #root {
+      height: 100vh;
+    }
+    
+    .loading-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #f0f2f5;
+    }
+    
+    .loading-logo {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 24px;
+      animation: pulse 1.5s infinite ease-in-out;
+    }
+    
+    .loading-text {
+      font-size: 24px;
+      font-weight: 500;
+      color: #1890ff;
+      margin-bottom: 16px;
+    }
+    
+    .loading-spinner {
+      border: 4px solid rgba(24, 144, 255, 0.1);
+      border-left-color: #1890ff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(0.95);
+        opacity: 0.8;
+      }
+    }
+    
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root">
+    <div class="loading-container">
+      <div class="loading-logo">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#1890ff" d="M100,20 C142.5,20 177.5,55 177.5,97.5 C177.5,140 142.5,175 100,175 C57.5,175 22.5,140 22.5,97.5 C22.5,55 57.5,20 100,20 Z M100,40 C68.5,40 42.5,66 42.5,97.5 C42.5,129 68.5,155 100,155 C131.5,155 157.5,129 157.5,97.5 C157.5,66 131.5,40 100,40 Z"/>
+          <path fill="#1890ff" d="M100,60 C120.5,60 137.5,77 137.5,97.5 C137.5,118 120.5,135 100,135 C79.5,135 62.5,118 62.5,97.5 C62.5,77 79.5,60 100,60 Z"/>
+          <path fill="#1890ff" d="M177.5,97.5 L200,97.5 M0,97.5 L22.5,97.5 M100,0 L100,20 M100,175 L100,200" stroke="#1890ff" stroke-width="10"/>
+        </svg>
+      </div>
+      <div class="loading-text">EFIAgent 可视化开发模块</div>
+      <div class="loading-spinner"></div>
+    </div>
+  </div>
+  
+  <!-- 依赖脚本 -->
+  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+  
+  <!-- 应用脚本 -->
+  <script src="/dist/bundle.js"></script>
+</body>
+</html>

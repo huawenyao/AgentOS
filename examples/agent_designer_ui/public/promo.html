@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EFIAgent - 分布式智能交响曲</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* 粒子背景 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: linear-gradient(45deg, #00f5ff, #ff00ff);
+            border-radius: 50%;
+            animation: float 6s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* 主容器 */
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 英雄区域 */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: radial-gradient(ellipse at center, rgba(0, 245, 255, 0.1) 0%, transparent 70%);
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%2300f5ff" stroke-width="0.5" opacity="0.3"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>') repeat;
+            opacity: 0.3;
+        }
+
+        .logo {
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #00f5ff, #ff00ff, #ffff00);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient 3s ease infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            color: #00f5ff;
+            font-weight: 300;
+        }
+
+        /* 网络可视化 */
+        .network-viz {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .node {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #00f5ff;
+            border-radius: 50%;
+            box-shadow: 0 0 20px #00f5ff;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.7; }
+        }
+
+        .connection {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #00f5ff, transparent);
+            animation: flow 3s infinite;
+        }
+
+        @keyframes flow {
+            0% { opacity: 0; transform: scaleX(0); }
+            50% { opacity: 1; transform: scaleX(1); }
+            100% { opacity: 0; transform: scaleX(0); }
+        }
+
+        /* 特性区域 */
+        .features {
+            padding: 100px 20px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 4rem;
+            background: linear-gradient(45deg, #00f5ff, #ff00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 245, 255, 0.3);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, #00f5ff, transparent);
+            animation: rotate 4s linear infinite;
+            z-index: -1;
+        }
+
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            inset: 2px;
+            background: rgba(26, 26, 46, 0.9);
+            border-radius: 18px;
+            z-index: -1;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 245, 255, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #00f5ff;
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .feature-desc {
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        /* 架构图区域 */
+        .architecture {
+            padding: 100px 20px;
+            background: #000;
+            position: relative;
+        }
+
+        .arch-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .arch-diagram {
+            position: relative;
+            height: 500px;
+            margin: 4rem 0;
+        }
+
+        .layer {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 120px;
+            border: 2px solid #00f5ff;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 245, 255, 0.1);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .layer:hover {
+            background: rgba(0, 245, 255, 0.2);
+            box-shadow: 0 0 30px rgba(0, 245, 255, 0.5);
+        }
+
+        .layer.coordination {
+            top: 0;
+            border-color: #ff00ff;
+            background: rgba(255, 0, 255, 0.1);
+        }
+
+        .layer.cognitive {
+            top: 150px;
+            border-color: #ffff00;
+            background: rgba(255, 255, 0, 0.1);
+        }
+
+        .layer.data {
+            top: 300px;
+            border-color: #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        .layer-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* 数据指标 */
+        .metrics {
+            padding: 100px 20px;
+            background: linear-gradient(135deg, #0f3460 0%, #16213e 50%, #1a1a2e 100%);
+        }
+
+        .metrics-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .metric-card {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(0, 245, 255, 0.3);
+        }
+
+        .metric-value {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #00f5ff;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            color: #ccc;
+            font-size: 1.1rem;
+        }
+
+        /* CTA区域 */
+        .cta {
+            padding: 100px 20px;
+            background: radial-gradient(ellipse at center, rgba(0, 245, 255, 0.2) 0%, transparent 70%);
+            text-align: center;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(45deg, #00f5ff, #ff00ff);
+            color: #000;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            margin: 1rem;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 245, 255, 0.5);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            .tagline {
+                font-size: 1.2rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .layer {
+                width: 95%;
+                height: 100px;
+            }
+            
+            .layer.cognitive {
+                top: 120px;
+            }
+            
+            .layer.data {
+                top: 240px;
+            }
+            
+            .arch-diagram {
+                height: 360px;
+            }
+        }
+
+        /* 滚动动画 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- 粒子背景 -->
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+        <!-- 英雄区域 -->
+        <section class="hero">
+            <div class="network-viz" id="network"></div>
+            <h1 class="logo">EFIAgent</h1>
+            <p class="tagline">分布式智能交响曲</p>
+            <p class="subtitle">Evolutionary Force Intelligence Agent</p>
+            <p style="font-size: 1.1rem; max-width: 600px; line-height: 1.6; opacity: 0.8;">
+                企业级多智能体协作系统，具备动态分工、认知协同、弹性扩展、安全可控的核心能力，
+                满足工业控制、金融风控、智能运维等高复杂度场景需求。
+            </p>
+        </section>
+
+        <!-- 核心特性 -->
+        <section class="features">
+            <div class="features-container">
+                <h2 class="section-title fade-in">核心创新</h2>
+                <div class="features-grid">
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon">🧠</div>
+                        <h3 class="feature-title">动态角色引擎</h3>
+                        <p class="feature-desc">基于实时负载与能力画像动态重组分工，实现智能体角色的自适应调整</p>
+                    </div>
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon">🌐</div>
+                        <h3 class="feature-title">混合通信拓扑</h3>
+                        <p class="feature-desc">星型协调层 + 局部P2P网络，降低40%通信开销，提升协作效率</p>
+                    </div>
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon">🔄</div>
+                        <h3 class="feature-title">三阶段进化协议</h3>
+                        <p class="feature-desc">提示词微调、工作流重构、模型热替换，实现系统持续自我优化</p>
+                    </div>
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon">🛡️</div>
+                        <h3 class="feature-title">零信任安全</h3>
+                        <p class="feature-desc">智能体身份认证、差分隐私保护、审计链追踪，确保系统安全可控</p>
+                    </div>
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon">⚡</div>
+                        <h3 class="feature-title">弹性资源调度</h3>
+                        <p class="feature-desc">边缘-云分层部署，博弈论激励模型，资源利用率提升40%</p>
+                    </div>
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon">🎯</div>
+                        <h3 class="feature-title">认知协同</h3>
+                        <p class="feature-desc">分布式记忆体、集体决策纠错、跨Agent知识蒸馏，实现群体智能涌现</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 架构图 -->
+        <section class="architecture">
+            <div class="arch-container">
+                <h2 class="section-title fade-in">分层联邦架构</h2>
+                <div class="arch-diagram fade-in">
+                    <div class="layer coordination">
+                        <div class="layer-title">协调层 - 元调度中心、动态角色引擎、进化控制器</div>
+                    </div>
+                    <div class="layer cognitive">
+                        <div class="layer-title">认知层 - 规划Agent、执行Agent组、审核Agent组</div>
+                    </div>
+                    <div class="layer data">
+                        <div class="layer-title">数据层 - 分布式记忆体、知识图谱、规则库</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 性能指标 -->
+        <section class="metrics">
+            <div class="metrics-container">
+                <h2 class="section-title fade-in">性能指标</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card fade-in">
+                        <div class="metric-value">≥98%</div>
+                        <div class="metric-label">任务完成率</div>
+                    </div>
+                    <div class="metric-card fade-in">
+                        <div class="metric-value">&lt;300ms</div>
+                        <div class="metric-label">响应延迟</div>
+                    </div>
+                    <div class="metric-card fade-in">
+                        <div class="metric-value">99.5%</div>
+                        <div class="metric-label">系统容错率</div>
+                    </div>
+                    <div class="metric-card fade-in">
+                        <div class="metric-value">40%</div>
+                        <div class="metric-label">资源利用率提升</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA区域 -->
+        <section class="cta">
+            <h2 class="section-title fade-in">开启智能协作新时代</h2>
+            <p class="fade-in" style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">
+                构建下一代企业级智能协作生态，奏响分布式智能交响曲
+            </p>
+            <a href="javascript:void(0)" class="cta-button fade-in" onclick="switchToAgentPlayground()">立即体验</a>
+            <a href="javascript:void(0)" class="cta-button fade-in" onclick="switchToCases()">了解更多</a>
+        </section>
+    </div>
+
+    <script>
+        // 粒子系统
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // 网络可视化
+        function createNetwork() {
+            const networkContainer = document.getElementById('network');
+            const nodeCount = 20;
+            const nodes = [];
+
+            // 创建节点
+            for (let i = 0; i < nodeCount; i++) {
+                const node = document.createElement('div');
+                node.className = 'node';
+                const x = Math.random() * 80 + 10; // 10% - 90%
+                const y = Math.random() * 80 + 10;
+                node.style.left = x + '%';
+                node.style.top = y + '%';
+                node.style.animationDelay = Math.random() * 2 + 's';
+                networkContainer.appendChild(node);
+                nodes.push({ element: node, x, y });
+            }
+
+            // 创建连接线
+            for (let i = 0; i < nodeCount; i++) {
+                for (let j = i + 1; j < nodeCount; j++) {
+                    const distance = Math.sqrt(
+                        Math.pow(nodes[i].x - nodes[j].x, 2) + 
+                        Math.pow(nodes[i].y - nodes[j].y, 2)
+                    );
+                    
+                    if (distance < 30 && Math.random() > 0.7) {
+                        const connection = document.createElement('div');
+                        connection.className = 'connection';
+                        
+                        const angle = Math.atan2(
+                            nodes[j].y - nodes[i].y, 
+                            nodes[j].x - nodes[i].x
+                        ) * 180 / Math.PI;
+                        
+                        connection.style.left = nodes[i].x + '%';
+                        connection.style.top = nodes[i].y + '%';
+                        connection.style.width = distance + '%';
+                        connection.style.transform = `rotate(${angle}deg)`;
+                        connection.style.transformOrigin = '0 50%';
+                        connection.style.animationDelay = Math.random() * 3 + 's';
+                        
+                        networkContainer.appendChild(connection);
+                    }
+                }
+            }
+        }
+
+        // 滚动动画
+        function handleScrollAnimation() {
+            const elements = document.querySelectorAll('.fade-in');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            elements.forEach(element => {
+                observer.observe(element);
+            });
+        }
+
+        // 与父页面通信的函数
+        function switchToAgentPlayground() {
+            // 通过postMessage与父页面通信
+            if (window.parent && window.parent !== window) {
+                window.parent.postMessage({ type: 'SWITCH_TAB', tab: 'agent-playground' }, '*');
+            } else {
+                // 如果不在iframe中，直接跳转
+                window.location.href = '/?tab=agent-playground';
+            }
+        }
+
+        function switchToCases() {
+            // 通过postMessage与父页面通信
+            if (window.parent && window.parent !== window) {
+                window.parent.postMessage({ type: 'SWITCH_TAB', tab: 'college-admission' }, '*');
+            } else {
+                // 如果不在iframe中，直接跳转
+                window.location.href = '/?tab=cases';
+            }
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            createNetwork();
+            handleScrollAnimation();
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

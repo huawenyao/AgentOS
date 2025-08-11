@@ -1,0 +1,205 @@
+.template-gallery {
+  padding: 20px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.template-gallery-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.template-gallery-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+  align-items: center;
+}
+
+.template-gallery-filters .ant-input-affix-wrapper {
+  width: 300px;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-group .anticon {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.view-mode-toggle {
+  margin-left: auto;
+}
+
+.template-gallery-loading,
+.template-gallery-error,
+.template-gallery-empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+
+.template-gallery-content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.template-section {
+  margin-bottom: 16px;
+}
+
+/* 卡片样式 */
+.template-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s;
+}
+
+.template-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.09);
+}
+
+.template-card-header {
+  margin-bottom: 12px;
+}
+
+.template-card-header .ant-typography {
+  margin-bottom: 8px;
+  margin-top: 8px;
+}
+
+.template-tags {
+  margin: 12px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.template-components {
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+/* 列表样式 */
+.template-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.template-list-item {
+  width: 100%;
+  transition: all 0.3s;
+}
+
+.template-list-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.09);
+}
+
+.template-list-item-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.template-list-item-info {
+  flex: 1;
+}
+
+.template-list-item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.template-list-item-header .ant-typography {
+  margin: 0;
+}
+
+.template-list-item-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* 特色模板样式 */
+.featured-template {
+  border: 1px solid #faad14;
+  background-color: rgba(250, 173, 20, 0.05);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .template-gallery-filters {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .template-gallery-filters .ant-input-affix-wrapper {
+    width: 100%;
+  }
+  
+  .filter-group {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  
+  .filter-group .ant-select {
+    width: 100% !important;
+    margin-bottom: 8px;
+  }
+  
+  .view-mode-toggle {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  .view-mode-toggle .ant-btn-group {
+    width: 100%;
+    display: flex;
+  }
+  
+  .view-mode-toggle .ant-btn {
+    flex: 1;
+  }
+  
+  .template-list-item-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .template-list-item-actions {
+    margin-top: 12px;
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.template-gallery-content {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* 暗色主题适配 */
+@media (prefers-color-scheme: dark) {
+  .featured-template {
+    background-color: rgba(250, 173, 20, 0.1);
+  }
+}

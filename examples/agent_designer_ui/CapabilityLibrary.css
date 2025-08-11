@@ -1,0 +1,200 @@
+.capability-library {
+  padding: 20px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.capability-library-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.capability-library-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.capability-library-filters .ant-input-affix-wrapper {
+  width: 300px;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-group .anticon {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.capability-tabs {
+  margin-bottom: 16px;
+}
+
+.capability-library-loading,
+.capability-library-error,
+.capability-library-empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+
+.capability-library-content {
+  padding: 8px 0;
+}
+
+/* 卡片样式 */
+.capability-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s;
+}
+
+.capability-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.09);
+}
+
+.capability-card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.capability-icon {
+  font-size: 24px;
+  margin-right: 12px;
+}
+
+.capability-card-header .ant-typography {
+  margin-bottom: 0;
+  margin-right: 8px;
+}
+
+.capability-tags {
+  margin: 12px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* 详情模态框样式 */
+.capability-detail-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.capability-detail-icon {
+  font-size: 48px;
+  margin-right: 16px;
+  background-color: #f5f5f5;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.capability-detail-info {
+  flex: 1;
+}
+
+.capability-detail-meta {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.capability-detail-description,
+.capability-detail-tags,
+.capability-detail-schema {
+  margin-bottom: 24px;
+}
+
+.schema-preview {
+  background-color: #f5f5f5;
+  padding: 16px;
+  border-radius: 4px;
+  max-height: 300px;
+  overflow: auto;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .capability-library-filters {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .capability-library-filters .ant-input-affix-wrapper {
+    width: 100%;
+  }
+  
+  .filter-group {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  
+  .filter-group .ant-select {
+    width: 100% !important;
+    margin-bottom: 8px;
+  }
+  
+  .capability-detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .capability-detail-icon {
+    margin-bottom: 16px;
+  }
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.capability-library-content {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* 暗色主题适配 */
+@media (prefers-color-scheme: dark) {
+  .capability-detail-icon,
+  .schema-preview {
+    background-color: rgba(255, 255, 255, 0.04);
+  }
+}
+
+/* 自定义滚动条 */
+.schema-preview::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.schema-preview::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.schema-preview::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.schema-preview::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

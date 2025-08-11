@@ -1,0 +1,444 @@
+/* PropertyPanel.css - 属性配置面板样式 */
+
+.property-panel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.property-panel .ant-card-head {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 12px 16px;
+  min-height: auto;
+}
+
+.property-panel .ant-card-head-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #262626;
+}
+
+.property-panel .ant-card-extra {
+  font-size: 12px;
+}
+
+.property-panel .ant-card-body {
+  padding: 16px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* 节点信息区域 */
+.node-info {
+  margin-bottom: 16px;
+}
+
+.node-info-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.node-info-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  border-radius: 6px;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.node-info-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.node-info-content h5 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #262626;
+  margin: 0 0 4px 0;
+  line-height: 1.4;
+}
+
+.node-info-content .ant-typography {
+  font-size: 12px;
+  color: #8c8c8c;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.node-info-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.node-info-tags .ant-tag {
+  margin: 0;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* 表单样式 */
+.property-panel .ant-form {
+  margin: 0;
+}
+
+.property-panel .ant-form-item {
+  margin-bottom: 16px;
+}
+
+.property-panel .ant-form-item-label {
+  padding-bottom: 4px;
+}
+
+.property-panel .ant-form-item-label > label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #595959;
+  height: auto;
+}
+
+.property-panel .ant-form-item-control-input {
+  min-height: 32px;
+}
+
+/* 折叠面板样式 */
+.property-panel .ant-collapse {
+  background: transparent;
+  border: none;
+}
+
+.property-panel .ant-collapse > .ant-collapse-item {
+  border: 1px solid #f0f0f0;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.property-panel .ant-collapse > .ant-collapse-item:last-child {
+  margin-bottom: 0;
+}
+
+.property-panel .ant-collapse-header {
+  padding: 8px 12px !important;
+  font-size: 13px;
+  font-weight: 500;
+  color: #595959;
+  background: #fafafa;
+  border-radius: 6px 6px 0 0;
+}
+
+.property-panel .ant-collapse-header:hover {
+  background: #f5f5f5;
+}
+
+.property-panel .ant-collapse-content {
+  border-top: 1px solid #f0f0f0;
+  background: #fff;
+  border-radius: 0 0 6px 6px;
+}
+
+.property-panel .ant-collapse-content-box {
+  padding: 12px;
+}
+
+.property-panel .ant-collapse-arrow {
+  font-size: 10px;
+  color: #8c8c8c;
+}
+
+/* 输入组件样式 */
+.property-panel .ant-input,
+.property-panel .ant-input-number,
+.property-panel .ant-select-selector,
+.property-panel .ant-picker {
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.property-panel .ant-input:focus,
+.property-panel .ant-input-number:focus,
+.property-panel .ant-select-focused .ant-select-selector,
+.property-panel .ant-picker:focus {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+}
+
+.property-panel .ant-input-number {
+  width: 100%;
+}
+
+.property-panel .ant-switch {
+  min-width: 44px;
+}
+
+.property-panel .ant-slider {
+  margin: 8px 0;
+}
+
+.property-panel .ant-slider-mark-text {
+  font-size: 11px;
+  color: #8c8c8c;
+}
+
+.property-panel .ant-radio-group,
+.property-panel .ant-checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.property-panel .ant-radio,
+.property-panel .ant-checkbox {
+  font-size: 13px;
+}
+
+.property-panel .ant-upload {
+  width: 100%;
+}
+
+.property-panel .ant-upload-list {
+  margin-top: 8px;
+}
+
+/* 颜色选择器 */
+.property-panel .ant-color-picker {
+  width: 100%;
+}
+
+.property-panel .ant-color-picker-trigger {
+  width: 100%;
+  height: 32px;
+  border-radius: 4px;
+}
+
+/* 代码编辑器样式 */
+.property-panel .ant-input[style*="Monaco"],
+.property-panel .ant-input[style*="Consolas"] {
+  font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  background: #fafafa;
+}
+
+/* 操作按钮区域 */
+.property-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 8px;
+}
+
+.property-actions .ant-btn {
+  font-size: 12px;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 4px;
+}
+
+/* 空状态样式 */
+.property-panel .ant-empty {
+  margin: 20px 0;
+}
+
+.property-panel .ant-empty-description {
+  font-size: 13px;
+  color: #8c8c8c;
+}
+
+/* 工具提示样式 */
+.property-panel .anticon-info-circle {
+  font-size: 12px;
+  color: #8c8c8c;
+  cursor: help;
+}
+
+.property-panel .anticon-info-circle:hover {
+  color: #1890ff;
+}
+
+/* 标签样式 */
+.property-panel .ant-tag {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin: 0;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .property-panel .ant-card-body {
+    padding: 12px;
+  }
+  
+  .node-info-header {
+    gap: 8px;
+  }
+  
+  .node-info-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+  
+  .property-panel .ant-collapse-header {
+    padding: 6px 10px !important;
+    font-size: 12px;
+  }
+  
+  .property-panel .ant-collapse-content-box {
+    padding: 10px;
+  }
+}
+
+/* 滚动条样式 */
+.property-panel .ant-card-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.property-panel .ant-card-body::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 3px;
+}
+
+.property-panel .ant-card-body::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border-radius: 3px;
+}
+
+.property-panel .ant-card-body::-webkit-scrollbar-thumb:hover {
+  background: #bfbfbf;
+}
+
+/* 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+  .property-panel {
+    background: #1f1f1f;
+    border-color: #303030;
+  }
+  
+  .property-panel .ant-card-head {
+    border-bottom-color: #303030;
+  }
+  
+  .node-info-icon {
+    background: #262626;
+  }
+  
+  .property-panel .ant-collapse > .ant-collapse-item {
+    border-color: #303030;
+  }
+  
+  .property-panel .ant-collapse-header {
+    background: #262626;
+    color: #d9d9d9;
+  }
+  
+  .property-panel .ant-collapse-header:hover {
+    background: #303030;
+  }
+  
+  .property-panel .ant-collapse-content {
+    background: #1f1f1f;
+    border-top-color: #303030;
+  }
+}
+
+/* 动画效果 */
+.property-panel {
+  transition: all 0.2s ease-in-out;
+}
+
+.node-info-icon {
+  transition: all 0.2s ease-in-out;
+}
+
+.property-panel .ant-btn {
+  transition: all 0.2s ease-in-out;
+}
+
+.property-panel .ant-collapse-header {
+  transition: all 0.2s ease-in-out;
+}
+
+/* 加载状态 */
+.property-panel.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.property-panel.loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* 错误状态 */
+.property-panel .ant-form-item-has-error .ant-input,
+.property-panel .ant-form-item-has-error .ant-input-number,
+.property-panel .ant-form-item-has-error .ant-select-selector {
+  border-color: #ff4d4f;
+}
+
+.property-panel .ant-form-item-has-error .ant-input:focus,
+.property-panel .ant-form-item-has-error .ant-input-number:focus,
+.property-panel .ant-form-item-has-error .ant-select-focused .ant-select-selector {
+  border-color: #ff4d4f;
+  box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.1);
+}
+
+/* 成功状态 */
+.property-panel .ant-form-item-has-success .ant-input,
+.property-panel .ant-form-item-has-success .ant-input-number,
+.property-panel .ant-form-item-has-success .ant-select-selector {
+  border-color: #52c41a;
+}
+
+/* 禁用状态 */
+.property-panel .ant-form-item-disabled .ant-input,
+.property-panel .ant-form-item-disabled .ant-input-number,
+.property-panel .ant-form-item-disabled .ant-select-selector {
+  background: #f5f5f5;
+  color: #bfbfbf;
+  cursor: not-allowed;
+}
+
+/* 预览模式样式 */
+.property-panel.preview-mode {
+  background: #fafafa;
+}
+
+.property-panel.preview-mode .ant-input,
+.property-panel.preview-mode .ant-input-number,
+.property-panel.preview-mode .ant-select-selector,
+.property-panel.preview-mode .ant-picker {
+  background: #f5f5f5;
+  border-color: #e8e8e8;
+  cursor: default;
+}
+
+.property-panel.preview-mode .ant-switch {
+  cursor: default;
+}
+
+.property-panel.preview-mode .ant-btn {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

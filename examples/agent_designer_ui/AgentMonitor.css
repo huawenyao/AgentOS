@@ -1,0 +1,218 @@
+/* Agent Monitor 样式 */
+.agent-monitor {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.agent-monitor .ant-card-body {
+  flex: 1;
+  overflow: hidden;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.agent-monitor .ant-tabs {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.agent-monitor .ant-tabs-content {
+  flex: 1;
+  overflow: hidden;
+}
+
+.agent-monitor .ant-tabs-tabpane {
+  height: 100%;
+  overflow: auto;
+}
+
+/* 头部样式 */
+.agent-monitor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.agent-status {
+  margin-left: 12px;
+}
+
+/* 工具栏样式 */
+.agent-monitor-toolbar {
+  margin-bottom: 12px;
+  padding: 8px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 日志区域样式 */
+.agent-monitor-logs {
+  height: calc(100% - 60px);
+  overflow: auto;
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+}
+
+.agent-monitor-logs .ant-table-wrapper {
+  height: 100%;
+}
+
+.agent-monitor-logs .ant-table {
+  height: 100%;
+}
+
+.agent-monitor-logs .ant-table-body {
+  height: calc(100% - 40px) !important;
+  overflow-y: auto !important;
+}
+
+/* 日志级别样式 */
+.agent-monitor-logs .ant-tag-blue {
+  background-color: #e6f7ff;
+  border-color: #91d5ff;
+  color: #1890ff;
+}
+
+.agent-monitor-logs .ant-tag-green {
+  background-color: #f6ffed;
+  border-color: #b7eb8f;
+  color: #52c41a;
+}
+
+.agent-monitor-logs .ant-tag-orange {
+  background-color: #fff7e6;
+  border-color: #ffd591;
+  color: #fa8c16;
+}
+
+.agent-monitor-logs .ant-tag-red {
+  background-color: #fff1f0;
+  border-color: #ffa39e;
+  color: #f5222d;
+}
+
+/* 加载状态样式 */
+.agent-monitor-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+
+/* 错误提示样式 */
+.agent-monitor-error {
+  margin-bottom: 12px;
+}
+
+/* 性能和状态监控样式 */
+.agent-monitor-performance,
+.agent-monitor-state {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 动画效果 */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.ant-badge-status-processing::after {
+  animation: pulse 2s infinite;
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+  .agent-monitor-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .agent-monitor-toolbar .ant-space {
+    margin-bottom: 8px;
+  }
+  
+  .agent-monitor-logs {
+    height: calc(100% - 100px);
+  }
+}
+
+/* 暗色主题支持 */
+.dark-theme .agent-monitor {
+  background-color: #1f1f1f;
+  color: #fff;
+}
+
+.dark-theme .agent-monitor-toolbar {
+  background-color: #2a2a2a;
+}
+
+.dark-theme .agent-monitor-logs {
+  border-color: #303030;
+}
+
+/* 自定义滚动条 */
+.agent-monitor-logs::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.agent-monitor-logs::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.agent-monitor-logs::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.agent-monitor-logs::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* 表格行交替颜色 */
+.agent-monitor-logs .ant-table-tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.dark-theme .agent-monitor-logs .ant-table-tbody tr:nth-child(even) {
+  background-color: #2a2a2a;
+}
+
+/* 日志消息样式 */
+.agent-monitor-logs .ant-table-tbody td:last-child {
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+/* 时间戳样式 */
+.agent-monitor-logs .ant-table-tbody td:first-child {
+  font-family: monospace;
+  font-size: 12px;
+}
+
+/* 高亮当前行 */
+.agent-monitor-logs .ant-table-tbody tr:hover td {
+  background-color: #e6f7ff !important;
+}
+
+.dark-theme .agent-monitor-logs .ant-table-tbody tr:hover td {
+  background-color: #1a365d !important;
+}

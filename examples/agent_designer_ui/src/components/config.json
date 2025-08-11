@@ -1,0 +1,158 @@
+{
+  "version": "1.0.0",
+  "app": {
+    "name": "EFIAgent可视化开发模块",
+    "description": "通过图形化界面简化Agent的设计、配置和部署流程",
+    "logo": "assets/logo.svg",
+    "theme": {
+      "primaryColor": "#1890ff",
+      "secondaryColor": "#52c41a",
+      "errorColor": "#f5222d",
+      "warningColor": "#faad14",
+      "successColor": "#52c41a",
+      "infoColor": "#1890ff",
+      "fontFamily": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+      "fontSize": 14,
+      "darkMode": false
+    },
+    "layout": {
+      "siderWidth": 250,
+      "propertySiderWidth": 300,
+      "headerHeight": 64,
+      "footerHeight": 48,
+      "showFooter": true
+    }
+  },
+  "api": {
+    "baseUrl": "http://localhost:8080",
+    "timeout": 30000,
+    "retryCount": 3,
+    "retryDelay": 1000,
+    "endpoints": {
+      "templates": "/api/v1/agent-templates",
+      "agents": "/api/v1/agents",
+      "workflows": "/api/v1/workflows",
+      "capabilities": "/api/v1/capabilities",
+      "reports": "/api/statistics/reports"
+    },
+    "headers": {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    }
+  },
+  "storage": {
+    "type": "localStorage",
+    "prefix": "efiagent_designer_",
+    "ttl": 86400
+  },
+  "features": {
+    "designer": {
+      "enabled": true,
+      "autosave": true,
+      "autosaveInterval": 60000,
+      "undoLimit": 20,
+      "showGrid": true,
+      "snapToGrid": true,
+      "gridSize": 20,
+      "zoomMin": 0.5,
+      "zoomMax": 2,
+      "zoomStep": 0.1
+    },
+    "templates": {
+      "enabled": true,
+      "allowCreate": true,
+      "allowEdit": true,
+      "allowDelete": true,
+      "allowExport": true,
+      "allowImport": true,
+      "categories": [
+        "通用",
+        "对话",
+        "分析",
+        "创作",
+        "开发",
+        "自定义"
+      ]
+    },
+    "agents": {
+      "enabled": true,
+      "allowCreate": true,
+      "allowEdit": true,
+      "allowDelete": true,
+      "allowDeploy": true,
+      "allowStart": true,
+      "allowStop": true,
+      "allowMonitor": true,
+      "categories": [
+        "对话",
+        "分析",
+        "创作",
+        "开发",
+        "自定义"
+      ]
+    },
+    "workflows": {
+      "enabled": true,
+      "allowCreate": true,
+      "allowEdit": true,
+      "allowDelete": true,
+      "allowExport": true,
+      "allowImport": true,
+      "categories": [
+        "通用",
+        "业务流程",
+        "数据处理",
+        "自定义"
+      ]
+    },
+    "capabilities": {
+      "enabled": true,
+      "allowCreate": true,
+      "allowEdit": true,
+      "allowDelete": true,
+      "allowImport": true,
+      "categories": [
+        "基础能力",
+        "认知能力",
+        "工具能力",
+        "交互能力",
+        "自定义能力"
+      ]
+    },
+    "components": {
+      "enabled": true,
+      "allowCreate": true,
+      "allowEdit": true,
+      "allowDelete": true,
+      "categories": [
+        "Agent类型",
+        "Agent配置",
+        "状态管理",
+        "工具集成",
+        "数据处理",
+        "自定义组件"
+      ]
+    },
+    "debug": {
+      "enabled": true,
+      "logLevels": [
+        "error",
+        "warn",
+        "info",
+        "debug"
+      ],
+      "maxLogEntries": 1000,
+      "showTimestamp": true,
+      "showLogLevel": true
+    },
+    "export": {
+      "formats": [
+        "json",
+        "yaml",
+        "python"
+      ],
+      "allowCode": true,
+      "allowConfig": true
+    }
+  }
+}

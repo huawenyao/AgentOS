@@ -213,7 +213,30 @@ class ResourceNode(BaseModel):
 class AgentSkillVector(BaseModel):
     """智能体技能向量
     
-    表示智能体在不同技能维度上的能力水平，取值范围为0-1
+    表示智能体在不同技能维度上的能力水平，取值范围为0-1。
+    该类是资源调度系统中智能体能力表示的核心，用于：
+    1. 记录和管理智能体在各个技能维度上的能力水平
+    2. 支持标准技能（如自然语言处理、计算机视觉等）和自定义技能
+    3. 提供技能向量间的相似度计算，用于智能体与任务的匹配
+    4. 在find_best_agent方法中作为智能体选择的依据
+    
+    技能水平采用0-1的标准化表示：
+    - 0表示完全不具备该技能
+    - 1表示完全掌握该技能
+    - 中间值表示部分掌握程度
+    
+    Example:
+        ```python
+        # 创建一个技能向量
+        skills = AgentSkillVector(
+            natural_language_processing=0.8,
+            reasoning=0.7,
+            planning=0.6
+        )
+        
+        # 添加自定义技能
+        skills.set_skill_level('domain_specific_knowledge', 0.9)
+        ```
     """
     natural_language_processing: float = 0.0  # 自然语言处理
     computer_vision: float = 0.0  # 计算机视觉
@@ -229,11 +252,17 @@ class AgentSkillVector(BaseModel):
     def get_skill_level(self, skill_name: str) -> float:
         """获取技能水平
         
+        获取指定技能的水平值。该方法会先检查标准技能（类的属性），
+        如果不是标准技能则检查自定义技能字典。如果两者都没有找到，则返回0.0。
+        
+        该方法在similarity和find_best_agent方法中被广泛使用，用于比较技能向量和计算匹配度。
+        
         Args:
-            skill_name: 技能名称
+            skill_name: 技能名称，可以是标准技能（如'natural_language_processing'）
+                        或自定义技能
             
         Returns:
-            float: 技能水平（0-1）
+            float: 技能水平（0-1范围内），0表示不具备该技能，1表示完全掌握
         """
         if hasattr(self, skill_name):
             return getattr(self, skill_name)
@@ -245,12 +274,29 @@ class AgentSkillVector(BaseModel):
     def set_skill_level(self, skill_name: str, level: float) -> None:
         """设置技能水平
         
+        设置指定技能的水平值。该方法会先验证技能水平是否在有效范围内（0-1），
+        然后检查是否为标准技能（类的属性）。如果是标准技能，则直接设置属性值；
+        如果不是标准技能，则添加或更新到自定义技能字典中。
+        
+        该方法在创建或更新智能体技能向量时使用，也在find_best_agent方法中用于
+        创建任务需求的技能向量。
+        
         Args:
-            skill_name: 技能名称
-            level: 技能水平（0-1）
+            skill_name: 技能名称，可以是标准技能（如'natural_language_processing'）
+                        或自定义技能
+            level: 技能水平，必须在0-1范围内，0表示不具备该技能，1表示完全掌握
             
         Raises:
-            ValueError: 技能水平超出范围
+            ValueError: 当技能水平不在0-1范围内时抛出
+        
+        Example:
+            ```python
+            # 设置自然语言处理技能水平为0.8
+            agent_skills.set_skill_level('natural_language_processing', 0.8)
+            
+            # 设置自定义技能
+            agent_skills.set_skill_level('custom_skill_name', 0.6)
+            ```
         """
         if level < 0 or level > 1:
             raise ValueError("技能水平必须在0-1范围内")
@@ -263,35 +309,48 @@ class AgentSkillVector(BaseModel):
     def similarity(self, other: "AgentSkillVector") -> float:
         """计算与另一个技能向量的相似度
         
-        使用余弦相似度计算两个技能向量的相似度
+        使用余弦相似度计算两个技能向量的相似度。余弦相似度衡量两个向量方向的相似程度，
+        值越接近1表示两个技能向量越相似，值越接近0表示越不相似。
+        
+        该方法在资源调度器的find_best_agent方法中用于计算智能体与任务需求的匹配度。
         
         Args:
-            other: 另一个技能向量
+            other: 另一个技能向量，通常代表任务所需的技能要求
             
         Returns:
-            float: 相似度（0-1）
+            float: 相似度（0-1范围内），1表示完全匹配，0表示完全不匹配
+        
+        Note:
+            该方法会考虑所有标准技能和自定义技能，确保全面评估智能体能力
         """
-        # 获取所有技能名称
+        # 获取所有技能名称 - 合并两个技能向量中的所有技能维度
         all_skills = set()
+        # 获取标准技能（类的属性，排除方法和特殊属性）
         for skill in dir(self):
             if not skill.startswith("_") and skill not in ["custom_skills", "similarity", "get_skill_level", "set_skill_level"]:
                 all_skills.add(skill)
         
+        # 添加两个向量中的所有自定义技能
         all_skills.update(self.custom_skills.keys())
         all_skills.update(other.custom_skills.keys())
         
-        # 计算向量
-        vec1 = [self.get_skill_level(skill) for skill in all_skills]
-        vec2 = [other.get_skill_level(skill) for skill in all_skills]
+        # 构建两个向量，确保维度一致 - 对于每个技能维度获取对应的技能水平
+        vec1 = [self.get_skill_level(skill) for skill in all_skills]  # 当前智能体的技能水平
+        vec2 = [other.get_skill_level(skill) for skill in all_skills]  # 目标技能水平（通常是任务需求）
         
-        # 计算余弦相似度
+        # 计算余弦相似度: cos(θ) = (A·B)/(|A|·|B|)
+        # 1. 计算点积(A·B) - 两个向量对应元素相乘后求和
         dot_product = sum(a * b for a, b in zip(vec1, vec2))
-        magnitude1 = math.sqrt(sum(a * a for a in vec1))
-        magnitude2 = math.sqrt(sum(b * b for b in vec2))
         
+        # 2. 计算两个向量的模长(magnitude)
+        magnitude1 = math.sqrt(sum(a * a for a in vec1))  # |A| = √(a₁²+a₂²+...+aₙ²)
+        magnitude2 = math.sqrt(sum(b * b for b in vec2))  # |B| = √(b₁²+b₂²+...+bₙ²)
+        
+        # 3. 处理零向量情况 - 避免除以零错误
         if magnitude1 == 0 or magnitude2 == 0:
-            return 0.0
+            return 0.0  # 如果任一向量为零向量，相似度为0
         
+        # 4. 返回余弦相似度 - 值域为[0,1]，1表示完全相似，0表示完全不相似
         return dot_product / (magnitude1 * magnitude2)
 
 
@@ -468,46 +527,66 @@ class ResourceScheduler:
                        excluded_agents: List[str] = None) -> Optional[str]:
         """找出最适合的智能体
         
-        根据技能需求找出最适合的智能体
+        根据技能需求找出最适合的智能体。该方法会检查每个智能体是否满足所有技能的最低要求，
+        然后计算智能体技能向量与需求技能向量的相似度，选择相似度最高的智能体。
         
         Args:
-            required_skills: 所需技能字典，键为技能名称，值为最低要求水平
-            excluded_agents: 排除的智能体ID列表
+            required_skills: 所需技能字典，键为技能名称，值为最低要求水平（0-1范围内）
+            excluded_agents: 排除的智能体ID列表，这些智能体不会被考虑
             
         Returns:
             Optional[str]: 最适合的智能体ID，如果没有合适的智能体则返回None
+            
+        Example:
+            ```python
+            # 查找具有自然语言处理和推理能力的智能体
+            best_agent_id = scheduler.find_best_agent({
+                'natural_language_processing': 0.7,
+                'reasoning': 0.5
+            })
+            ```
         """
         if excluded_agents is None:
             excluded_agents = []
         
-        # 创建所需技能向量
+        # 创建所需技能向量 - 将字典转换为AgentSkillVector对象
         required_vector = AgentSkillVector()
         for skill_name, level in required_skills.items():
             required_vector.set_skill_level(skill_name, level)
         
-        # 计算每个智能体的适合度
+        # 计算每个智能体的适合度（fitness）
         agent_fitness = {}
         for agent_id, skills in self.agent_skills.items():
+            # 跳过被排除的智能体
             if agent_id in excluded_agents:
                 continue
             
-            # 检查是否满足最低要求
+            # 检查是否满足所有技能的最低要求
             meets_requirements = True
             for skill_name, level in required_skills.items():
+                # 如果任一技能不满足要求，则标记为不符合并跳出循环
                 if skills.get_skill_level(skill_name) < level:
                     meets_requirements = False
                     break
             
+            # 只有满足所有最低要求的智能体才会被考虑
             if meets_requirements:
-                # 计算相似度作为适合度
+                # 使用余弦相似度计算技能向量的匹配程度作为适合度
                 fitness = skills.similarity(required_vector)
                 agent_fitness[agent_id] = fitness
         
+        # 如果没有找到符合要求的智能体，返回None
         if not agent_fitness:
             return None
         
-        # 返回适合度最高的智能体
-        return max(agent_fitness.items(), key=lambda x: x[1])[0]
+        # 返回适合度最高的智能体ID
+        best_agent_id = max(agent_fitness.items(), key=lambda x: x[1])[0]
+        
+        # 注意：该方法是智能体选择的核心，通过技能匹配确保任务分配给最合适的智能体
+        # 它与allocate_task方法配合使用，形成完整的任务分配流程：
+        # 1. 先用find_best_agent找出最适合的智能体
+        # 2. 再用allocate_task为该智能体分配合适的计算节点
+        return best_agent_id
     
     def get_node_status(self) -> Dict[str, Dict[str, Any]]:
         """获取节点状态

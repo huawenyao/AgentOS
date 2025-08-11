@@ -1,0 +1,302 @@
+/* CSS变量定义 - 与组件库保持一致 */
+:root {
+  --primary-color: #6366f1;
+  --secondary-color: #8b5cf6;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --border-color: #e2e8f0;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+}
+
+[data-theme="dark"] {
+  --primary-color: #818cf8;
+  --secondary-color: #a78bfa;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --bg-primary: #1e293b;
+  --bg-secondary: #0f172a;
+  --border-color: #334155;
+}
+
+/* 能力库样式 - 与组件库保持一致 */
+.capability-library {
+  padding: 1rem;
+  height: 100%;
+  overflow: auto;
+  background-color: var(--bg-primary, #ffffff);
+  color: var(--text-primary, #1e293b);
+}
+
+.capability-library-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.capability-library-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+
+.capability-library-search {
+  width: 300px;
+}
+
+.filter-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.capability-library-content {
+  margin-top: 1rem;
+}
+
+.capability-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-md, 0.5rem);
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
+}
+
+.capability-card:hover {
+  border-color: var(--primary-color, #6366f1);
+  box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+  transform: translateY(-1px);
+}
+
+.capability-card .ant-card-head {
+  background-color: var(--bg-secondary, #f8fafc);
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+  padding: 0.75rem 1rem;
+}
+
+.capability-card .ant-card-body {
+  flex: 1;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.capability-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.capability-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  background: linear-gradient(135deg, var(--primary-color, #6366f1), var(--secondary-color, #8b5cf6));
+  color: white;
+}
+
+.capability-card-header .ant-typography {
+  margin: 0;
+  flex: 1;
+}
+
+.capability-card .ant-typography {
+  color: var(--text-secondary, #64748b);
+  margin-bottom: 0.75rem;
+  flex: 1;
+}
+
+.capability-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.capability-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.capability-card-stats {
+  display: flex;
+  gap: 1rem;
+  color: var(--text-secondary, #64748b);
+  font-size: 0.75rem;
+}
+
+.capability-card-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.capability-detail {
+  padding: 1.5rem;
+}
+
+.capability-detail-header {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+}
+
+.capability-detail-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  background: linear-gradient(135deg, var(--primary-color, #6366f1), var(--secondary-color, #8b5cf6));
+  color: white;
+}
+
+.capability-detail-info {
+  flex: 1;
+}
+
+.capability-detail-meta {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.capability-detail-description {
+  margin-bottom: 1.5rem;
+}
+
+.capability-detail-tags {
+  margin-bottom: 1.5rem;
+}
+
+.capability-detail-schema {
+  margin-bottom: 1.5rem;
+}
+
+.schema-preview {
+  background-color: var(--bg-secondary, #f8fafc);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-md, 0.5rem);
+  padding: 1rem;
+  font-size: 0.75rem;
+  overflow-x: auto;
+  color: var(--text-primary, #1e293b);
+}
+
+.capability-tabs {
+  margin-bottom: 1rem;
+}
+
+.capability-tabs .ant-tabs-content {
+  height: calc(100% - 100px);
+  overflow: auto;
+}
+
+.capability-library-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.capability-library-error {
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.capability-library-empty {
+  text-align: center;
+  padding: 1.5rem;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .capability-library-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .capability-library-search {
+    width: 100%;
+  }
+  
+  .filter-group {
+    justify-content: space-between;
+  }
+  
+  .filter-group .ant-select {
+    flex: 1;
+    min-width: 120px;
+  }
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.capability-card {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* 能力组件类型标签样式 */
+.capability-card .ant-tag {
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  padding: 0.125rem 0.5rem;
+}
+
+/* 能力组件操作按钮样式 */
+.capability-card .ant-card-actions {
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+}
+
+.capability-card .ant-card-actions .ant-btn {
+  border: none;
+  box-shadow: none;
+}
+
+.capability-card .ant-card-actions .ant-btn:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* 搜索框样式优化 */
+.capability-library-search .ant-input {
+  border-radius: var(--radius-md);
+}
+
+.capability-library-search .ant-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}

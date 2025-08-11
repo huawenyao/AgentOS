@@ -1,0 +1,86 @@
+/* 能力市场样式 */
+
+.capability-market {
+  padding: 16px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.capability-market-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.capability-market-search {
+  width: 300px;
+}
+
+.capability-market-filters {
+  margin-bottom: 16px;
+}
+
+.capability-market-list {
+  margin-top: 16px;
+}
+
+.capability-card {
+  width: 100%;
+  margin-bottom: 16px;
+  transition: all 0.3s;
+}
+
+.capability-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.capability-card-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.capability-tags {
+  margin-top: 8px;
+}
+
+.capability-tag {
+  margin-right: 8px;
+  margin-bottom: 8px;
+}
+
+.capability-rating {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.capability-rating-count {
+  margin-left: 8px;
+  color: #8c8c8c;
+  font-size: 12px;
+}
+
+.capability-author {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+  color: #8c8c8c;
+}
+
+.capability-author-avatar {
+  margin-right: 8px;
+}
+
+.capability-empty {
+  padding: 48px 0;
+  text-align: center;
+}
+
+.capability-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+}

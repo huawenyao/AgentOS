@@ -2,7 +2,7 @@
   "system": {
     "debug": false,
     "log_level": "INFO",
-    "api_port": 8000,
+    "api_port": 8080,
     "max_workers": 8
   },
   "agents": {

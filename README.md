@@ -2,7 +2,7 @@
 
 ## 系统概述
 
-EFIAgent是一个具备动态分工、认知协同、弹性扩展、安全可控的多智能体（Multi-Agent）系统，旨在满足工业控制、金融风控、智能运维等高复杂度场景需求。
+EFIAgent（Evolutionary Force Intelligence Agent）是一个具备动态分工、认知协同、弹性扩展、安全可控的多智能体（Multi-Agent）系统，旨在满足工业控制、金融风控、智能运维等高复杂度场景需求。
 
 ### 核心指标
 

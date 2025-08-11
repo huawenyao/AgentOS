@@ -1,0 +1,440 @@
+/* 高考志愿填报分析器样式 */
+.college-admission-analyzer {
+  position: relative;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+  padding: 24px;
+  overflow-x: hidden;
+}
+
+/* 瀑布式画布背景 */
+.waterfall-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* 头部样式 */
+.analyzer-header {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  margin-bottom: 32px;
+  padding: 32px 0;
+}
+
+.analyzer-title {
+  color: #fff !important;
+  font-size: 2.5rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 16px !important;
+  text-shadow: 0 0 20px rgba(0, 245, 255, 0.5);
+  animation: titleGlow 3s ease-in-out infinite alternate;
+}
+
+.analyzer-subtitle {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 1.2rem !important;
+  margin-bottom: 0 !important;
+}
+
+@keyframes titleGlow {
+  from {
+    text-shadow: 0 0 20px rgba(0, 245, 255, 0.5), 0 0 30px rgba(0, 245, 255, 0.3);
+  }
+  to {
+    text-shadow: 0 0 30px rgba(0, 245, 255, 0.8), 0 0 40px rgba(0, 245, 255, 0.5);
+  }
+}
+
+/* 内容区域 */
+.analyzer-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* 卡片通用样式 */
+.profile-card,
+.analysis-card,
+.result-card,
+.recommendation-card,
+.risk-card,
+.advice-card {
+  background: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 245, 255, 0.2) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s ease;
+}
+
+.profile-card:hover,
+.analysis-card:hover,
+.result-card:hover {
+  border-color: rgba(0, 245, 255, 0.4) !important;
+  box-shadow: 0 12px 48px rgba(0, 245, 255, 0.1) !important;
+  transform: translateY(-2px);
+}
+
+/* 卡片标题 */
+.ant-card-head-title {
+  color: #fff !important;
+  font-weight: 600 !important;
+  font-size: 1.1rem !important;
+}
+
+.ant-card-body {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* 输入框样式 */
+.ant-input,
+.ant-input-number,
+.ant-select-selector {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(0, 245, 255, 0.3) !important;
+  color: #fff !important;
+  border-radius: 8px !important;
+}
+
+.ant-input:focus,
+.ant-input-number:focus,
+.ant-select-focused .ant-select-selector {
+  border-color: #00f5ff !important;
+  box-shadow: 0 0 0 2px rgba(0, 245, 255, 0.2) !important;
+}
+
+.ant-input::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* 按钮样式 */
+.analysis-button {
+  background: linear-gradient(45deg, #00f5ff, #0080ff) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  height: 48px !important;
+  font-weight: 600 !important;
+  font-size: 1.1rem !important;
+  box-shadow: 0 4px 20px rgba(0, 245, 255, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.analysis-button:hover {
+  background: linear-gradient(45deg, #0080ff, #00f5ff) !important;
+  box-shadow: 0 6px 30px rgba(0, 245, 255, 0.5) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* 进度条样式 */
+.progress-section {
+  margin-bottom: 24px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 245, 255, 0.2);
+}
+
+.ant-progress-bg {
+  background: linear-gradient(90deg, #108ee9, #87d068) !important;
+}
+
+.ant-progress-success-bg {
+  background: linear-gradient(90deg, #52c41a, #73d13d) !important;
+}
+
+/* 瀑布式步骤样式 */
+.waterfall-steps {
+  position: relative;
+  padding: 20px 0;
+}
+
+.waterfall-step {
+  position: relative;
+  margin-bottom: 24px;
+  padding: 16px 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  border-left: 4px solid #666;
+  transition: all 0.5s ease;
+  transform: translateX(-20px);
+  opacity: 0.6;
+}
+
+.waterfall-step.pending {
+  border-left-color: #666;
+  animation: slideInLeft 0.5s ease forwards;
+}
+
+.waterfall-step.running {
+  border-left-color: #1890ff;
+  background: rgba(24, 144, 255, 0.1);
+  box-shadow: 0 0 20px rgba(24, 144, 255, 0.3);
+  transform: translateX(0);
+  opacity: 1;
+  animation: pulseBlue 2s ease-in-out infinite;
+}
+
+.waterfall-step.completed {
+  border-left-color: #52c41a;
+  background: rgba(82, 196, 26, 0.1);
+  transform: translateX(0);
+  opacity: 1;
+  animation: slideInLeft 0.5s ease forwards, completedGlow 1s ease;
+}
+
+.waterfall-step.current {
+  transform: scale(1.02) translateX(0);
+  z-index: 10;
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-20px);
+    opacity: 0.6;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulseBlue {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(24, 144, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(24, 144, 255, 0.6), 0 0 40px rgba(24, 144, 255, 0.2);
+  }
+}
+
+@keyframes completedGlow {
+  0% {
+    box-shadow: 0 0 20px rgba(82, 196, 26, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(82, 196, 26, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(82, 196, 26, 0.3);
+  }
+}
+
+/* 步骤头部 */
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.step-number {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #00f5ff, #0080ff);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.step-info {
+  flex: 1;
+}
+
+.step-name {
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.step-duration {
+  font-size: 0.8rem;
+  margin-left: 8px;
+}
+
+.step-status {
+  flex-shrink: 0;
+}
+
+.step-output {
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  border-left: 3px solid #00f5ff;
+}
+
+/* 统计数据样式 */
+.ant-statistic-title {
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-size: 0.9rem !important;
+}
+
+.ant-statistic-content {
+  color: #00f5ff !important;
+  font-weight: 700 !important;
+}
+
+/* 表格样式 */
+.ant-table {
+  background: transparent !important;
+}
+
+.ant-table-thead > tr > th {
+  background: rgba(0, 0, 0, 0.3) !important;
+  border-bottom: 1px solid rgba(0, 245, 255, 0.3) !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+}
+
+.ant-table-tbody > tr > td {
+  background: rgba(0, 0, 0, 0.1) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: rgba(0, 245, 255, 0.1) !important;
+}
+
+/* 标签样式 */
+.ant-tag {
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+}
+
+/* 建议项样式 */
+.advice-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.advice-item:last-child {
+  border-bottom: none;
+}
+
+/* 空状态样式 */
+.empty-analysis {
+  text-align: center;
+  padding: 60px 20px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  color: rgba(0, 245, 255, 0.3);
+}
+
+/* 分割线样式 */
+.ant-divider {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .analyzer-title {
+    font-size: 2rem !important;
+  }
+  
+  .analyzer-subtitle {
+    font-size: 1rem !important;
+  }
+  
+  .college-admission-analyzer {
+    padding: 16px;
+  }
+  
+  .waterfall-step {
+    margin-bottom: 16px;
+    padding: 12px 16px;
+  }
+  
+  .step-number {
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
+  }
+}
+
+/* 加载动画 */
+.ant-spin-dot {
+  color: #00f5ff !important;
+}
+
+.ant-spin-dot-item {
+  background-color: #00f5ff !important;
+}
+
+/* 进度条动画增强 */
+.ant-progress-line {
+  position: relative;
+  overflow: hidden;
+}
+
+.ant-progress-line::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: progressShine 2s infinite;
+}
+
+@keyframes progressShine {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* 卡片进入动画 */
+.profile-card,
+.analysis-card,
+.result-card {
+  animation: cardSlideIn 0.6s ease-out;
+}
+
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 结果卡片特殊效果 */
+.result-card {
+  border: 2px solid rgba(0, 245, 255, 0.3) !important;
+  animation: resultCardGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes resultCardGlow {
+  from {
+    border-color: rgba(0, 245, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+  to {
+    border-color: rgba(0, 245, 255, 0.6);
+    box-shadow: 0 12px 48px rgba(0, 245, 255, 0.2);
+  }
+}

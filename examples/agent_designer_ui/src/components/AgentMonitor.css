@@ -1,0 +1,149 @@
+/* Agent Monitor 样式 */
+.agent-monitor {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.agent-monitor .ant-card-body {
+  flex: 1;
+  overflow: hidden;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.agent-monitor .ant-tabs {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.agent-monitor .ant-tabs-content {
+  flex: 1;
+  overflow: auto;
+}
+
+.agent-monitor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.agent-status {
+  display: flex;
+  align-items: center;
+}
+
+.agent-status .ant-badge {
+  margin-right: 8px;
+}
+
+.agent-monitor-controls {
+  display: flex;
+  gap: 8px;
+}
+
+/* 日志表格样式 */
+.agent-monitor-logs {
+  height: 100%;
+  overflow: auto;
+}
+
+.agent-monitor-logs .ant-table-wrapper {
+  height: 100%;
+}
+
+.agent-monitor-logs .ant-table {
+  height: 100%;
+}
+
+.agent-monitor-logs .ant-table-body {
+  height: calc(100% - 55px);
+  overflow: auto !important;
+}
+
+.agent-monitor-logs .log-message {
+  font-family: monospace;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* 日志级别标签样式 */
+.agent-monitor-logs .ant-tag-blue {
+  background-color: #e6f7ff;
+  border-color: #91d5ff;
+  color: #1890ff;
+}
+
+.agent-monitor-logs .ant-tag-green {
+  background-color: #f6ffed;
+  border-color: #b7eb8f;
+  color: #52c41a;
+}
+
+.agent-monitor-logs .ant-tag-orange {
+  background-color: #fff7e6;
+  border-color: #ffd591;
+  color: #fa8c16;
+}
+
+.agent-monitor-logs .ant-tag-red {
+  background-color: #fff1f0;
+  border-color: #ffa39e;
+  color: #f5222d;
+}
+
+/* 加载状态样式 */
+.agent-monitor-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+/* 空状态样式 */
+.agent-monitor-empty {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 24px;
+}
+
+.agent-monitor-empty .ant-empty {
+  margin-bottom: 16px;
+}
+
+/* 错误状态样式 */
+.agent-monitor-error {
+  margin: 16px 0;
+}
+
+/* 指标面板样式 */
+.metrics-panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.metric-card {
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  padding: 16px;
+  text-align: center;
+}
+
+.metric-value {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 8px 0;
+}
+
+.metric-label {
+  color: #666;
+  font-size: 14px;
+}
