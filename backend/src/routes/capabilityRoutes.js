@@ -100,6 +100,111 @@ router.get('/',
 
 /**
  * @swagger
+ * /api/capabilities:
+ *   post:
+ *     summary: 创建新能力
+ *     tags: [Capabilities]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CapabilityInput'
+ *     responses:
+ *       201:
+ *         description: 创建成功
+ *       400:
+ *         description: 请求体格式错误
+ *       401:
+ *         description: 未认证
+ */
+router.post('/',
+  authenticate,
+  authorize(['admin', 'user']),
+  validateCreateCapability,
+  handleValidationErrors,
+  capabilityController.createCapability
+);
+
+/**
+ * @swagger
+ * /api/capabilities/{id}:
+ *   put:
+ *     summary: 更新指定能力
+ *     tags: [Capabilities]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CapabilityInput'
+ *     responses:
+ *       200:
+ *         description: 更新成功
+ *       400:
+ *         description: 请求体格式错误
+ *       401:
+ *         description: 未认证
+ *       403:
+ *         description: 无权限
+ *       404:
+ *         description: 能力不存在
+ */
+router.put('/:id',
+  authenticate,
+  authorize(['admin', 'user']),
+  validateUuidParam('id'),
+  validateUpdateCapability,
+  handleValidationErrors,
+  capabilityController.updateCapability
+);
+
+/**
+ * @swagger
+ * /api/capabilities/{id}:
+ *   delete:
+ *     summary: 删除指定能力
+ *     tags: [Capabilities]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       204:
+ *         description: 删除成功
+ *       401:
+ *         description: 未认证
+ *       403:
+ *         description: 无权限
+ *       404:
+ *         description: 能力不存在
+ */
+router.delete('/:id',
+  authenticate,
+  authorize(['admin', 'user']),
+  validateUuidParam('id'),
+  handleValidationErrors,
+  capabilityController.deleteCapability
+);
+
+/**
+ * @swagger
  * /api/capabilities/stats:
  *   get:
  *     summary: 获取能力统计信息

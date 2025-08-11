@@ -5,6 +5,7 @@
   "main": "src/index.tsx",
   "scripts": {
     "start": "react-scripts start",
+    "dev": "react-scripts start",
     "build": "react-scripts build",
     "test": "jest --config jest.config.js",
     "test:watch": "jest --config jest.config.js --watch",
@@ -22,6 +23,7 @@
     "react-router-dom": "^6.14.0",
     "react-scripts": "5.0.1",
     "reactflow": "^11.10.1",
+    "recharts": "^3.1.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

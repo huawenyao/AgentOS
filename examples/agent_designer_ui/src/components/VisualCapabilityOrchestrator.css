@@ -1,0 +1,728 @@
+/**
+ * 可视化能力编排器样式
+ * 提供现代化的节点编辑器界面和流程可视化
+ */
+
+/* CSS变量定义 */
+:root {
+  /* 编排器颜色 */
+  --vco-primary-color: #1890ff;
+  --vco-success-color: #52c41a;
+  --vco-warning-color: #fa8c16;
+  --vco-error-color: #ff4d4f;
+  --vco-info-color: #13c2c2;
+  --vco-processing-color: #722ed1;
+  
+  /* 节点颜色 */
+  --vco-node-bg: #ffffff;
+  --vco-node-border: #d9d9d9;
+  --vco-node-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --vco-node-hover-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  
+  /* 状态颜色 */
+  --vco-idle-color: #8c8c8c;
+  --vco-running-color: #1890ff;
+  --vco-success-color: #52c41a;
+  --vco-error-color: #ff4d4f;
+  --vco-warning-color: #fa8c16;
+  
+  /* 背景色 */
+  --vco-bg-primary: #ffffff;
+  --vco-bg-secondary: #fafafa;
+  --vco-bg-tertiary: #f5f5f5;
+  --vco-bg-canvas: #fcfcfc;
+  
+  /* 文本色 */
+  --vco-text-primary: #262626;
+  --vco-text-secondary: #8c8c8c;
+  --vco-text-tertiary: #bfbfbf;
+  
+  /* 边框色 */
+  --vco-border-color: #d9d9d9;
+  --vco-border-light: #f0f0f0;
+  --vco-border-dark: #bfbfbf;
+  
+  /* 间距 */
+  --vco-spacing-xs: 4px;
+  --vco-spacing-sm: 8px;
+  --vco-spacing-md: 16px;
+  --vco-spacing-lg: 24px;
+  --vco-spacing-xl: 32px;
+  
+  /* 圆角 */
+  --vco-radius-sm: 4px;
+  --vco-radius-md: 6px;
+  --vco-radius-lg: 8px;
+  --vco-radius-xl: 12px;
+  
+  /* 动画 */
+  --vco-transition-fast: 0.15s ease-in-out;
+  --vco-transition-normal: 0.3s ease-in-out;
+  --vco-transition-slow: 0.5s ease-in-out;
+}
+
+/* 暗色主题 */
+[data-theme='dark'] {
+  --vco-node-bg: #1f1f1f;
+  --vco-node-border: #434343;
+  --vco-bg-primary: #141414;
+  --vco-bg-secondary: #1f1f1f;
+  --vco-bg-tertiary: #262626;
+  --vco-bg-canvas: #0f0f0f;
+  --vco-text-primary: #ffffff;
+  --vco-text-secondary: #a6a6a6;
+  --vco-text-tertiary: #737373;
+  --vco-border-color: #434343;
+  --vco-border-light: #303030;
+  --vco-border-dark: #595959;
+}
+
+/* 主容器 */
+.visual-capability-orchestrator {
+  .ant-modal-content {
+    height: 85vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .ant-modal-body {
+    flex: 1;
+    padding: 0;
+    overflow: hidden;
+  }
+}
+
+/* 编排器容器 */
+.orchestrator-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--vco-bg-primary);
+}
+
+/* 工具栏 */
+.orchestrator-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--vco-spacing-md);
+  background: var(--vco-bg-secondary);
+  border-bottom: 1px solid var(--vco-border-light);
+  flex-wrap: wrap;
+  gap: var(--vco-spacing-md);
+  
+  .toolbar-section {
+    display: flex;
+    align-items: center;
+    gap: var(--vco-spacing-sm);
+    
+    .ant-btn {
+      border-radius: var(--vco-radius-md);
+      transition: all var(--vco-transition-fast);
+      
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+    }
+    
+    .ant-progress {
+      .ant-progress-bg {
+        border-radius: var(--vco-radius-sm);
+      }
+    }
+  }
+}
+
+/* 画布区域 */
+.orchestrator-canvas {
+  flex: 1;
+  position: relative;
+  background: var(--vco-bg-canvas);
+  
+  .react-flow {
+    background: var(--vco-bg-canvas);
+  }
+  
+  .react-flow__background {
+    background: var(--vco-bg-canvas);
+  }
+  
+  .react-flow__controls {
+    bottom: var(--vco-spacing-md);
+    left: var(--vco-spacing-md);
+    
+    .react-flow__controls-button {
+      background: var(--vco-node-bg);
+      border: 1px solid var(--vco-border-color);
+      border-radius: var(--vco-radius-md);
+      transition: all var(--vco-transition-fast);
+      
+      &:hover {
+        background: var(--vco-bg-secondary);
+        border-color: var(--vco-primary-color);
+      }
+    }
+  }
+  
+  .react-flow__minimap {
+    background: var(--vco-node-bg);
+    border: 1px solid var(--vco-border-color);
+    border-radius: var(--vco-radius-lg);
+    overflow: hidden;
+  }
+}
+
+/* 能力节点样式 */
+.capability-node {
+  min-width: 200px;
+  background: var(--vco-node-bg);
+  border: 2px solid var(--vco-border-color);
+  border-radius: var(--vco-radius-lg);
+  box-shadow: var(--vco-node-shadow);
+  transition: all var(--vco-transition-normal);
+  position: relative;
+  overflow: hidden;
+  
+  &:hover {
+    box-shadow: var(--vco-node-hover-shadow);
+    transform: translateY(-2px);
+  }
+  
+  &.idle {
+    border-color: var(--vco-idle-color);
+    
+    .node-header {
+      background: linear-gradient(135deg, rgba(140, 140, 140, 0.1) 0%, rgba(140, 140, 140, 0.05) 100%);
+    }
+  }
+  
+  &.running {
+    border-color: var(--vco-running-color);
+    animation: pulse 2s infinite;
+    
+    .node-header {
+      background: linear-gradient(135deg, rgba(24, 144, 255, 0.1) 0%, rgba(24, 144, 255, 0.05) 100%);
+    }
+  }
+  
+  &.success {
+    border-color: var(--vco-success-color);
+    
+    .node-header {
+      background: linear-gradient(135deg, rgba(82, 196, 26, 0.1) 0%, rgba(82, 196, 26, 0.05) 100%);
+    }
+  }
+  
+  &.error {
+    border-color: var(--vco-error-color);
+    
+    .node-header {
+      background: linear-gradient(135deg, rgba(255, 77, 79, 0.1) 0%, rgba(255, 77, 79, 0.05) 100%);
+    }
+  }
+  
+  &.warning {
+    border-color: var(--vco-warning-color);
+    
+    .node-header {
+      background: linear-gradient(135deg, rgba(250, 140, 22, 0.1) 0%, rgba(250, 140, 22, 0.05) 100%);
+    }
+  }
+}
+
+/* 节点头部 */
+.node-header {
+  display: flex;
+  align-items: center;
+  padding: var(--vco-spacing-sm) var(--vco-spacing-md);
+  border-bottom: 1px solid var(--vco-border-light);
+  
+  .node-icon {
+    font-size: 16px;
+    margin-right: var(--vco-spacing-sm);
+    transition: color var(--vco-transition-fast);
+  }
+  
+  .node-title {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    
+    .ant-typography {
+      margin: 0;
+      line-height: 1.2;
+      
+      &:first-child {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--vco-text-primary);
+      }
+      
+      &:last-child {
+        font-size: 11px;
+        color: var(--vco-text-secondary);
+      }
+    }
+  }
+  
+  .node-status {
+    .ant-badge {
+      .ant-badge-status-dot {
+        width: 8px;
+        height: 8px;
+      }
+    }
+  }
+}
+
+/* 节点内容 */
+.node-content {
+  padding: var(--vco-spacing-sm) var(--vco-spacing-md);
+  
+  .node-metrics {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--vco-spacing-sm);
+    
+    .metric-item {
+      display: flex;
+      align-items: center;
+      gap: var(--vco-spacing-xs);
+      font-size: 11px;
+      color: var(--vco-text-secondary);
+      
+      .anticon {
+        color: var(--vco-text-tertiary);
+      }
+    }
+  }
+  
+  .node-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--vco-spacing-xs);
+    
+    .ant-tag {
+      margin: 0;
+      border-radius: var(--vco-radius-sm);
+      font-size: 10px;
+      line-height: 1.2;
+      padding: 2px 6px;
+    }
+  }
+}
+
+/* 节点连接点 */
+.node-handles {
+  .handle {
+    width: 8px;
+    height: 8px;
+    background: var(--vco-primary-color);
+    border: 2px solid var(--vco-node-bg);
+    border-radius: 50%;
+    position: absolute;
+    transition: all var(--vco-transition-fast);
+    
+    &:hover {
+      width: 12px;
+      height: 12px;
+      background: var(--vco-success-color);
+    }
+    
+    &.handle-input {
+      top: 50%;
+      left: -6px;
+      transform: translateY(-50%);
+    }
+    
+    &.handle-output {
+      top: 50%;
+      right: -6px;
+      transform: translateY(-50%);
+    }
+  }
+}
+
+/* 连线样式 */
+.react-flow__edge {
+  .react-flow__edge-path {
+    stroke-width: 2;
+    transition: stroke-width var(--vco-transition-fast);
+  }
+  
+  &:hover .react-flow__edge-path {
+    stroke-width: 3;
+  }
+  
+  .react-flow__edge-text {
+    font-size: 10px;
+    fill: var(--vco-text-secondary);
+  }
+}
+
+/* 配置抽屉 */
+.config-content {
+  .ant-tabs {
+    .ant-tabs-tab {
+      font-size: 13px;
+      padding: 8px 16px;
+    }
+    
+    .ant-tabs-content {
+      padding: var(--vco-spacing-md) 0;
+    }
+  }
+  
+  .node-info {
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--vco-spacing-sm) 0;
+      border-bottom: 1px solid var(--vco-border-light);
+      
+      &:last-child {
+        border-bottom: none;
+      }
+      
+      .ant-typography {
+        margin: 0;
+        
+        &:first-child {
+          color: var(--vco-text-secondary);
+          font-size: 12px;
+        }
+        
+        &:last-child {
+          color: var(--vco-text-primary);
+          font-size: 13px;
+        }
+      }
+    }
+  }
+  
+  .metrics-content {
+    .ant-statistic {
+      text-align: center;
+      
+      .ant-statistic-title {
+        font-size: 11px;
+        color: var(--vco-text-secondary);
+        margin-bottom: var(--vco-spacing-xs);
+      }
+      
+      .ant-statistic-content {
+        font-size: 16px;
+        color: var(--vco-text-primary);
+        
+        .ant-statistic-content-value {
+          font-weight: 600;
+        }
+        
+        .ant-statistic-content-suffix {
+          font-size: 12px;
+          color: var(--vco-text-secondary);
+        }
+      }
+    }
+  }
+  
+  .edge-metrics {
+    .metric-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--vco-spacing-md);
+      
+      .ant-typography {
+        margin: 0;
+        font-size: 12px;
+        color: var(--vco-text-secondary);
+      }
+      
+      .ant-progress {
+        flex: 1;
+        margin-left: var(--vco-spacing-md);
+      }
+    }
+  }
+}
+
+/* 执行面板 */
+.execution-panel {
+  .ant-card {
+    border-radius: var(--vco-radius-lg);
+    box-shadow: var(--vco-node-shadow);
+    border: 1px solid var(--vco-border-color);
+    
+    .ant-card-head {
+      border-bottom: 1px solid var(--vco-border-light);
+      
+      .ant-card-head-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--vco-text-primary);
+      }
+    }
+  }
+  
+  .execution-logs {
+    .log-item {
+      padding: 2px 0;
+      border-bottom: 1px solid var(--vco-border-light);
+      
+      &:last-child {
+        border-bottom: none;
+      }
+      
+      .ant-typography {
+        margin: 0;
+        color: var(--vco-text-secondary);
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      }
+    }
+  }
+}
+
+/* 动画效果 */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(24, 144, 255, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(24, 144, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(24, 144, 255, 0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .orchestrator-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    
+    .toolbar-section {
+      justify-content: center;
+    }
+  }
+  
+  .capability-node {
+    min-width: 180px;
+    
+    .node-header {
+      padding: var(--vco-spacing-xs) var(--vco-spacing-sm);
+      
+      .node-title {
+        .ant-typography:first-child {
+          font-size: 12px;
+        }
+      }
+    }
+    
+    .node-content {
+      padding: var(--vco-spacing-xs) var(--vco-spacing-sm);
+      
+      .node-metrics {
+        .metric-item {
+          font-size: 10px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .visual-capability-orchestrator {
+    .ant-modal-content {
+      height: 95vh;
+      margin: 0;
+    }
+  }
+  
+  .orchestrator-toolbar {
+    padding: var(--vco-spacing-sm);
+    
+    .toolbar-section {
+      flex-wrap: wrap;
+      gap: var(--vco-spacing-xs);
+      
+      .ant-btn {
+        font-size: 12px;
+        padding: 4px 8px;
+        height: auto;
+      }
+    }
+  }
+  
+  .capability-node {
+    min-width: 160px;
+    
+    .node-header {
+      .node-icon {
+        font-size: 14px;
+      }
+      
+      .node-title {
+        .ant-typography:first-child {
+          font-size: 11px;
+        }
+        
+        .ant-typography:last-child {
+          font-size: 10px;
+        }
+      }
+    }
+  }
+  
+  .react-flow__controls {
+    bottom: var(--vco-spacing-sm);
+    left: var(--vco-spacing-sm);
+    
+    .react-flow__controls-button {
+      width: 24px;
+      height: 24px;
+      
+      svg {
+        width: 12px;
+        height: 12px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .orchestrator-toolbar {
+    .toolbar-section {
+      .ant-btn {
+        .anticon {
+          margin-right: 0;
+        }
+        
+        span:not(.anticon) {
+          display: none;
+        }
+      }
+    }
+  }
+  
+  .capability-node {
+    min-width: 140px;
+    
+    .node-content {
+      .node-metrics {
+        flex-direction: column;
+        gap: var(--vco-spacing-xs);
+        
+        .metric-item {
+          font-size: 9px;
+        }
+      }
+      
+      .node-tags {
+        .ant-tag {
+          font-size: 9px;
+          padding: 1px 4px;
+        }
+      }
+    }
+  }
+  
+  .execution-panel {
+    .ant-card {
+      width: 250px !important;
+      
+      .ant-card-head-title {
+        font-size: 12px;
+      }
+    }
+    
+    .execution-logs {
+      .log-item {
+        .ant-typography {
+          font-size: 10px;
+        }
+      }
+    }
+  }
+}
+
+/* 无障碍支持 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .capability-node {
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
+/* 高对比度模式 */
+@media (prefers-contrast: high) {
+  :root {
+    --vco-border-color: #000000;
+    --vco-text-secondary: #000000;
+  }
+  
+  [data-theme='dark'] {
+    --vco-border-color: #ffffff;
+    --vco-text-secondary: #ffffff;
+  }
+  
+  .capability-node {
+    border-width: 3px;
+  }
+}
+
+/* 打印样式 */
+@media print {
+  .visual-capability-orchestrator {
+    .orchestrator-toolbar,
+    .react-flow__controls,
+    .react-flow__minimap,
+    .execution-panel {
+      display: none;
+    }
+    
+    .orchestrator-canvas {
+      background: white;
+      
+      .react-flow {
+        background: white;
+      }
+    }
+    
+    .capability-node {
+      box-shadow: none;
+      border: 2px solid #000;
+      break-inside: avoid;
+    }
+  }
+}

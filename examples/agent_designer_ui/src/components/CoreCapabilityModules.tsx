@@ -136,96 +136,175 @@ const CoreCapabilityModules: React.FC<CoreCapabilityModulesProps> = ({
       id: `llm_${provider.id}_${model.id}`,
       name: `${provider.name} ${model.name}`,
       description: model.description,
-      type: 'cognitive' as CoreCapabilityType,
-      category: 'cognition' as CapabilityCategory,
+      type: CoreCapabilityType.COGNITIVE,
+      subType: 'understanding' as any,
       version: '1.0.0',
-      maturityLevel: 'stable' as CapabilityMaturityLevel,
-      dependencies: [],
-      interfaces: {
-        input: {
-          schema: {
-            type: 'object',
-            properties: {
-              prompt: { type: 'string' },
-              temperature: { type: 'number', minimum: 0, maximum: 2 },
-              maxTokens: { type: 'number', minimum: 1 }
-            },
-            required: ['prompt']
-          },
-          validation: 'strict'
+      maturityLevel: CapabilityMaturityLevel.MANAGED,
+      source: CapabilitySource.CUSTOM,
+      category: CapabilityCategory.NLP,
+      config: {
+        executionMode: 'async' as const,
+        timeout: 30000,
+        retryPolicy: {
+          maxRetries: 3,
+          backoffStrategy: 'exponential' as const,
+          initialDelay: 1000,
+          maxDelay: 10000,
+          retryableErrors: ['TIMEOUT', 'CONNECTION_ERROR']
         },
-        output: {
+        qualityThreshold: 0.8,
+        performanceTarget: {
+          responseTime: 5000,
+          throughput: 100,
+          accuracy: 0.9,
+          availability: 0.99
+        },
+        securityLevel: 'medium' as const,
+        accessControl: {
+          authentication: true,
+          authorization: ['user'],
+          encryption: false,
+          auditLog: true
+        },
+        monitoring: {
+          enabled: true,
+          metricsCollection: true,
+          loggingLevel: 'info' as const,
+          alerting: {
+            enabled: true,
+            thresholds: [],
+            channels: []
+          },
+          healthCheck: {
+            enabled: true,
+            interval: 60,
+            timeout: 10,
+            failureThreshold: 3,
+            successThreshold: 1
+          }
+        },
+        parameters: {}
+      },
+      inputs: [
+        {
+          id: 'prompt',
+          name: 'Prompt',
+          description: 'Input prompt for the model',
+          dataType: 'string',
+          required: true,
+          validation: {
+            type: 'string',
+            minLength: 1
+          },
+          examples: ['Hello, how are you?']
+        },
+        {
+          id: 'temperature',
+          name: 'Temperature',
+          description: 'Sampling temperature',
+          dataType: 'number',
+          required: false,
+          validation: {
+            type: 'number',
+            min: 0,
+            max: 2
+          },
+          defaultValue: 0.7,
+          examples: [0.7]
+        },
+        {
+          id: 'maxTokens',
+          name: 'Max Tokens',
+          description: 'Maximum number of tokens to generate',
+          dataType: 'number',
+          required: false,
+          validation: {
+            type: 'number',
+            min: 1
+          },
+          defaultValue: 1000,
+          examples: [1000]
+        }
+      ],
+      outputs: [
+        {
+          id: 'response',
+          name: 'Response',
+          description: 'Generated response from the model',
+          dataType: 'string',
+          schema: {
+            type: 'string'
+          },
+          examples: ['Hello! I am doing well, thank you for asking.']
+        },
+        {
+          id: 'usage',
+          name: 'Usage Statistics',
+          description: 'Token usage information',
+          dataType: 'object',
           schema: {
             type: 'object',
             properties: {
-              response: { type: 'string' },
-              usage: {
-                type: 'object',
-                properties: {
-                  promptTokens: { type: 'number' },
-                  completionTokens: { type: 'number' },
-                  totalTokens: { type: 'number' }
-                }
-              }
-            },
-            required: ['response']
+              promptTokens: { type: 'number' },
+              completionTokens: { type: 'number' },
+              totalTokens: { type: 'number' }
+            }
           },
-          validation: 'strict'
+          examples: [{ promptTokens: 10, completionTokens: 20, totalTokens: 30 }]
         }
+      ],
+      dependencies: [],
+      metrics: {
+        avgResponseTime: 0,
+        throughput: 0,
+        successRate: 0,
+        errorRate: 0,
+        accuracy: 0,
+        precision: 0,
+        recall: 0,
+        f1Score: 0,
+        usageCount: 0,
+        activeUsers: 0,
+        avgCpuUsage: 0,
+        avgMemoryUsage: 0,
+        avgTokenUsage: 0,
+        lastUpdated: new Date()
       },
-      implementation: {
-        runtime: 'api',
-        config: {
-          provider: provider.name,
-          model: model.name,
-          endpoint: provider.config.endpoint,
-          apiKey: provider.config.apiKey
-        }
-      },
-      monitoring: {
-        metrics: ['latency', 'tokens', 'cost'],
-        logging: 'detailed',
-        alerts: {
-          errorRate: { threshold: 0.05, window: '5m' },
-          latency: { threshold: 5000, window: '1m' }
-        }
-      },
-      security: {
-        authentication: 'required',
-        authorization: 'rbac',
-        encryption: 'tls',
-        dataRetention: '30d'
-      },
+      resources: [],
+      sources: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      author: 'System',
+      tags: ['llm', provider.type, model.name],
       metadata: {
-        tags: ['llm', provider.type, model.name],
-        documentation: `LLM capability powered by ${provider.name} ${model.name}`,
-        examples: [
-          {
-            name: 'Basic Text Generation',
-            input: { prompt: 'Hello, world!' },
-            output: { response: 'Hello! How can I help you today?' },
-            description: '',
-            code: ''
-          }
-        ],
-        author: '',
-        organization: '',
-        license: '',
-        category: '',
-        difficulty: 'beginner',
+        author: 'System',
+        organization: 'EFIAgent',
+        license: 'MIT',
+        category: 'nlp',
+        difficulty: 'beginner' as const,
         rating: 0,
         downloads: 0,
         featured: false,
         verified: false,
+        documentation: `LLM capability powered by ${provider.name} ${model.name}`,
+        examples: [
+          {
+            name: 'Basic Text Generation',
+            description: 'Generate text using LLM',
+            input: { prompt: 'Hello, world!' },
+            output: { response: 'Hello! How can I help you today?' },
+            code: '// Example usage code'
+          }
+        ],
         changelog: [],
+        tags: ['llm', provider.type, model.name],
         implementation: {
-          language: '',
-          framework: '',
+          language: 'typescript',
+          framework: 'react',
           dependencies: [],
           resources: {
-            cpu: '',
-            memory: '',
-            gpu: undefined
+            cpu: '500m',
+            memory: '512Mi'
           }
         }
       }
@@ -240,109 +319,181 @@ const CoreCapabilityModules: React.FC<CoreCapabilityModulesProps> = ({
       id: `kg_${kg.id}`,
       name: `${kg.name} Knowledge Graph`,
       description: `Knowledge graph capability using ${kg.name}`,
-      type: 'knowledge' as CoreCapabilityType,
-      category: 'knowledge' as CapabilityCategory,
+      type: CoreCapabilityType.COGNITIVE,
+      subType: 'understanding' as any,
       version: '1.0.0',
-      maturityLevel: 'stable' as CapabilityMaturityLevel,
-      dependencies: [],
-      interfaces: {
-        input: {
-          schema: {
-            type: 'object',
-            properties: {
-              query: { type: 'string' },
-              entityType: { type: 'string' },
-              limit: { type: 'number', minimum: 1, maximum: 1000 }
-            },
-            required: ['query']
-          },
-          validation: 'strict'
+      maturityLevel: CapabilityMaturityLevel.MANAGED,
+      source: CapabilitySource.CUSTOM,
+      category: CapabilityCategory.KNOWLEDGE_GRAPH,
+      config: {
+        executionMode: 'async' as const,
+        timeout: 30000,
+        retryPolicy: {
+          maxRetries: 3,
+          backoffStrategy: 'exponential' as const,
+          initialDelay: 1000,
+          maxDelay: 10000,
+          retryableErrors: ['TIMEOUT', 'CONNECTION_ERROR']
         },
-        output: {
+        qualityThreshold: 0.8,
+        performanceTarget: {
+          responseTime: 5000,
+          throughput: 100,
+          accuracy: 0.9,
+          availability: 0.99
+        },
+        securityLevel: 'medium' as const,
+        accessControl: {
+          authentication: true,
+          authorization: ['user'],
+          encryption: false,
+          auditLog: true
+        },
+        monitoring: {
+          enabled: true,
+          metricsCollection: true,
+          loggingLevel: 'info' as const,
+          alerting: {
+            enabled: true,
+            thresholds: [],
+            channels: []
+          },
+          healthCheck: {
+            enabled: true,
+            interval: 60,
+            timeout: 10,
+            failureThreshold: 3,
+            successThreshold: 1
+          }
+        },
+        parameters: {}
+      },
+      inputs: [
+        {
+          id: 'query',
+          name: 'Query',
+          description: 'Knowledge graph query',
+          dataType: 'string',
+          required: true,
+          validation: {
+            type: 'string',
+            minLength: 1
+          },
+          examples: ['Find all entities related to AI']
+        },
+        {
+          id: 'entityType',
+          name: 'Entity Type',
+          description: 'Type of entities to search for',
+          dataType: 'string',
+          required: false,
+          validation: {
+            type: 'string'
+          },
+          examples: ['Person', 'Organization', 'Technology']
+        },
+        {
+          id: 'limit',
+          name: 'Result Limit',
+          description: 'Maximum number of results to return',
+          dataType: 'number',
+          required: false,
+          validation: {
+            type: 'number',
+            min: 1,
+            max: 1000
+          },
+          defaultValue: 100,
+          examples: [100]
+        }
+      ],
+      outputs: [
+        {
+          id: 'entities',
+          name: 'Entities',
+          description: 'Found entities from knowledge graph',
+          dataType: 'array',
+          schema: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                id: { type: 'string' },
+                type: { type: 'string' },
+                properties: { type: 'object' },
+                relationships: { type: 'array' }
+              }
+            }
+          },
+          examples: [[{ id: '1', type: 'Person', properties: { name: 'John' }, relationships: [] }]]
+        },
+        {
+          id: 'metadata',
+          name: 'Query Metadata',
+          description: 'Query execution metadata',
+          dataType: 'object',
           schema: {
             type: 'object',
             properties: {
-              entities: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    id: { type: 'string' },
-                    type: { type: 'string' },
-                    properties: { type: 'object' },
-                    relationships: { type: 'array' }
-                  }
-                }
-              },
-              metadata: {
-                type: 'object',
-                properties: {
-                  totalResults: { type: 'number' },
-                  queryTime: { type: 'number' }
-                }
-              }
-            },
-            required: ['entities']
+              totalResults: { type: 'number' },
+              queryTime: { type: 'number' }
+            }
           },
-          validation: 'strict'
+          examples: [{ totalResults: 10, queryTime: 150 }]
         }
+      ],
+      dependencies: [],
+      metrics: {
+        avgResponseTime: 0,
+        throughput: 0,
+        successRate: 0,
+        errorRate: 0,
+        accuracy: 0,
+        precision: 0,
+        recall: 0,
+        f1Score: 0,
+        usageCount: 0,
+        activeUsers: 0,
+        avgCpuUsage: 0,
+        avgMemoryUsage: 0,
+        avgTokenUsage: 0,
+        lastUpdated: new Date()
       },
-      implementation: {
-        runtime: 'database',
-        config: {
-          type: kg.type,
-          endpoint: kg.config.endpoint,
-          database: kg.config.database,
-          credentials: {
-            username: kg.config.username,
-            password: kg.config.password
-          }
-        }
-      },
-      monitoring: {
-        metrics: ['queryTime', 'resultCount', 'errorRate'],
-        logging: 'standard',
-        alerts: {
-          connectionFailure: { threshold: 1, window: '1m' },
-          slowQuery: { threshold: 10000, window: '5m' }
-        }
-      },
-      security: {
-        authentication: 'required',
-        authorization: 'rbac',
-        encryption: 'tls',
-        dataRetention: '90d'
-      },
+      resources: [],
+      sources: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      author: 'System',
+      tags: ['knowledge-graph', kg.type, 'query'],
       metadata: {
-        tags: ['knowledge-graph', kg.type, 'query'],
-        documentation: `Knowledge graph capability for ${kg.name}`,
-        examples: [
-          {
-            name: 'Entity Search',
-            input: { query: 'person', limit: 10 },
-            output: { entities: [], metadata: { totalResults: 0, queryTime: 100 } },
-            description: '',
-            code: ''
-          }
-        ],
-        author: '',
-        organization: '',
-        license: '',
-        category: '',
-        difficulty: 'beginner',
+        author: 'System',
+        organization: 'EFIAgent',
+        license: 'MIT',
+        category: 'knowledge-graph',
+        difficulty: 'beginner' as const,
         rating: 0,
         downloads: 0,
         featured: false,
         verified: false,
+        documentation: `Knowledge graph capability for ${kg.name}`,
+        examples: [
+          {
+            name: 'Entity Search',
+            description: 'Search for entities in knowledge graph',
+            input: { query: 'person', limit: 10 },
+            output: { entities: [], metadata: { totalResults: 0, queryTime: 100 } },
+            code: '// Example usage code'
+          }
+        ],
         changelog: [],
+        tags: ['knowledge-graph', kg.type, 'query'],
         implementation: {
-          language: '',
-          framework: '',
+          language: 'typescript',
+          framework: 'react',
           dependencies: [],
           resources: {
-            cpu: '',
-            memory: '',
-            gpu: undefined
+            cpu: '200m',
+            memory: '256Mi'
           }
         }
       }
@@ -357,75 +508,130 @@ const CoreCapabilityModules: React.FC<CoreCapabilityModulesProps> = ({
       id: `tool_${tool.id}`,
       name: `${tool.name} Integration`,
       description: tool.description,
-      type: 'action' as CoreCapabilityType,
-      category: 'integration' as CapabilityCategory,
+      type: CoreCapabilityType.COGNITIVE,
+      subType: 'integration' as any,
       version: '1.0.0',
-      maturityLevel: 'stable' as CapabilityMaturityLevel,
-      dependencies: [],
-      interfaces: {
-        input: {
-          schema: tool.schema.input,
-          validation: 'strict'
+      maturityLevel: CapabilityMaturityLevel.MANAGED,
+      source: CapabilitySource.CUSTOM,
+      category: CapabilityCategory.OTHER,
+      config: {
+        executionMode: 'async' as const,
+        timeout: 30000,
+        retryPolicy: {
+          maxRetries: 3,
+          backoffStrategy: 'exponential' as const,
+          initialDelay: 1000,
+          maxDelay: 10000,
+          retryableErrors: ['TIMEOUT', 'CONNECTION_ERROR']
         },
-        output: {
-          schema: tool.schema.output,
-          validation: 'strict'
-        }
-      },
-      implementation: {
-        runtime: 'api',
-        config: {
-          type: tool.type,
-          endpoint: tool.config.endpoint,
-          method: tool.config.method,
-          headers: tool.config.headers,
-          authentication: tool.config.authentication
-        }
-      },
-      monitoring: {
-        metrics: ['responseTime', 'successRate', 'errorRate'],
-        logging: 'detailed',
-        alerts: {
-          highErrorRate: { threshold: 0.1, window: '5m' },
-          slowResponse: { threshold: 5000, window: '1m' }
-        }
-      },
-      security: {
-        authentication: tool.config.authentication?.type !== 'none' ? 'required' : 'optional',
-        authorization: 'rbac',
-        encryption: 'tls',
-        dataRetention: '30d'
-      },
-      metadata: {
-        tags: ['tool', tool.type, 'integration'],
-        documentation: `Tool integration for ${tool.name}`,
-        examples: [
-          {
-            name: 'Basic Usage',
-            input: {},
-            output: {},
-            description: '',
-            code: ''
+        qualityThreshold: 0.8,
+        performanceTarget: {
+          responseTime: 5000,
+          throughput: 100,
+          accuracy: 0.9,
+          availability: 0.99
+        },
+        securityLevel: 'medium' as const,
+        accessControl: {
+          authentication: true,
+          authorization: ['user'],
+          encryption: false,
+          auditLog: true
+        },
+        monitoring: {
+          enabled: true,
+          metricsCollection: true,
+          loggingLevel: 'info' as const,
+          alerting: {
+            enabled: true,
+            thresholds: [],
+            channels: []
+          },
+          healthCheck: {
+            enabled: true,
+            interval: 60,
+            timeout: 10,
+            failureThreshold: 3,
+            successThreshold: 1
           }
-        ],
-        author: '',
-        organization: '',
-        license: '',
-        category: '',
-        difficulty: 'beginner',
+        },
+        parameters: {}
+      },
+      inputs: [
+        {
+          id: 'toolInput',
+          name: 'Tool Input',
+          description: `Input data for ${tool.name}`,
+          dataType: 'object',
+          required: true,
+          validation: {
+            type: 'object'
+          },
+          examples: [{}]
+        }
+      ],
+      outputs: [
+        {
+          id: 'toolOutput',
+          name: 'Tool Output',
+          description: `Output data from ${tool.name}`,
+          dataType: 'object',
+          schema: tool.schema.output,
+          examples: [{}]
+        }
+      ],
+      dependencies: [],
+      metrics: {
+        avgResponseTime: 0,
+        throughput: 0,
+        successRate: 0,
+        errorRate: 0,
+        accuracy: 0,
+        precision: 0,
+        recall: 0,
+        f1Score: 0,
+        usageCount: 0,
+        activeUsers: 0,
+        avgCpuUsage: 0,
+        avgMemoryUsage: 0,
+        avgTokenUsage: 0,
+        lastUpdated: new Date()
+      },
+      resources: [],
+      sources: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      author: 'System',
+      tags: ['tool', tool.type, 'integration'],
+      metadata: {
+        author: 'System',
+        organization: 'EFIAgent',
+        license: 'MIT',
+        category: 'integration',
+        difficulty: 'beginner' as const,
         rating: 0,
         downloads: 0,
         featured: false,
         verified: false,
+        documentation: `Tool integration for ${tool.name}`,
+        examples: [
+          {
+            name: 'Basic Usage',
+            description: 'Basic tool integration example',
+            input: {},
+            output: {},
+            code: '// Example usage code'
+          }
+        ],
         changelog: [],
+        tags: ['tool', tool.type, 'integration'],
         implementation: {
-          language: '',
-          framework: '',
+          language: 'typescript',
+          framework: 'react',
           dependencies: [],
           resources: {
-            cpu: '',
-            memory: '',
-            gpu: undefined
+            cpu: '100m',
+            memory: '128Mi'
           }
         }
       }
@@ -733,7 +939,7 @@ const CoreCapabilityModules: React.FC<CoreCapabilityModulesProps> = ({
                                 onClick={() => {
                                   const capability = createLLMCapability(provider, model);
                                   onCapabilitySelect(capability);
-                                  message.success(`已添加能力: ${capability.name}`);
+                                  message.success(`已添加能力: ${capability?.name || '未知能力'}`);
                                 }}
                               >
                                 添加能力
@@ -805,7 +1011,7 @@ const CoreCapabilityModules: React.FC<CoreCapabilityModulesProps> = ({
                 onClick={() => {
                   const capability = createKGCapability(kg);
                   onCapabilitySelect(capability);
-                  message.success(`已添加能力: ${capability.name}`);
+                  message.success(`已添加能力: ${capability?.name || '未知能力'}`);
                 }}
               >
                 创建能力
@@ -903,7 +1109,7 @@ const CoreCapabilityModules: React.FC<CoreCapabilityModulesProps> = ({
                 onClick={() => {
                   const capability = createToolCapability(tool);
                   onCapabilitySelect(capability);
-                  message.success(`已添加能力: ${capability.name}`);
+                  message.success(`已添加能力: ${capability?.name || '未知能力'}`);
                 }}
               >
                 创建能力

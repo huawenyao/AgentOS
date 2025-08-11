@@ -6,7 +6,6 @@
 import {
   CoreCapabilityModule,
   Agent2_0,
-  CapabilityOrchestrator,
   CoreCapabilityType,
   CapabilityMaturityLevel,
   CapabilitySource,
@@ -292,6 +291,7 @@ export class ModelUnifier {
           organization: '',
           license: '',
           category: '',
+          complexity: 'medium' as 'simple' | 'medium' | 'complex',
           difficulty: 'intermediate' as const,
           rating: 0,
           downloads: 0,
@@ -411,6 +411,7 @@ export class ModelUnifier {
         name: backend.name,
         description: backend.description,
         version: backend.version,
+        type: 'agent',  // 默认类型
         status: statusMapping[backend.status] || 'idle',
         capabilities: capabilities.filter(cap => backend.capabilities.includes(cap.id)),
         orchestrator: {
@@ -418,6 +419,10 @@ export class ModelUnifier {
           name: `${backend.name} Orchestrator`,
           description: `Orchestrator for ${backend.name}`,
           mode: backend.orchestrator.pattern as any,
+          priority: 1,
+          executionTimeout: 30000,
+          retryCount: 3,
+          errorHandling: 'continue' as 'stop' | 'continue' | 'fallback',
           rules: backend.orchestrator.config.flow_definition || [],
           capabilityMapping: [],
           executionStrategy: {
@@ -668,9 +673,17 @@ export class ModelUnifier {
           rating: 0,
           downloads: 0,
           featured: false,
+          usageCount: 0,
+          lastUsed: new Date(),
           createdAt: new Date(backend.metadata.created_at),
           updatedAt: new Date(backend.metadata.updated_at),
-          changelog: []
+          changelog: [],
+          performanceMetrics: {
+            taskCompletionTime: 0,
+            accuracy: 0,
+            resourceUtilization: 0,
+            learningImprovement: 0
+          }
         }
       };
 
@@ -698,13 +711,13 @@ export class ModelUnifier {
         status: frontend.status,
         capabilities: frontend.capabilities.map(cap => cap.id),
         orchestrator: {
-          pattern: frontend.orchestrator.mode,
+          pattern: frontend.orchestrationConfig.mode,
           config: {
-            execution_strategy: frontend.orchestrator.executionStrategy?.loadBalancing || 'round_robin',
-            parallel_execution: frontend.orchestrator.mode === 'parallel',
+            execution_strategy: frontend.orchestrationConfig.executionStrategy?.loadBalancing || 'round_robin',
+            parallel_execution: frontend.orchestrationConfig.mode === 'parallel',
             error_handling: 'stop',
-            optimization: frontend.orchestrator.optimization || {},
-            flow_definition: frontend.orchestrator.rules || []
+            optimization: frontend.orchestrationConfig.optimization || {},
+            flow_definition: frontend.orchestrationConfig.rules || []
           }
         },
         knowledge_graph: {
@@ -858,15 +871,15 @@ export class ModelUnifier {
     });
 
     // 验证编排器
-    if (!agent.orchestrator) {
-      throw new ModelValidationError('Agent orchestrator is required', 'orchestrator', agent.orchestrator);
+    if (!agent.orchestrationConfig) {
+      throw new ModelValidationError('Agent orchestrationConfig is required', 'orchestrationConfig', agent.orchestrationConfig);
     }
 
-    if (!agent.orchestrator.mode) {
+    if (!agent.orchestrationConfig.mode) {
       throw new ModelValidationError(
-        'Agent orchestrator mode is required',
-        'orchestrator.mode',
-        agent.orchestrator.mode
+        'Agent orchestrationConfig mode is required',
+        'orchestrationConfig.mode',
+        agent.orchestrationConfig.mode
       );
     }
   }

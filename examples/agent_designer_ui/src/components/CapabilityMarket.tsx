@@ -69,7 +69,7 @@ const CapabilityMarket: React.FC<CapabilityMarketProps> = ({
     
     const keyword = searchKeyword.toLowerCase();
     return (
-      capability.name.toLowerCase().includes(keyword) ||
+      (capability?.name || '').toLowerCase().includes(keyword) ||
       capability.description.toLowerCase().includes(keyword) ||
       capability.category.toLowerCase().includes(keyword)
     );
@@ -83,7 +83,7 @@ const CapabilityMarket: React.FC<CapabilityMarketProps> = ({
       const newInstalled = [...installedIds, capability.id];
       setInstalledIds(newInstalled);
       localStorage.setItem('installedCapabilities', JSON.stringify(newInstalled));
-      message.success(`已安装能力: ${capability.name}`);
+      message.success(`已安装能力: ${capability?.name || '未知能力'}`);
     }
     
     onSelectCapability(capability);
@@ -92,7 +92,7 @@ const CapabilityMarket: React.FC<CapabilityMarketProps> = ({
   // 处理能力选择
   const handleCapabilitySelect = (capability: Capability) => {
     onSelectCapability(capability);
-    message.success(`已选择能力: ${capability.name}`);
+    message.success(`已选择能力: ${capability?.name || '未知能力'}`);
   };
   
   // 获取能力分类颜色
@@ -122,7 +122,7 @@ const CapabilityMarket: React.FC<CapabilityMarketProps> = ({
         cover={
           <div className="capability-icon">
             {capability.icon ? (
-              <img alt={capability.name} src={capability.icon} />
+              <img alt={capability?.name || '未知能力'} src={capability.icon} />
             ) : (
               <Avatar 
                 size={64} 
@@ -154,7 +154,7 @@ const CapabilityMarket: React.FC<CapabilityMarketProps> = ({
         <Meta
           title={
             <div className="capability-title">
-              <span>{capability.name}</span>
+              <span>{capability?.name || '未知能力'}</span>
               <Tag color={getCategoryColor(capability.category)}>{capability.category}</Tag>
             </div>
           }

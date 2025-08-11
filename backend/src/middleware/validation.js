@@ -218,6 +218,85 @@ const agentConfigValidation = {
   ]
 }
 
+// Agent实例验证规则
+const agentValidation = {
+  // 创建Agent实例验证
+  create: [
+    body('name')
+      .isLength({ min: 1, max: 100 })
+      .withMessage('Agent名称长度必须在1-100个字符之间'),
+    body('description')
+      .optional()
+      .isLength({ max: 500 })
+      .withMessage('描述长度不能超过500个字符'),
+    body('configId')
+      .isUUID()
+      .withMessage('配置ID必须是有效的UUID'),
+    body('environment')
+      .optional()
+      .isIn(['development', 'staging', 'production'])
+      .withMessage('环境必须是development、staging或production'),
+    body('autoStart')
+      .optional()
+      .isBoolean()
+      .withMessage('自动启动必须是布尔值'),
+    handleValidationErrors
+  ],
+  
+  // 更新Agent实例验证
+  update: [
+    param('id')
+      .isUUID()
+      .withMessage('Agent ID必须是有效的UUID'),
+    body('name')
+      .optional()
+      .isLength({ min: 1, max: 100 })
+      .withMessage('Agent名称长度必须在1-100个字符之间'),
+    body('description')
+      .optional()
+      .isLength({ max: 500 })
+      .withMessage('描述长度不能超过500个字符'),
+    body('configId')
+      .optional()
+      .isUUID()
+      .withMessage('配置ID必须是有效的UUID'),
+    body('environment')
+      .optional()
+      .isIn(['development', 'staging', 'production'])
+      .withMessage('环境必须是development、staging或production'),
+    handleValidationErrors
+  ],
+  
+  // 批量操作验证
+  batchOperation: [
+    body('agentIds')
+      .isArray({ min: 1, max: 50 })
+      .withMessage('Agent ID数组长度必须在1-50之间'),
+    body('agentIds.*')
+      .isUUID()
+      .withMessage('每个Agent ID必须是有效的UUID'),
+    body('operation')
+      .isIn(['start', 'stop', 'delete'])
+      .withMessage('操作类型必须是start、stop或delete'),
+    handleValidationErrors
+  ],
+  
+  // 克隆Agent验证
+  clone: [
+    param('id')
+      .isUUID()
+      .withMessage('Agent ID必须是有效的UUID'),
+    body('name')
+      .isLength({ min: 1, max: 100 })
+      .withMessage('新Agent名称长度必须在1-100个字符之间'),
+    body('description')
+      .optional()
+      .isLength({ max: 500 })
+      .withMessage('描述长度不能超过500个字符'),
+    handleValidationErrors
+  ]
+}
+
 // 工作流验证规则
 const workflowValidation = {
   // 创建工作流验证
@@ -492,6 +571,7 @@ module.exports = {
   userValidation,
   agentTemplateValidation,
   agentConfigValidation,
+  agentValidation,
   workflowValidation,
   capabilityValidation,
   componentValidation,
@@ -505,6 +585,10 @@ module.exports = {
   validateUpdateAgentTemplate: agentTemplateValidation.update,
   validateCreateAgentConfig: agentConfigValidation.create,
   validateUpdateAgentConfig: agentConfigValidation.update,
+  validateCreateAgent: agentValidation.create,
+  validateUpdateAgent: agentValidation.update,
+  validateBatchAgentOperation: agentValidation.batchOperation,
+  validateCloneAgent: agentValidation.clone,
   validateCreateWorkflow: workflowValidation.create,
   validateUpdateWorkflow: workflowValidation.update,
   validateExecuteWorkflow: workflowValidation.execute,

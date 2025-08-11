@@ -60,7 +60,7 @@ const CapabilityLibraryTest: React.FC = () => {
       >
         <div className="capability-card-header">
           <span className="capability-icon">{capability.icon}</span>
-          <Title level={4}>{capability.name}</Title>
+          <Title level={4}>{capability?.name || '未知能力'}</Title>
           <Tag color="blue">{capability.type}</Tag>
         </div>
         

@@ -1,4 +1,5 @@
 const dataService = require('../services/dataService')
+const monitoringService = require('../services/monitoringService')
 const logger = require('../utils/logger')
 const errorHandler = require('../middleware/errorHandler')
 const os = require('os')
@@ -40,25 +41,7 @@ class MonitoringController {
   // 获取系统指标
   async getSystemMetrics(req, res) {
     try {
-      const metrics = {
-        cpu: {
-          usage: process.cpuUsage(),
-          loadAverage: os.loadavg()
-        },
-        memory: {
-          total: os.totalmem(),
-          free: os.freemem(),
-          used: os.totalmem() - os.freemem(),
-          process: process.memoryUsage()
-        },
-        system: {
-          platform: os.platform(),
-          arch: os.arch(),
-          uptime: os.uptime(),
-          hostname: os.hostname()
-        },
-        timestamp: new Date().toISOString()
-      }
+      const metrics = await monitoringService.getSystemMetrics()
 
       logger.info('系统指标查询', {
         action: 'GET_SYSTEM_METRICS',
@@ -83,22 +66,7 @@ class MonitoringController {
   async getPerformanceMetrics(req, res) {
     try {
       const { timeRange = '1h', agentId } = req.query
-
-      // 模拟性能数据
-      const metrics = {
-        responseTime: {
-          average: 150,
-          p95: 300,
-          p99: 500
-        },
-        throughput: {
-          requestsPerSecond: 25,
-          requestsPerMinute: 1500
-        },
-        errorRate: 0.02,
-        timestamp: new Date().toISOString(),
-        timeRange
-      }
+      const metrics = await monitoringService.getPerformanceMetrics({ timeRange, agentId })
 
       logger.info('性能指标查询', {
         action: 'GET_PERFORMANCE_METRICS',
@@ -144,24 +112,7 @@ class MonitoringController {
         limit: parseInt(limit)
       }
 
-      // 模拟日志数据
-      const logs = {
-        logs: [
-          {
-            id: 1,
-            level: 'info',
-            message: '应用启动成功',
-            module: 'app',
-            timestamp: new Date().toISOString()
-          }
-        ],
-        pagination: {
-          total: 1,
-          page: 1,
-          limit: 50,
-          totalPages: 1
-        }
-      }
+      const logs = await monitoringService.getLogs(filters, pagination)
 
       logger.info('系统日志查询', {
         action: 'GET_SYSTEM_LOGS',
@@ -187,17 +138,17 @@ class MonitoringController {
   async getAlerts(req, res) {
     try {
       const { page = 1, limit = 20, status, severity } = req.query
-
-      // 模拟告警数据
-      const alerts = {
-        alerts: [],
-        pagination: {
-          total: 0,
-          page: parseInt(page),
-          limit: parseInt(limit),
-          totalPages: 0
-        }
+      
+      const filters = {}
+      if (status) filters.status = status
+      if (severity) filters.severity = severity
+      
+      const pagination = {
+        page: parseInt(page),
+        limit: parseInt(limit)
       }
+      
+      const alerts = await monitoringService.getAlerts(filters, pagination)
 
       res.json({
         success: true,
@@ -217,6 +168,8 @@ class MonitoringController {
   async acknowledgeAlert(req, res) {
     try {
       const { id } = req.params
+      
+      await monitoringService.acknowledgeAlert(id, req.user.id)
 
       logger.info('告警确认', {
         action: 'ACKNOWLEDGE_ALERT',

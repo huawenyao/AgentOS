@@ -553,7 +553,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
             <SettingOutlined />
           </div>
           <div className="node-info-content">
-            <Title level={5} style={{ margin: 0 }}>{selectedNode.name}</Title>
+            <Title level={5} style={{ margin: 0 }}>{selectedNode?.name || '未命名节点'}</Title>
             <Text type="secondary" style={{ fontSize: '12px' }}>
               {selectedNode.description}
             </Text>

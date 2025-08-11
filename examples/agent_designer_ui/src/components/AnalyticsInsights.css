@@ -1,0 +1,539 @@
+/**
+ * 分析洞察模块样式文件
+ * 提供现代化、响应式的界面设计
+ */
+
+/* 主容器样式 */
+.analytics-insights-modal {
+  .ant-modal-content {
+    height: calc(100vh - 40px);
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .ant-modal-body {
+    flex: 1;
+    padding: 16px;
+    overflow: hidden;
+  }
+}
+
+.analytics-insights-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+/* 工具栏样式 */
+.analytics-toolbar {
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px 8px 0 0;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 16px;
+  
+  .ant-picker {
+    border-radius: 6px;
+  }
+  
+  .ant-btn {
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+  }
+  
+  .ant-input-number {
+    border-radius: 6px;
+  }
+}
+
+/* 内容区域样式 */
+.analytics-content {
+  flex: 1;
+  overflow: auto;
+  
+  .analytics-tabs {
+    height: 100%;
+    
+    .ant-tabs-content-holder {
+      overflow: auto;
+    }
+    
+    .ant-tabs-tab {
+      border-radius: 8px 8px 0 0;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: rgba(24, 144, 255, 0.1);
+      }
+    }
+    
+    .ant-tabs-tab-active {
+      background: #fff;
+      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+/* 性能分析面板样式 */
+.analytics-performance-panel {
+  padding: 16px;
+  
+  .metrics-cards {
+    margin-bottom: 24px;
+    
+    .metric-card {
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      border: none;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      }
+      
+      .ant-card-body {
+        padding: 16px;
+      }
+      
+      .ant-statistic-title {
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 8px;
+      }
+      
+      .ant-statistic-content {
+        font-weight: 600;
+      }
+      
+      .metric-status {
+        margin-top: 8px;
+        text-align: center;
+        
+        .ant-badge {
+          font-size: 11px;
+        }
+      }
+    }
+  }
+  
+  .performance-charts {
+    .ant-card {
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border: none;
+      
+      .ant-card-head {
+        border-bottom: 1px solid #f0f0f0;
+        
+        .ant-card-head-title {
+          font-weight: 600;
+          color: #262626;
+        }
+      }
+    }
+  }
+}
+
+/* 使用分析面板样式 */
+.analytics-usage-panel {
+  padding: 16px;
+  
+  .usage-overview {
+    margin-bottom: 24px;
+    
+    .ant-card {
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border: none;
+      text-align: center;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      }
+      
+      .ant-statistic-title {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 8px;
+      }
+      
+      .ant-statistic-content {
+        font-weight: 600;
+        font-size: 24px;
+      }
+    }
+  }
+  
+  .usage-charts {
+    .ant-card {
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border: none;
+    }
+  }
+  
+  .retention-analysis {
+    text-align: center;
+    
+    .retention-metric {
+      margin-bottom: 16px;
+      
+      .ant-progress-circle {
+        margin-bottom: 8px;
+      }
+      
+      .retention-label {
+        font-size: 14px;
+        color: #666;
+        font-weight: 500;
+      }
+    }
+    
+    .usage-distribution {
+      h4 {
+        margin-bottom: 16px;
+        color: #262626;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+/* 趋势分析面板样式 */
+.analytics-trend-panel {
+  padding: 16px;
+  
+  .trend-overview {
+    margin-bottom: 24px;
+    
+    .ant-card {
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border: none;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      }
+    }
+    
+    .trend-summary {
+      .trend-indicator {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+        
+        .anticon {
+          margin-right: 8px;
+          font-size: 16px;
+        }
+        
+        .trend-text {
+          font-weight: 500;
+          color: #262626;
+        }
+      }
+      
+      .confidence-score {
+        margin-bottom: 12px;
+        
+        .ant-progress {
+          .ant-progress-text {
+            font-size: 12px;
+          }
+        }
+      }
+      
+      .anomaly-alert {
+        .ant-alert {
+          border-radius: 6px;
+        }
+      }
+    }
+  }
+  
+  .prediction-charts {
+    .ant-card {
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border: none;
+    }
+  }
+  
+  .anomaly-detection {
+    .anomaly-list {
+      max-height: 350px;
+      overflow-y: auto;
+      
+      .anomaly-item {
+        padding: 12px;
+        border: 1px solid #f0f0f0;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        background: #fafafa;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          background: #f0f0f0;
+          border-color: #d9d9d9;
+        }
+        
+        .anomaly-header {
+          display: flex;
+          align-items: center;
+          margin-bottom: 8px;
+          
+          .ant-tag {
+            margin-right: 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+          }
+          
+          .anomaly-metric {
+            font-weight: 500;
+            color: #262626;
+          }
+        }
+        
+        .anomaly-details {
+          font-size: 12px;
+          color: #666;
+          line-height: 1.5;
+          
+          div {
+            margin-bottom: 2px;
+          }
+        }
+      }
+    }
+    
+    .ant-empty {
+      margin: 40px 0;
+    }
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .analytics-insights-modal {
+    .ant-modal-content {
+      height: calc(100vh - 20px);
+    }
+  }
+  
+  .analytics-toolbar {
+    .ant-row {
+      flex-direction: column;
+      gap: 12px;
+    }
+  }
+  
+  .metrics-cards {
+    .ant-col {
+      margin-bottom: 8px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .analytics-insights-container {
+    margin: 0;
+    border-radius: 0;
+  }
+  
+  .analytics-toolbar {
+    padding: 12px;
+    border-radius: 0;
+    
+    .ant-space {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  
+  .analytics-content {
+    .analytics-tabs {
+      .ant-tabs-tab {
+        padding: 8px 12px;
+        font-size: 12px;
+      }
+    }
+  }
+  
+  .analytics-performance-panel,
+  .analytics-usage-panel,
+  .analytics-trend-panel {
+    padding: 8px;
+  }
+  
+  .metric-card {
+    .ant-card-body {
+      padding: 12px !important;
+    }
+    
+    .ant-statistic-content {
+      font-size: 18px !important;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .analytics-insights-modal {
+    .ant-modal {
+      margin: 0;
+      max-width: 100%;
+      height: 100vh;
+    }
+    
+    .ant-modal-content {
+      height: 100vh;
+      border-radius: 0;
+    }
+  }
+  
+  .analytics-toolbar {
+    .ant-picker {
+      width: 100%;
+    }
+    
+    .ant-btn {
+      width: 100%;
+    }
+  }
+}
+
+/* 图表容器优化 */
+.recharts-wrapper {
+  .recharts-cartesian-grid {
+    opacity: 0.3;
+  }
+  
+  .recharts-tooltip-wrapper {
+    .recharts-default-tooltip {
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      border: none;
+    }
+  }
+  
+  .recharts-legend-wrapper {
+    .recharts-legend-item {
+      margin-right: 16px;
+    }
+  }
+}
+
+/* 加载状态优化 */
+.ant-spin-container {
+  min-height: 400px;
+}
+
+.ant-spin-spinning {
+  .analytics-performance-panel,
+  .analytics-usage-panel,
+  .analytics-trend-panel {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+}
+
+/* 动画效果 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.metric-card,
+.ant-card {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.metric-card:nth-child(1) { animation-delay: 0.1s; }
+.metric-card:nth-child(2) { animation-delay: 0.2s; }
+.metric-card:nth-child(3) { animation-delay: 0.3s; }
+.metric-card:nth-child(4) { animation-delay: 0.4s; }
+.metric-card:nth-child(5) { animation-delay: 0.5s; }
+.metric-card:nth-child(6) { animation-delay: 0.6s; }
+
+/* 深色主题支持 */
+[data-theme='dark'] {
+  .analytics-insights-container {
+    background: #141414;
+  }
+  
+  .analytics-toolbar {
+    background: #1f1f1f;
+    border-bottom-color: #303030;
+  }
+  
+  .metric-card,
+  .ant-card {
+    background: #1f1f1f;
+    border-color: #303030;
+    
+    .ant-card-head {
+      border-bottom-color: #303030;
+    }
+  }
+  
+  .anomaly-item {
+    background: #262626;
+    border-color: #303030;
+    
+    &:hover {
+      background: #303030;
+      border-color: #434343;
+    }
+  }
+}
+
+/* 高对比度模式 */
+@media (prefers-contrast: high) {
+  .metric-card,
+  .ant-card {
+    border: 2px solid #000;
+  }
+  
+  .ant-statistic-content {
+    font-weight: 700;
+  }
+  
+  .trend-text {
+    font-weight: 700;
+  }
+}
+
+/* 减少动画模式 */
+@media (prefers-reduced-motion: reduce) {
+  .metric-card,
+  .ant-card,
+  .ant-btn {
+    animation: none;
+    transition: none;
+  }
+  
+  .metric-card:hover,
+  .ant-card:hover,
+  .ant-btn:hover {
+    transform: none;
+  }
+}

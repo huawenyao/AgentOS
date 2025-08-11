@@ -21,7 +21,9 @@ import {
   ExperimentOutlined,
   DownOutlined,
   FileTextOutlined,
-  RobotOutlined
+  RobotOutlined,
+  DatabaseOutlined,
+  BarChartOutlined
 } from '@ant-design/icons';
 
 // 导入组件
@@ -32,6 +34,7 @@ import TemplateLibrary from './TemplateLibrary';
 import TemplateGallery from './TemplateGallery';
 import CapabilityMarket from './CapabilityMarket';
 import CapabilityLibrary from './CapabilityLibrary';
+import CapabilityManager from './CapabilityManager';
 import WorkflowDesigner from './WorkflowDesigner';
 import WorkflowManager from './WorkflowManager';
 import WorkflowMonitor from './WorkflowMonitor';
@@ -40,6 +43,8 @@ import PromoPage from './PromoPage';
 import CollegeAdmissionDemo from './CollegeAdmissionDemo';
 import ReportManager from './ReportManager';
 import Settings from './Settings';
+import DataImportManager from './DataImportManager';
+import AnalyticsInsights from './analytics/AnalyticsInsights';
 
 // 导入全局状态管理
 import { useGlobalState } from './StateManager';
@@ -124,6 +129,11 @@ const MainApp: React.FC = () => {
       label: <Link to="/capability-library">能力库</Link>,
     },
     {
+      key: 'capability-manager',
+      icon: <ApiOutlined />,
+      label: <Link to="/capability-manager">能力管理</Link>,
+    },
+    {
       key: 'workflow-manager',
       icon: <NodeIndexOutlined />,
       label: <Link to="/workflow-manager">工作流管理</Link>,
@@ -144,9 +154,19 @@ const MainApp: React.FC = () => {
       label: <Link to="/agent-monitor">Agent监控</Link>,
     },
     {
+      key: 'analytics-insights',
+      icon: <BarChartOutlined />,
+      label: <Link to="/analytics-insights">分析洞察</Link>,
+    },
+    {
       key: 'report-manager',
       icon: <FileTextOutlined />,
       label: <Link to="/report-manager">报告管理</Link>,
+    },
+    {
+      key: 'data-import',
+      icon: <DatabaseOutlined />,
+      label: <Link to="/data-import">数据管理</Link>,
     },
     {
       key: 'version-control',
@@ -277,16 +297,20 @@ const MainApp: React.FC = () => {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/agent-designer" element={<AgentDesigner />} />
+        <Route path="/agent-designer/:agentId" element={<AgentDesigner />} />
         <Route path="/agent-manager" element={<AgentManager />} />
         <Route path="/template-library" element={<TemplateLibrary onSelectTemplate={(template: AgentTemplate) => globalState.selectTemplate(template)} />} />
         <Route path="/template-gallery" element={<TemplateGallery />} />
         <Route path="/capability-market" element={<CapabilityMarket onSelectCapability={(capability: Capability) => globalState.selectComponent(capability as unknown as Component)} />} />
         <Route path="/capability-library" element={<CapabilityLibrary />} />
+          <Route path="/capability-manager" element={<CapabilityManager />} />
         <Route path="/workflow-manager" element={<WorkflowManager />} />
         <Route path="/workflow-designer" element={<WorkflowDesigner components={globalState.components} onSaveWorkflow={(nodes, edges) => console.log('保存工作流', nodes, edges)} />} />
         <Route path="/workflow-monitor" element={<WorkflowMonitor />} />
         <Route path="/agent-monitor" element={<AgentMonitor agentId={globalState.selectedAgent?.id || null} />} />
+        <Route path="/analytics-insights" element={<AnalyticsInsights />} />
         <Route path="/report-manager" element={<ReportManager />} />
+        <Route path="/data-import" element={<DataImportManager onDataImported={() => { globalState.loadCapabilities(); globalState.loadAgents(); globalState.loadWorkflows(); }} />} />
         <Route path="/version-control" element={<VersionControl />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/help" element={<HelpCenter />} />

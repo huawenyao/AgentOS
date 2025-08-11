@@ -63,7 +63,7 @@ const TemplateLibrary: React.FC<TemplateLibraryProps> = ({
     
     const keyword = searchKeyword.toLowerCase();
     return (
-      template.name.toLowerCase().includes(keyword) ||
+      (template.name || '').toLowerCase().includes(keyword) ||
       template.description.toLowerCase().includes(keyword) ||
       template.tags?.some(tag => tag.toLowerCase().includes(keyword))
     );
@@ -87,7 +87,7 @@ const TemplateLibrary: React.FC<TemplateLibraryProps> = ({
   // 处理模板选择
   const handleTemplateSelect = (template: AgentTemplate) => {
     onSelectTemplate(template);
-    message.success(`已选择模板: ${template.name}`);
+    message.success(`已选择模板: ${template.name || '未命名模板'}`);
   };
   
   // 获取Agent类型图标
@@ -117,7 +117,7 @@ const TemplateLibrary: React.FC<TemplateLibraryProps> = ({
         cover={
           <div className="template-icon">
             {getAgentTypeIcon(template.type) || (
-              <div className="template-icon-placeholder">{template.name.charAt(0)}</div>
+              <div className="template-icon-placeholder">{(template.name || '未命名模板').charAt(0)}</div>
             )}
           </div>
         }
@@ -140,7 +140,7 @@ const TemplateLibrary: React.FC<TemplateLibraryProps> = ({
         onClick={() => handleTemplateSelect(template)}
       >
         <Meta
-          title={template.name}
+          title={template.name || '未命名模板'}
           description={
             <div>
               <p className="template-description">{template.description}</p>

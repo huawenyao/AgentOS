@@ -1,0 +1,145 @@
+.knowledge-graph {
+  padding: 24px;
+  background: #f5f5f5;
+  min-height: 100vh;
+}
+
+.knowledge-graph .ant-card {
+  margin-bottom: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.knowledge-graph .ant-card-head {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.knowledge-graph .ant-card-head-title {
+  font-weight: 600;
+}
+
+.graph-visualization {
+  height: 100%;
+}
+
+.graph-visualization .ant-card-body {
+  padding: 0;
+}
+
+.knowledge-graph .ant-table-row:hover {
+  cursor: pointer;
+}
+
+.knowledge-graph .ant-statistic-title {
+  font-size: 14px;
+  color: #666;
+}
+
+.knowledge-graph .ant-statistic-content {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.knowledge-graph .ant-progress-line {
+  margin: 0;
+}
+
+.knowledge-graph .ant-tag {
+  margin: 2px;
+  border-radius: 4px;
+}
+
+.knowledge-graph .ant-tabs-tab {
+  font-weight: 500;
+}
+
+.knowledge-graph .ant-modal-header {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.knowledge-graph .ant-form-item-label > label {
+  font-weight: 500;
+}
+
+.knowledge-graph .ant-btn {
+  border-radius: 6px;
+}
+
+.knowledge-graph .ant-input {
+  border-radius: 6px;
+}
+
+.knowledge-graph .ant-select-selector {
+  border-radius: 6px;
+}
+
+.knowledge-graph .ant-card-small .ant-card-head {
+  min-height: 42px;
+}
+
+.knowledge-graph .ant-card-small .ant-card-body {
+  padding: 16px;
+}
+
+.knowledge-graph .ant-divider {
+  margin: 12px 0;
+}
+
+.knowledge-graph .ant-space-item {
+  display: inline-flex;
+  align-items: center;
+}
+
+.knowledge-graph .ant-typography {
+  margin-bottom: 0;
+}
+
+.knowledge-graph .ant-btn-text {
+  padding: 4px 8px;
+  height: auto;
+}
+
+.knowledge-graph .ant-btn-text:hover {
+  background-color: #f5f5f5;
+}
+
+.knowledge-graph .ant-btn-text.ant-btn-dangerous:hover {
+  background-color: #fff2f0;
+  color: #ff4d4f;
+}
+
+@media (max-width: 768px) {
+  .knowledge-graph {
+    padding: 16px;
+  }
+  
+  .knowledge-graph .ant-col {
+    margin-bottom: 16px;
+  }
+  
+  .graph-visualization {
+    height: 300px;
+  }
+}
+
+@media (max-width: 576px) {
+  .knowledge-graph {
+    padding: 12px;
+  }
+  
+  .knowledge-graph .ant-card {
+    margin-bottom: 12px;
+  }
+  
+  .graph-visualization {
+    height: 250px;
+  }
+  
+  .knowledge-graph .ant-table {
+    font-size: 12px;
+  }
+  
+  .knowledge-graph .ant-statistic-content {
+    font-size: 20px;
+  }
+}

@@ -4,14 +4,12 @@
  */
 
 import {
-  BaseNode,
   Component,
   ComponentType,
   ComponentCategory,
   AgentType,
   AgentStatus,
   PropertyType,
-  PropertyDefinition,
   CapabilityConfig,
   AgentTemplate,
   AgentInstance,
@@ -469,12 +467,14 @@ export const capabilities: Capability[] = [
       {
         id: 'search_engine',
         name: 'search_engine',
-        type: 'select',
+        label: '搜索引擎',
+        displayName: '搜索引擎',
+        type: PropertyType.SELECT,
         required: true,
         options: [
-          { value: 'google', description: 'Google' },
-          { value: 'bing', description: 'Bing' },
-          { value: 'baidu', description: 'Baidu' }
+          { label: 'Google', value: 'google' },
+          { label: 'Bing', value: 'bing' },
+          { label: 'Baidu', value: 'baidu' }
         ],
         defaultValue: 'google',
         description: '使用的搜索引擎'
@@ -482,7 +482,9 @@ export const capabilities: Capability[] = [
       {
         id: 'web_search_result_count',
         name: 'result_count',
-        type: 'number',
+        label: '结果数量',
+        displayName: '结果数量',
+        type: PropertyType.NUMBER,
         required: false,
         defaultValue: 10,
         description: '返回的搜索结果数量'
@@ -515,7 +517,9 @@ export const capabilities: Capability[] = [
       {
         id: 'file_operation_permission',
         name: 'permission',
-        type: 'select',
+        label: '操作权限',
+        displayName: '操作权限',
+        type: PropertyType.SELECT,
         required: true,
         options: [
           { label: '只读', value: 'read_only' },
@@ -527,7 +531,9 @@ export const capabilities: Capability[] = [
       {
         id: 'file_operation_base_path',
         name: 'base_path',
-        type: 'string',
+        label: '基础路径',
+        displayName: '基础路径',
+        type: PropertyType.STRING,
         required: true,
         defaultValue: './data',
         description: '文件操作的基础路径'
@@ -566,7 +572,9 @@ export const capabilities: Capability[] = [
       {
         id: 'llm_model',
         name: 'model',
-        type: 'select',
+        label: '语言模型',
+        displayName: '语言模型',
+        type: PropertyType.SELECT,
         required: true,
         options: [
           { label: 'GPT-4', value: 'gpt4' },
@@ -579,7 +587,9 @@ export const capabilities: Capability[] = [
       {
         id: 'llm_temperature',
         name: 'temperature',
-        type: 'number',
+        label: '随机性',
+        displayName: '随机性',
+        type: PropertyType.NUMBER,
         required: false,
         defaultValue: 0.7,
         description: '生成文本的随机性'
@@ -587,7 +597,9 @@ export const capabilities: Capability[] = [
       {
         id: 'llm_max_tokens',
         name: 'max_tokens',
-        type: 'number',
+        label: '最大长度',
+        displayName: '最大长度',
+        type: PropertyType.NUMBER,
         required: false,
         defaultValue: 1000,
         description: '生成文本的最大长度'
@@ -626,7 +638,9 @@ export const capabilities: Capability[] = [
       {
         id: 'api_method',
         name: 'method',
-        type: 'select',
+        label: '请求方法',
+        displayName: '请求方法',
+        type: PropertyType.SELECT,
         required: true,
         options: [
           { label: 'GET', value: 'get' },
@@ -640,14 +654,18 @@ export const capabilities: Capability[] = [
       {
         id: 'api_base_url',
         name: 'base_url',
-        type: 'string',
+        label: '基础URL',
+        displayName: '基础URL',
+        type: PropertyType.STRING,
         required: true,
         description: 'API的基础URL'
       },
       {
         id: 'api_headers',
         name: 'headers',
-        type: 'textarea',
+        label: '请求头',
+        displayName: '请求头',
+        type: PropertyType.TEXT_AREA,
         required: false,
         defaultValue: '{}',
         description: 'HTTP请求头（JSON格式）'
@@ -686,7 +704,9 @@ export const capabilities: Capability[] = [
       {
         id: 'db_type',
         name: 'db_type',
-        type: 'select',
+        label: '数据库类型',
+        displayName: '数据库类型',
+        type: PropertyType.SELECT,
         required: true,
         options: [
           { label: 'MySQL', value: 'mysql' },
@@ -700,14 +720,18 @@ export const capabilities: Capability[] = [
       {
         id: 'db_connection_string',
         name: 'connection_string',
-        type: 'string',
+        label: '连接字符串',
+        displayName: '连接字符串',
+        type: PropertyType.STRING,
         required: true,
         description: '数据库连接字符串'
       },
       {
         id: 'db_query_timeout',
         name: 'query_timeout',
-        type: 'number',
+        label: '查询超时',
+        displayName: '查询超时',
+        type: PropertyType.NUMBER,
         required: false,
         defaultValue: 30,
         description: '查询超时时间（秒）'
@@ -746,7 +770,9 @@ export const capabilities: Capability[] = [
       {
         id: 'code_language',
         name: 'language',
-        type: 'select',
+        label: '代码语言',
+        displayName: '代码语言',
+        type: PropertyType.SELECT,
         required: true,
         options: [
           { label: 'Python', value: 'python' },
@@ -759,7 +785,9 @@ export const capabilities: Capability[] = [
       {
         id: 'code_timeout',
         name: 'timeout',
-        type: 'number',
+        label: '执行超时',
+        displayName: '执行超时',
+        type: PropertyType.NUMBER,
         required: false,
         defaultValue: 10,
         description: '执行超时时间（秒）'
@@ -767,7 +795,9 @@ export const capabilities: Capability[] = [
       {
         id: 'code_sandbox',
         name: 'sandbox',
-        type: 'boolean',
+        label: '沙箱执行',
+        displayName: '沙箱执行',
+        type: PropertyType.BOOLEAN,
         required: false,
         defaultValue: true,
         description: '是否在沙箱中执行'
@@ -800,7 +830,9 @@ export const capabilities: Capability[] = [
       {
         id: 'image_model',
         name: 'model',
-        type: 'select',
+        label: '处理模型',
+        displayName: '处理模型',
+        type: PropertyType.SELECT,
         required: true,
         options: [
           { label: 'OpenCV', value: 'opencv' },
@@ -813,7 +845,9 @@ export const capabilities: Capability[] = [
       {
         id: 'image_max_size',
         name: 'max_image_size',
-        type: 'number',
+        label: '最大尺寸',
+        displayName: '最大尺寸',
+        type: PropertyType.NUMBER,
         required: false,
         defaultValue: 1024,
         description: '处理的最大图像尺寸（像素）'
@@ -852,7 +886,9 @@ export const capabilities: Capability[] = [
       {
         id: 'tts_voice',
         name: 'voice',
-        type: 'select',
+        label: '语音类型',
+        displayName: '语音类型',
+        type: PropertyType.SELECT,
         required: true,
         options: [
           { label: '男声', value: 'male' },
@@ -865,7 +901,9 @@ export const capabilities: Capability[] = [
       {
         id: 'tts_rate',
         name: 'rate',
-        type: 'number',
+        label: '语音速率',
+        displayName: '语音速率',
+        type: PropertyType.NUMBER,
         required: false,
         defaultValue: 1.0,
         description: '语音速率'
@@ -873,7 +911,9 @@ export const capabilities: Capability[] = [
       {
         id: 'tts_format',
         name: 'format',
-        type: 'select',
+        label: '音频格式',
+        displayName: '音频格式',
+        type: PropertyType.SELECT,
         required: false,
         options: [
           { label: 'MP3', value: 'mp3' },
@@ -911,7 +951,9 @@ export const capabilities: Capability[] = [
       {
         id: 'stt_language',
         name: 'language',
-        type: 'select',
+        label: '语音语言',
+        displayName: '语音语言',
+        type: PropertyType.SELECT,
         required: true,
         options: [
           { label: '中文', value: 'zh' },
@@ -925,7 +967,9 @@ export const capabilities: Capability[] = [
       {
         id: 'stt_model',
         name: 'model',
-        type: 'select',
+        label: '识别模型',
+        displayName: '识别模型',
+        type: PropertyType.SELECT,
         required: false,
         options: [
           { label: '标准', value: 'standard' },
@@ -968,7 +1012,9 @@ export const capabilities: Capability[] = [
       {
         id: 'memory_storage_type',
         name: 'storage_type',
-        type: 'select',
+        label: '存储类型',
+        displayName: '存储类型',
+        type: PropertyType.SELECT,
         required: true,
         options: [
           { label: '短期记忆', value: 'short_term' },
@@ -981,7 +1027,9 @@ export const capabilities: Capability[] = [
       {
         id: 'memory_capacity',
         name: 'capacity',
-        type: 'number',
+        label: '存储容量',
+        displayName: '存储容量',
+        type: PropertyType.NUMBER,
         required: false,
         defaultValue: 1000,
         description: '记忆存储容量'
@@ -989,7 +1037,9 @@ export const capabilities: Capability[] = [
       {
         id: 'memory_persistence',
         name: 'persistence',
-        type: 'boolean',
+        label: '持久化',
+        displayName: '持久化',
+        type: PropertyType.BOOLEAN,
         required: false,
         defaultValue: true,
         description: '是否持久化存储'

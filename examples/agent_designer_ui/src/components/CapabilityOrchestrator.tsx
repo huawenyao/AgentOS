@@ -10,8 +10,10 @@ import {
   Tabs, Collapse, Tree, Table, Tag, Badge, Progress, Tooltip, 
   Modal, Input, Radio, Checkbox, Divider, Alert, Timeline,
   Drawer, List, Avatar, Statistic, Row, Col, message, Steps,
-  Result, Empty, Spin, AutoComplete, Rate, Popconfirm
+  Result, Empty, Spin, AutoComplete, Rate, Popconfirm, Typography
 } from 'antd';
+
+const { Text } = Typography;
 import {
   ThunderboltOutlined, SettingOutlined, PlayCircleOutlined,
   PauseCircleOutlined, StopOutlined, ReloadOutlined,
@@ -23,10 +25,10 @@ import {
   BulbOutlined, RocketOutlined, ExperimentOutlined, TeamOutlined,
   DashboardOutlined, InteractionOutlined, FunctionOutlined,
   CodeOutlined, BookOutlined, StarOutlined, CloseCircleOutlined,
-  SyncOutlined, FireOutlined, NodeIndexOutlined
+  SyncOutlined, FireOutlined, NodeIndexOutlined, SearchOutlined
 } from '@ant-design/icons';
 import {
-  CapabilityOrchestrator as ICapabilityOrchestrator,
+  OrchestrationConfig,
   CapabilityOrchestrationMode, OrchestrationRule,
   CapabilityMapping, ExecutionStrategy, OptimizationConfig,
   CoreCapabilityModule, CoreCapabilityType, CapabilityMaturityLevel,
@@ -40,17 +42,15 @@ const { TabPane } = Tabs;
 const { Panel } = Collapse;
 const { Option } = Select;
 const { TextArea } = Input;
-const { TreeNode } = Tree;
-const { Step } = Steps;
 
 // 任务规划接口
 // 本地接口定义已移至 CapabilitySystemTypes.ts
 
 interface CapabilityOrchestratorProps {
-  orchestrator: ICapabilityOrchestrator;
+  orchestrationConfig: OrchestrationConfig;
   capabilities: CoreCapabilityModule[];
   agent?: Agent2_0;
-  onChange: (orchestrator: ICapabilityOrchestrator) => void;
+  onChange: (orchestrationConfig: OrchestrationConfig) => void;
   onTaskPlanChange?: (plan: TaskPlan) => void;
   onExecute?: () => void;
   onStop?: () => void;
@@ -75,7 +75,7 @@ interface ExecutionStatus {
 }
 
 const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
-  orchestrator,
+  orchestrationConfig,
   capabilities,
   agent,
   onChange,
@@ -123,39 +123,39 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
    */
   useEffect(() => {
     form.setFieldsValue({
-      name: orchestrator.name,
-      description: orchestrator.description,
-      mode: orchestrator.mode,
-      loadBalancing: orchestrator.executionStrategy.loadBalancing,
-      failover: orchestrator.executionStrategy.failover,
-      circuitBreakerEnabled: orchestrator.executionStrategy.circuitBreaker.enabled,
-      circuitBreakerFailureThreshold: orchestrator.executionStrategy.circuitBreaker.failureThreshold,
-      circuitBreakerRecoveryTimeout: orchestrator.executionStrategy.circuitBreaker.recoveryTimeout,
-      rateLimitEnabled: orchestrator.executionStrategy.rateLimit.enabled,
-      rateLimitRequestsPerSecond: orchestrator.executionStrategy.rateLimit.requestsPerSecond,
-      rateLimitBurstSize: orchestrator.executionStrategy.rateLimit.burstSize,
-      optimizationEnabled: orchestrator.optimization.enabled,
-      autoScalingEnabled: orchestrator.optimization.autoScaling.enabled,
-      autoScalingMinInstances: orchestrator.optimization.autoScaling.minInstances,
-      autoScalingMaxInstances: orchestrator.optimization.autoScaling.maxInstances,
-      autoScalingTargetCpuUtilization: orchestrator.optimization.autoScaling.targetCpuUtilization,
-      cachingEnabled: orchestrator.optimization.caching.enabled,
-      cachingStrategy: orchestrator.optimization.caching.strategy,
-      cachingMaxSize: orchestrator.optimization.caching.maxSize,
-      cachingTtl: orchestrator.optimization.caching.ttl
+      name: orchestrationConfig.name,
+      description: orchestrationConfig.description,
+      mode: orchestrationConfig.mode,
+      loadBalancing: orchestrationConfig.executionStrategy.loadBalancing,
+      failover: orchestrationConfig.executionStrategy.failover,
+      circuitBreakerEnabled: orchestrationConfig.executionStrategy.circuitBreaker.enabled,
+      circuitBreakerFailureThreshold: orchestrationConfig.executionStrategy.circuitBreaker.failureThreshold,
+      circuitBreakerRecoveryTimeout: orchestrationConfig.executionStrategy.circuitBreaker.recoveryTimeout,
+      rateLimitEnabled: orchestrationConfig.executionStrategy.rateLimit.enabled,
+      rateLimitRequestsPerSecond: orchestrationConfig.executionStrategy.rateLimit.requestsPerSecond,
+      rateLimitBurstSize: orchestrationConfig.executionStrategy.rateLimit.burstSize,
+      optimizationEnabled: orchestrationConfig.optimization.enabled,
+      autoScalingEnabled: orchestrationConfig.optimization.autoScaling.enabled,
+      autoScalingMinInstances: orchestrationConfig.optimization.autoScaling.minInstances,
+      autoScalingMaxInstances: orchestrationConfig.optimization.autoScaling.maxInstances,
+      autoScalingTargetCpuUtilization: orchestrationConfig.optimization.autoScaling.targetCpuUtilization,
+      cachingEnabled: orchestrationConfig.optimization.caching.enabled,
+      cachingStrategy: orchestrationConfig.optimization.caching.strategy,
+      cachingMaxSize: orchestrationConfig.optimization.caching.maxSize,
+      cachingTtl: orchestrationConfig.optimization.caching.ttl
     });
-  }, [orchestrator, form]);
+  }, [orchestrationConfig, form]);
   
   /**
    * 更新编排器配置
    */
-  const updateOrchestrator = useCallback((updates: Partial<ICapabilityOrchestrator>) => {
+  const updateOrchestrator = useCallback((updates: Partial<OrchestrationConfig>) => {
     const updatedOrchestrator = {
-      ...orchestrator,
+      ...orchestrationConfig,
       ...updates
     };
     onChange(updatedOrchestrator);
-  }, [orchestrator, onChange]);
+  }, [orchestrationConfig, onChange]);
   
   /**
    * 处理表单值变化
@@ -170,20 +170,20 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
     // 执行策略更新
     if (Object.keys(changedValues).some(key => key.startsWith('loadBalancing') || key.startsWith('failover') || key.startsWith('circuitBreaker') || key.startsWith('rateLimit'))) {
       updates.executionStrategy = {
-        ...orchestrator.executionStrategy,
-        loadBalancing: allValues.loadBalancing || orchestrator.executionStrategy.loadBalancing,
-        failover: allValues.failover !== undefined ? allValues.failover : orchestrator.executionStrategy.failover,
+        ...orchestrationConfig.executionStrategy,
+        loadBalancing: allValues.loadBalancing || orchestrationConfig.executionStrategy.loadBalancing,
+        failover: allValues.failover !== undefined ? allValues.failover : orchestrationConfig.executionStrategy.failover,
         circuitBreaker: {
-          ...orchestrator.executionStrategy.circuitBreaker,
-          enabled: allValues.circuitBreakerEnabled !== undefined ? allValues.circuitBreakerEnabled : orchestrator.executionStrategy.circuitBreaker.enabled,
-          failureThreshold: allValues.circuitBreakerFailureThreshold || orchestrator.executionStrategy.circuitBreaker.failureThreshold,
-          recoveryTimeout: allValues.circuitBreakerRecoveryTimeout || orchestrator.executionStrategy.circuitBreaker.recoveryTimeout
+          ...orchestrationConfig.executionStrategy.circuitBreaker,
+          enabled: allValues.circuitBreakerEnabled !== undefined ? allValues.circuitBreakerEnabled : orchestrationConfig.executionStrategy.circuitBreaker.enabled,
+          failureThreshold: allValues.circuitBreakerFailureThreshold || orchestrationConfig.executionStrategy.circuitBreaker.failureThreshold,
+          recoveryTimeout: allValues.circuitBreakerRecoveryTimeout || orchestrationConfig.executionStrategy.circuitBreaker.recoveryTimeout
         },
         rateLimit: {
-          ...orchestrator.executionStrategy.rateLimit,
-          enabled: allValues.rateLimitEnabled !== undefined ? allValues.rateLimitEnabled : orchestrator.executionStrategy.rateLimit.enabled,
-          requestsPerSecond: allValues.rateLimitRequestsPerSecond || orchestrator.executionStrategy.rateLimit.requestsPerSecond,
-          burstSize: allValues.rateLimitBurstSize || orchestrator.executionStrategy.rateLimit.burstSize
+          ...orchestrationConfig.executionStrategy.rateLimit,
+          enabled: allValues.rateLimitEnabled !== undefined ? allValues.rateLimitEnabled : orchestrationConfig.executionStrategy.rateLimit.enabled,
+          requestsPerSecond: allValues.rateLimitRequestsPerSecond || orchestrationConfig.executionStrategy.rateLimit.requestsPerSecond,
+          burstSize: allValues.rateLimitBurstSize || orchestrationConfig.executionStrategy.rateLimit.burstSize
         }
       };
     }
@@ -191,29 +191,28 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
     // 优化配置更新
     if (Object.keys(changedValues).some(key => key.startsWith('optimization') || key.startsWith('autoScaling') || key.startsWith('caching'))) {
       updates.optimization = {
-        ...orchestrator.optimization,
-        enabled: allValues.optimizationEnabled !== undefined ? allValues.optimizationEnabled : orchestrator.optimization.enabled,
+        ...orchestrationConfig.optimization,
+        enabled: allValues.optimizationEnabled !== undefined ? allValues.optimizationEnabled : orchestrationConfig.optimization.enabled,
         autoScaling: {
-          ...orchestrator.optimization.autoScaling,
-          enabled: allValues.autoScalingEnabled !== undefined ? allValues.autoScalingEnabled : orchestrator.optimization.autoScaling.enabled,
-          minInstances: allValues.autoScalingMinInstances || orchestrator.optimization.autoScaling.minInstances,
-          maxInstances: allValues.autoScalingMaxInstances || orchestrator.optimization.autoScaling.maxInstances,
-          targetCpuUtilization: allValues.autoScalingTargetCpuUtilization || orchestrator.optimization.autoScaling.targetCpuUtilization
+          ...orchestrationConfig.optimization.autoScaling,
+          enabled: allValues.autoScalingEnabled !== undefined ? allValues.autoScalingEnabled : orchestrationConfig.optimization.autoScaling.enabled,
+          minInstances: allValues.autoScalingMinInstances || orchestrationConfig.optimization.autoScaling.minInstances,
+          maxInstances: allValues.autoScalingMaxInstances || orchestrationConfig.optimization.autoScaling.maxInstances,
+          targetCpuUtilization: allValues.autoScalingTargetCpuUtilization || orchestrationConfig.optimization.autoScaling.targetCpuUtilization
         },
         caching: {
-          ...orchestrator.optimization.caching,
-          enabled: allValues.cachingEnabled !== undefined ? allValues.cachingEnabled : orchestrator.optimization.caching.enabled,
-          strategy: allValues.cachingStrategy || orchestrator.optimization.caching.strategy,
-          maxSize: allValues.cachingMaxSize || orchestrator.optimization.caching.maxSize,
-          ttl: allValues.cachingTtl || orchestrator.optimization.caching.ttl
+          ...orchestrationConfig.optimization.caching,
+          enabled: allValues.cachingEnabled !== undefined ? allValues.cachingEnabled : orchestrationConfig.optimization.caching.enabled,
+          strategy: allValues.cachingStrategy || orchestrationConfig.optimization.caching.strategy,
+          maxSize: allValues.cachingMaxSize || orchestrationConfig.optimization.caching.maxSize,
+          ttl: allValues.cachingTtl || orchestrationConfig.optimization.caching.ttl
         }
       };
     }
     
     if (Object.keys(updates).length > 0) {
       updateOrchestrator(updates);
-    }
-  }, [orchestrator, updateOrchestrator]);
+  }, [orchestrationConfig, updateOrchestrator]);
   
   /**
    * 添加编排规则
@@ -292,6 +291,66 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
     updateOrchestrator({ capabilityMapping: updatedMappings });
     message.success('映射删除成功');
   };
+
+  /**
+   * 分析协作关系
+   */
+  const handleAnalyzeCollaboration = useCallback(async () => {
+    try {
+      setExecutionStatus(prev => ({ ...prev, isRunning: true, currentStep: '分析协作关系' }));
+      
+      // 模拟分析过程
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // 生成协调结果
+      const result: CoordinationResult = {
+        success: true,
+        coordinatedCapabilities: capabilities.slice(0, 3).map(cap => cap.id),
+        conflictResolutions: [
+          {
+            conflictType: 'resource_competition',
+            resolution: 'priority_based_allocation',
+            affectedCapabilities: [capabilities[0]?.id || '', capabilities[1]?.id || '']
+          }
+        ],
+        estimatedPerformance: {
+          totalDuration: Math.floor(Math.random() * 500) + 200,
+          resourceUtilization: Math.floor(Math.random() * 30) + 70,
+          throughput: Math.floor(Math.random() * 100) + 50
+        }
+      };
+      
+      setCoordinationResult(result);
+      message.success('协作关系分析完成');
+    } catch (error) {
+      message.error('协作关系分析失败');
+    } finally {
+      setExecutionStatus(prev => ({ ...prev, isRunning: false, currentStep: '' }));
+    }
+  }, [capabilities]);
+
+  /**
+   * 执行协调策略
+   */
+  const handleExecuteCoordination = useCallback(async () => {
+    if (!coordinationResult) {
+      message.warning('请先分析协作关系');
+      return;
+    }
+    
+    try {
+      setExecutionStatus(prev => ({ ...prev, isRunning: true, currentStep: '执行协调策略' }));
+      
+      // 模拟执行过程
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      message.success('协调策略执行完成');
+    } catch (error) {
+      message.error('协调策略执行失败');
+    } finally {
+      setExecutionStatus(prev => ({ ...prev, isRunning: false, currentStep: '' }));
+    }
+  }, [coordinationResult]);
   
   /**
    * 执行编排
@@ -1127,7 +1186,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
 
         {currentTaskPlan ? (
           <div className="task-plan-content">
-            <Card title={currentTaskPlan.name} extra={
+            <Card title={currentTaskPlan?.name || '未命名任务计划'} extra={
               <Space>
                 <Tag color={currentTaskPlan.status === 'completed' ? 'green' : currentTaskPlan.status === 'failed' ? 'red' : 'blue'}>
                   {currentTaskPlan.status}
@@ -1171,7 +1230,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
                 direction="vertical"
                 current={0}
                 items={currentTaskPlan.tasks.map((task, index) => ({
-                  title: task.name,
+                  title: task?.name || '未命名任务',
                   description: task.description,
                   status: task.status === 'completed' ? 'finish' : task.status === 'failed' ? 'error' : task.status === 'executing' ? 'process' : 'wait',
                   icon: <FunctionOutlined />
@@ -1261,7 +1320,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
                       <Button 
                         size="small" 
                         type="link"
-                        onClick={() => message.info(`查看${capability.name}详情`)}
+                        onClick={() => message.info(`查看${capability?.name || '未知能力'}详情`)}
                       >
                         详情
                       </Button>
@@ -1269,7 +1328,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
                   >
                     <List.Item.Meta
                       avatar={<Avatar icon={<ThunderboltOutlined />} />}
-                      title={capability.name}
+                      title={capability?.name || '未知能力'}
                       description={
                         <Space>
                           <Tag color="blue">
@@ -1327,6 +1386,124 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
   };
 
   /**
+   * 渲染协作网络图
+   */
+  const renderCollaborationNetwork = () => {
+    const networkData = {
+      nodes: capabilities.slice(0, 6).map((cap, index) => ({
+        id: cap.id,
+        name: cap?.name || '未知能力',
+        type: cap.type,
+        status: index % 3 === 0 ? 'active' : index % 3 === 1 ? 'pending' : 'idle',
+        x: 100 + (index % 3) * 120,
+        y: 50 + Math.floor(index / 3) * 100
+      })),
+      edges: []
+    };
+
+    // 生成连接关系
+    for (let i = 0; i < networkData.nodes.length - 1; i++) {
+      networkData.edges.push({
+        source: networkData.nodes[i].id,
+        target: networkData.nodes[i + 1].id,
+        type: 'data_flow'
+      });
+    }
+
+    return (
+      <div style={{ height: 280, border: '1px solid #d9d9d9', borderRadius: 6, padding: 16, background: '#fafafa', position: 'relative' }}>
+        <div style={{ textAlign: 'center', marginBottom: 16 }}>
+          <Text strong>协作网络拓扑</Text>
+          <div style={{ fontSize: 12, color: '#666', marginTop: 4 }}>
+            节点: {networkData.nodes.length} | 连接: {networkData.edges.length}
+          </div>
+        </div>
+        
+        <svg width="100%" height="200" style={{ overflow: 'visible' }}>
+          {/* 渲染连接线 */}
+          {networkData.edges.map((edge, index) => {
+            const sourceNode = networkData.nodes.find(n => n.id === edge.source);
+            const targetNode = networkData.nodes.find(n => n.id === edge.target);
+            if (!sourceNode || !targetNode) return null;
+            
+            return (
+              <g key={index}>
+                <line
+                  x1={sourceNode.x}
+                  y1={sourceNode.y}
+                  x2={targetNode.x}
+                  y2={targetNode.y}
+                  stroke="#1890ff"
+                  strokeWidth="2"
+                  strokeDasharray="5,5"
+                  markerEnd="url(#arrowhead)"
+                />
+                <text
+                  x={(sourceNode.x + targetNode.x) / 2}
+                  y={(sourceNode.y + targetNode.y) / 2 - 5}
+                  fontSize="10"
+                  fill="#666"
+                  textAnchor="middle"
+                >
+                  数据流
+                </text>
+              </g>
+            );
+          })}
+          
+          {/* 箭头标记 */}
+          <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#1890ff" />
+            </marker>
+          </defs>
+          
+          {/* 渲染节点 */}
+          {networkData.nodes.map((node, index) => (
+            <g key={node.id}>
+              <circle
+                cx={node.x}
+                cy={node.y}
+                r="20"
+                fill={node.status === 'active' ? '#52c41a' : node.status === 'pending' ? '#fa8c16' : '#d9d9d9'}
+                stroke="#fff"
+                strokeWidth="2"
+              />
+              <text
+                x={node.x}
+                y={node.y + 35}
+                fontSize="11"
+                fill="#262626"
+                textAnchor="middle"
+                fontWeight="500"
+              >
+                {(node?.name || '未知能力').length > 8 ? (node?.name || '未知能力').substring(0, 8) + '...' : (node?.name || '未知能力')}
+              </text>
+              <text
+                x={node.x}
+                y={node.y + 48}
+                fontSize="9"
+                fill="#8c8c8c"
+                textAnchor="middle"
+              >
+                {node.status}
+              </text>
+            </g>
+          ))}
+        </svg>
+        
+        <div style={{ position: 'absolute', bottom: 8, right: 8, fontSize: 10, color: '#999' }}>
+          <Space size={16}>
+            <span><span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: '#52c41a', marginRight: 4 }}></span>活跃</span>
+            <span><span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: '#fa8c16', marginRight: 4 }}></span>等待</span>
+            <span><span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: '#d9d9d9', marginRight: 4 }}></span>空闲</span>
+          </Space>
+        </div>
+      </div>
+    );
+  };
+
+  /**
    * 渲染协作协调界面
    */
   const renderCoordination = () => {
@@ -1342,16 +1519,24 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
               <Space>
                 <Button 
                   icon={<InteractionOutlined />}
-                  onClick={() => message.info('分析协作关系')}
+                  onClick={handleAnalyzeCollaboration}
+                  disabled={readonly}
                 >
                   分析协作
                 </Button>
                 <Button 
                   type="primary"
                   icon={<TeamOutlined />}
-                  onClick={() => message.info('执行协调策略')}
+                  onClick={handleExecuteCoordination}
+                  disabled={readonly}
                 >
                   执行协调
+                </Button>
+                <Button 
+                  icon={<BarChartOutlined />}
+                  onClick={() => setMonitoringDrawerVisible(true)}
+                >
+                  监控面板
                 </Button>
               </Space>
             </Col>
@@ -1359,42 +1544,59 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
         </div>
 
         <Row gutter={[16, 16]}>
-          <Col span={12}>
-            <Card title="协作网络" size="small">
-              <div className="coordination-network">
-                <Empty 
-                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  description="协作网络图"
-                >
-                  <p>显示能力间的协作关系和数据流</p>
-                </Empty>
-              </div>
+          <Col span={14}>
+            <Card title="协作网络" size="small" extra={
+              <Space>
+                <Tag color="blue">实时更新</Tag>
+                <Button size="small" icon={<ReloadOutlined />} onClick={() => message.info('刷新网络状态')}>刷新</Button>
+              </Space>
+            }>
+              {renderCollaborationNetwork()}
             </Card>
           </Col>
           
-          <Col span={12}>
-            <Card title="协调策略" size="small">
+          <Col span={10}>
+            <Card title="协调策略" size="small" extra={
+              <Button size="small" type="link" onClick={() => message.info('配置策略')}>配置</Button>
+            }>
               <List
+                size="small"
                 dataSource={[
-                  { name: '资源竞争解决', status: 'active', description: '解决多个能力对同一资源的竞争' },
-                  { name: '数据流协调', status: 'pending', description: '协调能力间的数据传递' },
-                  { name: '执行时序同步', status: 'active', description: '同步多个能力的执行时序' },
-                  { name: '故障恢复协调', status: 'inactive', description: '协调故障恢复过程' }
+                  { name: '资源竞争解决', status: 'active', description: '解决多个能力对同一资源的竞争', priority: 'high', conflicts: 2 },
+                  { name: '数据流协调', status: 'pending', description: '协调能力间的数据传递', priority: 'medium', conflicts: 0 },
+                  { name: '执行时序同步', status: 'active', description: '同步多个能力的执行时序', priority: 'high', conflicts: 1 },
+                  { name: '故障恢复协调', status: 'inactive', description: '协调故障恢复过程', priority: 'low', conflicts: 0 },
+                  { name: '负载均衡协调', status: 'active', description: '协调系统负载分配', priority: 'medium', conflicts: 0 }
                 ]}
                 renderItem={(strategy) => (
-                  <List.Item>
+                  <List.Item actions={[
+                    strategy.conflicts > 0 && (
+                      <Badge count={strategy.conflicts} size="small">
+                        <ExclamationCircleOutlined style={{ color: '#fa541c' }} />
+                      </Badge>
+                    ),
+                    <Tag color={strategy.priority === 'high' ? 'red' : strategy.priority === 'medium' ? 'orange' : 'green'} size="small">
+                      {strategy.priority === 'high' ? '高' : strategy.priority === 'medium' ? '中' : '低'}
+                    </Tag>
+                  ]}>
                     <List.Item.Meta
-                      avatar={<Avatar icon={<InteractionOutlined />} />}
-                      title={
-                        <Space>
-                          {strategy.name}
-                          <Badge 
-                            status={strategy.status === 'active' ? 'success' : strategy.status === 'pending' ? 'processing' : 'default'} 
-                            text={strategy.status}
-                          />
-                        </Space>
+                      avatar={
+                        <Badge 
+                          status={strategy.status === 'active' ? 'success' : strategy.status === 'pending' ? 'processing' : 'default'}
+                          dot
+                        >
+                          <Avatar size="small" icon={<InteractionOutlined />} />
+                        </Badge>
                       }
-                      description={strategy.description}
+                      title={strategy?.name || '未命名策略'}
+                      description={
+                        <div>
+                          <div style={{ fontSize: 12, color: '#666', marginBottom: 4 }}>{strategy.description}</div>
+                          {strategy.conflicts > 0 && (
+                            <Text type="warning" style={{ fontSize: 11 }}>检测到 {strategy.conflicts} 个冲突</Text>
+                          )}
+                        </div>
+                      }
                     />
                   </List.Item>
                 )}
@@ -1403,39 +1605,157 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
           </Col>
         </Row>
 
-        <Card title="协调结果" style={{ marginTop: 16 }}>
+        <Card title="协调结果" style={{ marginTop: 16 }} extra={
+          coordinationResult && (
+            <Space>
+              <Tag color={coordinationResult.success ? 'green' : 'red'}>
+                {coordinationResult.success ? '协调成功' : '协调失败'}
+              </Tag>
+              <Text type="secondary" style={{ fontSize: 12 }}>
+                更新时间: {new Date().toLocaleTimeString()}
+              </Text>
+            </Space>
+          )
+        }>
           {coordinationResult ? (
             <div>
               <Row gutter={[16, 16]}>
-                <Col span={8}>
+                <Col span={6}>
                   <Statistic
                     title="协调成功率"
-                    value={coordinationResult.success ? 100 : 0}
+                    value={coordinationResult.success ? 95 : 0}
                     suffix="%"
                     valueStyle={{ color: coordinationResult.success ? '#3f8600' : '#cf1322' }}
                     prefix={<TeamOutlined />}
                   />
                 </Col>
-                <Col span={8}>
+                <Col span={6}>
                   <Statistic
                     title="资源利用率"
                     value={coordinationResult.estimatedPerformance.resourceUtilization}
                     suffix="%"
                     prefix={<DashboardOutlined />}
+                    valueStyle={{ color: '#1890ff' }}
                   />
                 </Col>
-                <Col span={8}>
+                <Col span={6}>
                   <Statistic
                     title="协调延迟"
                     value={coordinationResult.estimatedPerformance.totalDuration}
                     suffix="ms"
                     prefix={<ClockCircleOutlined />}
+                    valueStyle={{ color: '#fa8c16' }}
                   />
+                </Col>
+                <Col span={6}>
+                  <Statistic
+                    title="冲突解决数"
+                    value={3}
+                    prefix={<ExclamationCircleOutlined />}
+                    valueStyle={{ color: '#722ed1' }}
+                  />
+                </Col>
+              </Row>
+              
+              <Divider />
+              
+              <Row gutter={[16, 16]}>
+                <Col span={12}>
+                  <Card title="协调时间线" size="small">
+                    <Timeline size="small">
+                      <Timeline.Item color="green" dot={<CheckCircleOutlined />}>
+                        <div>
+                          <Text strong>协调启动</Text>
+                          <br />
+                          <Text type="secondary" style={{ fontSize: 12 }}>开始分析协作关系和依赖</Text>
+                        </div>
+                      </Timeline.Item>
+                      <Timeline.Item color="blue" dot={<SearchOutlined />}>
+                        <div>
+                          <Text strong>冲突检测</Text>
+                          <br />
+                          <Text type="secondary" style={{ fontSize: 12 }}>发现并分析 3 个潜在冲突</Text>
+                        </div>
+                      </Timeline.Item>
+                      <Timeline.Item color="orange" dot={<SettingOutlined />}>
+                        <div>
+                          <Text strong>策略执行</Text>
+                          <br />
+                          <Text type="secondary" style={{ fontSize: 12 }}>应用资源竞争解决策略</Text>
+                        </div>
+                      </Timeline.Item>
+                      <Timeline.Item color="green" dot={<CheckCircleOutlined />}>
+                        <div>
+                          <Text strong>协调完成</Text>
+                          <br />
+                          <Text type="secondary" style={{ fontSize: 12 }}>成功率 95%，延迟 {coordinationResult.estimatedPerformance.totalDuration}ms</Text>
+                        </div>
+                      </Timeline.Item>
+                    </Timeline>
+                  </Card>
+                </Col>
+                <Col span={12}>
+                  <Card title="性能指标" size="small">
+                    <Space direction="vertical" style={{ width: '100%' }} size={12}>
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                          <Text style={{ fontSize: 12 }}>协调效率</Text>
+                          <Text style={{ fontSize: 12, color: '#52c41a' }}>95%</Text>
+                        </div>
+                        <Progress 
+                          percent={95} 
+                          size="small" 
+                          status="success"
+                          strokeColor="#52c41a"
+                        />
+                      </div>
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                          <Text style={{ fontSize: 12 }}>资源优化</Text>
+                          <Text style={{ fontSize: 12, color: '#1890ff' }}>{coordinationResult.estimatedPerformance.resourceUtilization}%</Text>
+                        </div>
+                        <Progress 
+                          percent={coordinationResult.estimatedPerformance.resourceUtilization} 
+                          size="small" 
+                          strokeColor="#1890ff"
+                        />
+                      </div>
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                          <Text style={{ fontSize: 12 }}>响应速度</Text>
+                          <Text style={{ fontSize: 12, color: '#fa8c16' }}>{Math.max(0, 100 - coordinationResult.estimatedPerformance.totalDuration / 10)}%</Text>
+                        </div>
+                        <Progress 
+                          percent={Math.max(0, 100 - coordinationResult.estimatedPerformance.totalDuration / 10)} 
+                          size="small" 
+                          strokeColor="#fa8c16"
+                        />
+                      </div>
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                          <Text style={{ fontSize: 12 }}>稳定性</Text>
+                          <Text style={{ fontSize: 12, color: '#722ed1' }}>88%</Text>
+                        </div>
+                        <Progress 
+                          percent={88} 
+                          size="small" 
+                          strokeColor="#722ed1"
+                        />
+                      </div>
+                    </Space>
+                  </Card>
                 </Col>
               </Row>
             </div>
           ) : (
-            <Empty description="暂无协调结果" />
+            <Empty 
+              description="暂无协调结果" 
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+            >
+              <Button type="primary" onClick={handleAnalyzeCollaboration} disabled={readonly}>
+                开始协调分析
+              </Button>
+            </Empty>
           )}
         </Card>
       </div>
@@ -1490,7 +1810,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
                       avatar={<Avatar icon={<RocketOutlined />} />}
                       title={
                         <Space>
-                          {strategy.name}
+                          {strategy?.name || '未命名策略'}
                           <Switch size="small" checked={strategy.enabled} disabled={readonly} />
                         </Space>
                       }

@@ -32,7 +32,7 @@
       "templates": "/api/v1/agent-templates",
       "agents": "/api/v1/agents",
       "workflows": "/api/v1/workflows",
-      "capabilities": "/api/v1/capabilities",
+      "capabilities": "/api/capabilities",
       "reports": "/api/statistics/reports"
     },
     "headers": {

@@ -5,6 +5,86 @@ const errorHandler = require('../middleware/errorHandler')
 const { v4: uuidv4 } = require('uuid')
 
 class CapabilityController {
+  // 创建能力
+  async createCapability(req, res) {
+    try {
+      const capabilityData = req.body;
+      capabilityData.ownerId = req.user.id;
+
+      const newCapability = await dataService.createCapability(capabilityData);
+
+      logger.info('能力创建成功', {
+        userId: req.user.id,
+        action: 'CREATE_CAPABILITY',
+        capabilityId: newCapability.id
+      });
+
+      res.status(201).json({
+        success: true,
+        data: newCapability
+      });
+    } catch (error) {
+      logger.error('创建能力失败', {
+        error: error.message,
+        stack: error.stack,
+        userId: req.user.id
+      });
+      errorHandler.handleError(error, res);
+    }
+  }
+
+  // 更新能力
+  async updateCapability(req, res) {
+    try {
+      const { id } = req.params;
+      const capabilityData = req.body;
+
+      const updatedCapability = await dataService.updateCapability(id, capabilityData, req.user);
+
+      logger.info('能力更新成功', {
+        userId: req.user.id,
+        action: 'UPDATE_CAPABILITY',
+        capabilityId: id
+      });
+
+      res.json({
+        success: true,
+        data: updatedCapability
+      });
+    } catch (error) {
+      logger.error('更新能力失败', {
+        error: error.message,
+        stack: error.stack,
+        userId: req.user.id
+      });
+      errorHandler.handleError(error, res);
+    }
+  }
+
+  // 删除能力
+  async deleteCapability(req, res) {
+    try {
+      const { id } = req.params;
+
+      await dataService.deleteCapability(id, req.user);
+
+      logger.info('能力删除成功', {
+        userId: req.user.id,
+        action: 'DELETE_CAPABILITY',
+        capabilityId: id
+      });
+
+      res.status(204).send();
+    } catch (error) {
+      logger.error('删除能力失败', {
+        error: error.message,
+        stack: error.stack,
+        userId: req.user.id
+      });
+      errorHandler.handleError(error, res);
+    }
+  }
+
   // 获取能力列表
   async getCapabilities(req, res) {
     try {

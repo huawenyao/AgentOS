@@ -256,6 +256,7 @@
   background: transparent;
   box-shadow: none;
   transition: all var(--transition-normal);
+  color: var(--text-primary);
 }
 
 .toolbar-button-group .ant-btn:hover {
@@ -265,11 +266,14 @@
 
 .toolbar-button-group .ant-btn.ant-btn-primary {
   background-color: var(--primary-color);
-  color: white;
+  color: white !important;
+  border-color: var(--primary-color);
 }
 
 .toolbar-button-group .ant-btn.ant-btn-primary:hover {
   background-color: var(--primary-hover);
+  color: white !important;
+  border-color: var(--primary-hover);
 }
 
 /* 主要内容区域 */
@@ -303,6 +307,7 @@
   background-image: 
     radial-gradient(circle, var(--border-color) 1px, transparent 1px);
   background-size: 20px 20px;
+  overflow: auto; /* 添加滚动条支持 */
 }
 
 /* ReactFlow 自定义样式 */
@@ -331,16 +336,20 @@
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2), var(--shadow-lg);
 }
 
-/* 能力节点样式 */
+/* 能力节点样式 - 优化尺寸和美观性 */
 .capability-node {
   position: relative;
   background-color: var(--bg-primary);
   border-radius: var(--radius-lg);
-  padding: var(--spacing-md);
-  min-width: 200px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  min-width: 240px;
+  max-width: 280px;
+  min-height: 120px;
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-normal);
   border: 2px solid var(--border-color);
+  cursor: pointer;
+  overflow: hidden;
 }
 
 .capability-node::before {
@@ -358,8 +367,8 @@
 }
 
 .capability-node:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: var(--shadow-lg);
   border-color: var(--primary-color);
 }
 
@@ -369,16 +378,18 @@
 
 .capability-node.selected {
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2), var(--shadow-lg);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3), var(--shadow-lg);
+  transform: scale(1.05);
 }
 
 .capability-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-sm);
   font-weight: 600;
   font-size: 0.875rem;
+  min-height: 48px;
 }
 
 .capability-name {
@@ -388,19 +399,26 @@
 
 .capability-type-badge {
   position: absolute;
-  top: -8px;
-  right: -8px;
-  width: 24px;
-  height: 24px;
+  top: -6px;
+  right: -6px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: white;
   font-weight: bold;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
   z-index: 2;
+  border: 2px solid var(--bg-primary);
+  transition: all var(--transition-normal);
+}
+
+.capability-node:hover .capability-type-badge {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-lg);
 }
 
 .capability-type-cognitive {
@@ -419,9 +437,51 @@
   background-color: var(--secondary-color);
 }
 
-/* 不同能力类型的特定样式 */
+/* 能力节点焦点状态 */
+.capability-node:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* 能力节点禁用状态 */
+.capability-node.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  filter: grayscale(0.3);
+}
+
+.capability-node.disabled:hover {
+  transform: none;
+  box-shadow: var(--shadow-sm);
+}
+
+/* 能力节点连接状态指示 */
+.capability-node.connected::before {
+  opacity: 0.2;
+}
+
+.capability-node.connecting {
+  animation: connectingPulse 1s ease-in-out infinite;
+}
+
+@keyframes connectingPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* 不同能力类型的特定样式 - 优化颜色主题和视觉层次 */
 .capability-node.capability-type-cognitive {
   border-color: #1890ff;
+  background: linear-gradient(135deg, rgba(24, 144, 255, 0.02), rgba(64, 169, 255, 0.05));
+}
+
+.capability-node.capability-type-cognitive:hover {
+  border-color: #1890ff;
+  background: linear-gradient(135deg, rgba(24, 144, 255, 0.05), rgba(64, 169, 255, 0.08));
 }
 
 .capability-node.capability-type-cognitive .capability-type-badge {
@@ -430,6 +490,12 @@
 
 .capability-node.capability-type-reasoning {
   border-color: #52c41a;
+  background: linear-gradient(135deg, rgba(82, 196, 26, 0.02), rgba(115, 209, 61, 0.05));
+}
+
+.capability-node.capability-type-reasoning:hover {
+  border-color: #52c41a;
+  background: linear-gradient(135deg, rgba(82, 196, 26, 0.05), rgba(115, 209, 61, 0.08));
 }
 
 .capability-node.capability-type-reasoning .capability-type-badge {
@@ -438,6 +504,12 @@
 
 .capability-node.capability-type-decision {
   border-color: #faad14;
+  background: linear-gradient(135deg, rgba(250, 173, 20, 0.02), rgba(255, 197, 61, 0.05));
+}
+
+.capability-node.capability-type-decision:hover {
+  border-color: #faad14;
+  background: linear-gradient(135deg, rgba(250, 173, 20, 0.05), rgba(255, 197, 61, 0.08));
 }
 
 .capability-node.capability-type-decision .capability-type-badge {
@@ -446,13 +518,19 @@
 
 .capability-node.capability-type-learning {
   border-color: #722ed1;
+  background: linear-gradient(135deg, rgba(114, 46, 209, 0.02), rgba(146, 84, 222, 0.05));
+}
+
+.capability-node.capability-type-learning:hover {
+  border-color: #722ed1;
+  background: linear-gradient(135deg, rgba(114, 46, 209, 0.05), rgba(146, 84, 222, 0.08));
 }
 
 .capability-node.capability-type-learning .capability-type-badge {
   background: linear-gradient(135deg, #722ed1, #9254de);
 }
 
-/* ReactFlow 节点样式 */
+/* ReactFlow 节点样式 - 优化交互效果 */
 .react-flow__node-capability {
   background: transparent !important;
   border: none !important;
@@ -466,49 +544,77 @@
 .react-flow__node-capability .capability-node {
   transform: none;
   transition: all var(--transition-normal);
+  will-change: transform, box-shadow;
 }
 
 .react-flow__node-capability:hover .capability-node {
-  transform: translateY(-2px);
+  transform: translateY(-3px) scale(1.02);
   box-shadow: var(--shadow-lg);
 }
 
-/* 能力图标样式 */
+.react-flow__node-capability.selected .capability-node {
+  animation: pulseSelection 2s ease-in-out infinite;
+}
+
+@keyframes pulseSelection {
+  0%, 100% {
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3), var(--shadow-lg);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(99, 102, 241, 0.2), var(--shadow-lg);
+  }
+}
+
+/* 能力图标样式 - 优化尺寸和视觉效果 */
 .capability-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 16px;
-  margin-right: var(--spacing-sm);
+  font-size: 18px;
   box-shadow: var(--shadow-sm);
   flex-shrink: 0;
+  transition: all var(--transition-normal);
+}
+
+.capability-node:hover .capability-icon {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-md);
 }
 
 .capability-info {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .capability-info h3 {
-  margin: 0;
-  font-size: 14px;
+  margin: 0 0 4px 0;
+  font-size: 15px;
   font-weight: 600;
   color: var(--text-primary);
-  line-height: 1.2;
-}
-
-.capability-info p {
-  margin: 2px 0 0 0;
-  font-size: 12px;
-  color: var(--text-secondary);
   line-height: 1.3;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.capability-info p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  white-space: normal;
 }
 
 .capability-description {
@@ -516,7 +622,9 @@
   font-size: 11px;
   margin-top: var(--spacing-xs);
   line-height: 1.4;
-  padding: 0 var(--spacing-sm);
+  padding: var(--spacing-xs) 0;
+  border-top: 1px solid var(--border-color);
+  opacity: 0.8;
 }
 
 .capability-metrics {
@@ -524,7 +632,16 @@
   gap: var(--spacing-xs);
   flex-wrap: wrap;
   margin-top: var(--spacing-xs);
-  padding: 0 var(--spacing-sm);
+  align-items: center;
+}
+
+.capability-metric {
+  display: flex;
+  align-items: center;
+}
+
+.capability-metric .ant-badge {
+  font-size: 10px;
 }
 
 .capability-metric {
@@ -683,6 +800,25 @@
   font-size: 0.875rem;
   color: var(--text-primary);
   font-weight: 500;
+}
+
+/* 能力库抽屉响应式设计 */
+@media (max-width: 768px) {
+  .capability-library {
+    height: calc(100vh - 80px);
+  }
+  
+  .capability-card {
+    margin-bottom: 6px;
+  }
+  
+  .capability-card .ant-card-body {
+    padding: 12px;
+  }
+  
+  .capability-list {
+    gap: 8px;
+  }
 }
 
 /* 响应式设计 */
@@ -862,8 +998,29 @@
   font-size: 14px;
 }
 
+.capability-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 11px;
+  color: #999;
+}
+
+.capability-meta .ant-badge {
+  font-size: 11px;
+}
+
+.capability-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #666;
+  margin-top: 4px;
+}
+
 .capability-tags {
-  margin-top: 12px;
+  margin-top: 8px;
 }
 
 
@@ -902,13 +1059,15 @@
 
 /* 能力库抽屉 */
 .capability-library {
-  height: 100%;
+  height: calc(100vh - 120px);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .library-header {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+  flex-shrink: 0;
 }
 
 .filter-tabs .ant-tabs-tab {
@@ -921,13 +1080,17 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
+  padding-right: 8px;
+  min-height: 0;
 }
 
 .capability-card {
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 6px;
   transition: all 0.3s ease;
+  margin-bottom: 0;
+  flex-shrink: 0;
 }
 
 .capability-card:hover {
@@ -935,19 +1098,28 @@
   box-shadow: var(--shadow);
 }
 
+.capability-card .ant-card-body {
+  padding: 12px;
+}
+
+.capability-card .ant-card-head {
+  padding: 8px 12px;
+  min-height: auto;
+}
+
 .card-title {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
+  gap: 6px;
+  font-size: 13px;
   font-weight: 600;
 }
 
 .capability-description {
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin: 8px 0;
-  line-height: 1.5;
+  font-size: 12px;
+  margin-bottom: 8px;
+  line-height: 1.4;
+  color: #666;
 }
 
 .capability-meta {
@@ -956,6 +1128,37 @@
   gap: 12px;
   margin: 8px 0;
   font-size: 12px;
+  flex-wrap: wrap;
+}
+
+.capability-meta .ant-tag {
+  margin: 0;
+  font-size: 11px;
+  border-radius: var(--radius-sm);
+}
+
+.capability-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 8px 0;
+  font-size: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.capability-stats span {
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.capability-stats .version {
+  color: var(--info-color);
+  font-weight: 500;
+}
+
+.capability-stats .author {
+  color: var(--text-tertiary);
 }
 
 .version {
@@ -1099,10 +1302,15 @@
   box-shadow: var(--shadow);
 }
 
-/* 响应式设计 */
+/* 响应式设计 - 优化能力节点在不同屏幕尺寸下的显示 */
 @media (max-width: 1200px) {
   .content-right {
     width: 350px;
+  }
+  
+  .capability-node {
+    min-width: 220px;
+    max-width: 260px;
   }
 }
 
@@ -1124,8 +1332,31 @@
   }
   
   .capability-node {
-    min-width: 150px;
-    padding: 8px;
+    min-width: 180px;
+    max-width: 220px;
+    min-height: 100px;
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+  
+  .capability-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+  
+  .capability-info h3 {
+    font-size: 14px;
+  }
+  
+  .capability-info p {
+    font-size: 11px;
+    -webkit-line-clamp: 1;
+  }
+  
+  .capability-type-badge {
+    width: 24px;
+    height: 24px;
+    font-size: 0.7rem;
   }
 }
 
@@ -1142,9 +1373,54 @@
   .capability-library {
     padding: 12px;
   }
+  
+  .capability-node {
+    min-width: 160px;
+    max-width: 200px;
+    min-height: 90px;
+    padding: var(--spacing-xs);
+  }
+  
+  .capability-node:hover {
+    transform: translateY(-2px) scale(1.01);
+  }
+  
+  .capability-node.selected {
+    transform: scale(1.02);
+  }
+  
+  .capability-header {
+    min-height: 40px;
+  }
+  
+  .capability-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+  
+  .capability-info h3 {
+    font-size: 13px;
+  }
+  
+  .capability-info p {
+    font-size: 10px;
+  }
+  
+  .capability-description {
+    font-size: 10px;
+  }
+  
+  .capability-type-badge {
+    width: 22px;
+    height: 22px;
+    font-size: 0.65rem;
+    top: -4px;
+    right: -4px;
+  }
 }
 
-/* 动画效果 */
+/* 动画效果 - 增强视觉反馈 */
 .capability-card {
   animation: fadeInUp 0.3s ease;
 }
@@ -1162,14 +1438,47 @@
 
 .capability-node {
   animation: fadeIn 0.5s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.capability-node::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.capability-node:hover::after {
+  left: 100%;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
+    transform: scale(0.9);
   }
   to {
     opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 能力节点加载动画 */
+.capability-node.loading {
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
   }
 }
 
@@ -1427,4 +1736,290 @@
 /* 颜色选择器样式 */
 .ant-color-picker {
   font-size: 13px;
+}
+
+/* 编排配置面板样式 */
+.orchestration-panel {
+  padding: 16px;
+  background: var(--bg-primary);
+}
+
+.orchestration-panel .ant-card {
+  margin-bottom: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.orchestration-panel .ant-card-head {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.orchestration-panel .ant-card-head-title {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.orchestration-panel .ant-form-item-label > label {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* 知识图谱配置面板样式 */
+.knowledge-graph-panel {
+  padding: 16px;
+  background: var(--bg-primary);
+}
+
+.knowledge-graph-panel .ant-card {
+  margin-bottom: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.knowledge-graph-panel .ant-card-head {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.knowledge-graph-panel .ant-card-head-title {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.knowledge-graph-panel .ant-form-item-label > label {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* 学习配置面板样式 */
+.learning-panel {
+  padding: 16px;
+  background: var(--bg-primary);
+}
+
+.learning-panel .ant-card {
+  margin-bottom: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.learning-panel .ant-card-head {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.learning-panel .ant-card-head-title {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.learning-panel .ant-form-item-label > label {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.learning-panel .ant-checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.learning-panel .ant-checkbox-wrapper {
+  margin-right: 0;
+}
+
+/* 部署配置面板样式 */
+.deployment-panel {
+  padding: 16px;
+  background: var(--bg-primary);
+}
+
+.deployment-panel .ant-card {
+  margin-bottom: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.deployment-panel .ant-card-head {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.deployment-panel .ant-card-head-title {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.deployment-panel .ant-form-item-label > label {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.deployment-panel .ant-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.deployment-panel .ant-radio-wrapper {
+  margin-right: 0;
+}
+
+/* 配置面板通用样式 */
+.orchestration-panel .ant-input,
+.knowledge-graph-panel .ant-input,
+.learning-panel .ant-input,
+.deployment-panel .ant-input,
+.orchestration-panel .ant-select-selector,
+.knowledge-graph-panel .ant-select-selector,
+.learning-panel .ant-select-selector,
+.deployment-panel .ant-select-selector,
+.orchestration-panel .ant-input-number,
+.knowledge-graph-panel .ant-input-number,
+.learning-panel .ant-input-number,
+.deployment-panel .ant-input-number {
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.orchestration-panel .ant-input:hover,
+.knowledge-graph-panel .ant-input:hover,
+.learning-panel .ant-input:hover,
+.deployment-panel .ant-input:hover,
+.orchestration-panel .ant-select-selector:hover,
+.knowledge-graph-panel .ant-select-selector:hover,
+.learning-panel .ant-select-selector:hover,
+.deployment-panel .ant-select-selector:hover,
+.orchestration-panel .ant-input-number:hover,
+.knowledge-graph-panel .ant-input-number:hover,
+.learning-panel .ant-input-number:hover,
+.deployment-panel .ant-input-number:hover {
+  border-color: var(--primary-color);
+}
+
+.orchestration-panel .ant-input:focus,
+.knowledge-graph-panel .ant-input:focus,
+.learning-panel .ant-input:focus,
+.deployment-panel .ant-input:focus,
+.orchestration-panel .ant-select-focused .ant-select-selector,
+.knowledge-graph-panel .ant-select-focused .ant-select-selector,
+.learning-panel .ant-select-focused .ant-select-selector,
+.deployment-panel .ant-select-focused .ant-select-selector,
+.orchestration-panel .ant-input-number:focus,
+.knowledge-graph-panel .ant-input-number:focus,
+.learning-panel .ant-input-number:focus,
+.deployment-panel .ant-input-number:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+/* 滑块样式 */
+.orchestration-panel .ant-slider,
+.learning-panel .ant-slider,
+.deployment-panel .ant-slider {
+  margin: 16px 0;
+}
+
+.orchestration-panel .ant-slider-track,
+.learning-panel .ant-slider-track,
+.deployment-panel .ant-slider-track {
+  background: var(--primary-color);
+}
+
+.orchestration-panel .ant-slider-handle,
+.learning-panel .ant-slider-handle,
+.deployment-panel .ant-slider-handle {
+  border: 2px solid var(--primary-color);
+}
+
+/* 开关样式 */
+.deployment-panel .ant-switch {
+  background: var(--border-color);
+}
+
+.deployment-panel .ant-switch-checked {
+  background: var(--primary-color);
+}
+
+/* 复选框样式 */
+.learning-panel .ant-checkbox-wrapper,
+.deployment-panel .ant-checkbox-wrapper {
+  color: var(--text-primary);
+}
+
+.learning-panel .ant-checkbox-checked .ant-checkbox-inner,
+.deployment-panel .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+/* 单选框样式 */
+.orchestration-panel .ant-radio-wrapper,
+.deployment-panel .ant-radio-wrapper {
+  color: var(--text-primary);
+}
+
+.orchestration-panel .ant-radio-checked .ant-radio-inner,
+.deployment-panel .ant-radio-checked .ant-radio-inner {
+  border-color: var(--primary-color);
+}
+
+.orchestration-panel .ant-radio-checked .ant-radio-inner::after,
+.deployment-panel .ant-radio-checked .ant-radio-inner::after {
+  background-color: var(--primary-color);
+}
+
+/* 自定义滚动条样式 */
+.flow-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.flow-container::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+}
+
+.flow-container::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition-normal);
+}
+
+.flow-container::-webkit-scrollbar-thumb:hover {
+  background: var(--border-hover);
+}
+
+.flow-container::-webkit-scrollbar-corner {
+  background: var(--bg-tertiary);
+}
+
+/* Firefox 滚动条样式 */
+.flow-container {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) var(--bg-tertiary);
+}
+
+/* 自定义按钮文字颜色 */
+.header-right .ant-btn {
+  color: #000000 !important;
+}
+
+.header-right .ant-btn:hover {
+  color: #000000 !important;
+}
+
+.header-right .ant-btn:focus {
+  color: #000000 !important;
+}
+
+.header-right .ant-btn:active {
+  color: #000000 !important;
 }

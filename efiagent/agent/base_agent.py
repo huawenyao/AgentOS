@@ -59,7 +59,7 @@ class AgentConfig(BaseModel):
     description: Optional[str] = None  # 描述
     capabilities: List[AgentCapability] = Field(default_factory=list)  # 能力列表
     parameters: Dict[str, Any] = Field(default_factory=dict)  # 参数
-    model_config: Dict[str, Any] = Field(default_factory=dict)  # 模型配置
+    agent_model_config: Dict[str, Any] = Field(default_factory=dict)  # 模型配置
     
     def to_dict(self) -> Dict[str, Any]:
         """转换为字典
@@ -74,7 +74,7 @@ class AgentConfig(BaseModel):
             "description": self.description,
             "capabilities": [c.to_dict() for c in self.capabilities],
             "parameters": self.parameters,
-            "model_config": self.model_config
+            "agent_model_config": self.agent_model_config
         }
 
 

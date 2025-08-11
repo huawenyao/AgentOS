@@ -291,6 +291,10 @@ export class ModelUnifierService {
         name: backendOrchestrator.name,
         description: backendOrchestrator.description,
         mode: backendOrchestrator.orchestration_mode as any,
+        priority: 1,
+        executionTimeout: 30000,
+        retryCount: 3,
+        errorHandling: 'continue' as 'stop' | 'continue' | 'fallback',
         rules: [],
         capabilityMapping: [],
         executionStrategy: backendOrchestrator.execution_strategy || {

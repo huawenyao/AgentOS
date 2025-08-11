@@ -1,3 +1,10 @@
+import { 
+    CustomerServiceRequest, 
+    CategorizedRequest, 
+    RoutedRequest, 
+    ProcessedRequest 
+} from '../data/customer_service_simulation';
+
 /**
  * EFIAgent 2.0 能力系统模型类型定义
  * 基于认知、推理、决策、学习四大核心能力维度的系统化建模
@@ -65,11 +72,26 @@ export enum CapabilitySource {
   CUSTOM = 'custom',
 }
 
+// 能力来源详细信息接口
+export interface CapabilitySourceInfo {
+  type: CapabilitySource;
+  details: {
+    provider: string;
+    license: string;
+    version: string;
+    url?: string;
+  };
+}
+
 // 能力分类枚举
 export enum CapabilityCategory {
   PERCEPTION = 'perception',
   NLP = 'nlp',
+  SENTIMENT_ANALYSIS = 'sentiment_analysis',
+  INTENT_RECOGNITION = 'intent_recognition',
+  DIALOGUE_MANAGEMENT = 'dialogue_management',
   KNOWLEDGE_GRAPH = 'knowledge_graph',
+  KNOWLEDGE_BASE = 'knowledge_base',
   REASONING = 'reasoning',
   PLANNING = 'planning',
   DECISION_MAKING = 'decision_making',
@@ -80,6 +102,11 @@ export enum CapabilityCategory {
   AGENT_CONTROL = 'agent_control',
   SECURITY = 'security',
   MONITORING = 'monitoring',
+  TOOL_INTEGRATION = 'tool_integration',
+  COLLABORATION = 'collaboration',
+  EXPERIMENTAL = 'experimental',
+  ENTERPRISE = 'enterprise',
+  RESEARCH = 'research',
   OTHER = 'other',
 }
 
@@ -111,6 +138,29 @@ export enum AgentStatus {
   COMPLETED = 'completed',     // 已完成
   DEPLOYING = 'deploying',     // 部署中
   UPDATING = 'updating'        // 更新中
+}
+
+// 工作流执行状态枚举
+export enum WorkflowExecutionStatus {
+  PENDING = 'pending',         // 等待执行
+  RUNNING = 'running',         // 执行中
+  COMPLETED = 'completed',     // 已完成
+  FAILED = 'failed',          // 执行失败
+  CANCELLED = 'cancelled',     // 已取消
+  ERROR = 'error'             // 错误状态
+}
+
+// 工作流节点类型枚举
+export enum WorkflowNodeType {
+  PROCESSING = 'processing',   // 数据处理节点
+  INTEGRATION = 'integration', // 集成节点
+  CONDITION = 'condition',     // 条件节点
+  CONTROL = 'control',         // 控制节点
+  CAPABILITY = 'capability',   // 能力节点
+  VALIDATION = 'validation',   // 验证节点
+  ACTION = 'action',          // 动作节点
+  START = 'start',            // 开始节点
+  END = 'end'                 // 结束节点
 }
 
 // 核心能力模块接口
@@ -268,6 +318,7 @@ export interface CapabilityMetadata {
   organization: string;
   license: string;
   category: string;
+  complexity: 'simple' | 'medium' | 'complex';
   difficulty: 'beginner' | 'intermediate' | 'advanced' | 'expert';
   rating: number;
   downloads: number;
@@ -277,10 +328,15 @@ export interface CapabilityMetadata {
   examples: CapabilityExample[];
   changelog: ChangelogEntry[];
   tags: string[];
+  createdAt: Date;
+  updatedAt: Date;
   implementation: {
     language: string;
     framework: string;
     dependencies: string[];
+    runtime?: string;
+    gpu?: boolean;
+    distributed?: boolean;
     resources: {
       cpu: string;
       memory: string;
@@ -296,6 +352,12 @@ export interface CapabilityMetrics {
   throughput: number;
   successRate: number;
   errorRate: number;
+  performance: {
+    responseTime: number;
+    throughput: number;
+    accuracy: number;
+    reliability: number;
+  };
   
   // 质量指标
   accuracy: number;
@@ -358,6 +420,10 @@ export interface HealthCheckConfig {
 
 // 能力编排器接口
 export interface CapabilityOrchestrator {
+  priority: number; // 新增：优先级
+  executionTimeout: number; // 新增：执行超时
+  retryCount: number; // 新增：重试次数
+  errorHandling: 'stop' | 'continue' | 'fallback'; // 新增：错误处理策略
   id: string;
   name: string;
   description: string;
@@ -468,19 +534,37 @@ export interface PrefetchingConfig {
   lookaheadTime: number; // 预取提前时间（秒）
 }
 
-// Agent 2.0 定义
+// 工作流编排配置
+export interface WorkflowOrchestrationConfig {
+  mode: CapabilityOrchestrationMode;
+  retryPolicy?: RetryPolicy;
+  optimizationConfig?: OptimizationConfig;
+}
+
+// Agent2_0接口 - 内化能力编排功能
 export interface Agent2_0 {
   id: string;
   name: string;
   description: string;
   version: string;
+  type: string;  // Agent类型
   status: AgentStatus;  // Agent运行状态
   
-  // 核心能力配置
+  // 核心能力模块
   capabilities: CoreCapabilityModule[];
   
-  // 能力编排器
-  orchestrator: CapabilityOrchestrator;
+  // 内化的编排配置（原编排器功能内化到Agent中）
+  orchestrationConfig: {
+    mode: CapabilityOrchestrationMode;
+    priority: number;
+    executionTimeout: number;
+    retryCount: number;
+    errorHandling: 'stop' | 'continue' | 'fallback';
+    rules: OrchestrationRule[];
+    capabilityMapping: CapabilityMapping[];
+    executionStrategy: ExecutionStrategy;
+    optimization: OptimizationConfig;
+  };
   
   // 知识图谱配置
   knowledgeGraph: KnowledgeGraphConfig;
@@ -1048,9 +1132,17 @@ export interface AgentMetadata {
   rating: number;
   downloads: number;
   featured: boolean;
+  usageCount: number;
+  lastUsed: Date;
   createdAt: Date;
   updatedAt: Date;
   changelog: ChangelogEntry[];
+  performanceMetrics: {
+    taskCompletionTime: number;
+    accuracy: number;
+    resourceUtilization: number;
+    learningImprovement: number;
+  };
 }
 
 // 变更日志条目
@@ -1058,7 +1150,8 @@ export interface ChangelogEntry {
   version: string;
   date: Date;
   changes: string[];
-  breaking: boolean;
+  breaking?: boolean;
+  type?: string;
 }
 
 // 能力市场接口
@@ -1110,7 +1203,8 @@ export interface CapabilityExample {
   description: string;
   input: any;
   output: any;
-  code: string;
+  code?: string;
+  tags?: string[];
 }
 
 // 支持信息
@@ -1185,7 +1279,7 @@ export interface WorkflowNode {
 export interface WorkflowNodeInput {
   id: string;
   name: string;
-  type: string;
+  dataType: string;
   required: boolean;
   value?: any;
   connected?: boolean;
@@ -1195,7 +1289,8 @@ export interface WorkflowNodeInput {
 export interface WorkflowNodeOutput {
   id: string;
   name: string;
-  type: string;
+  dataType: string;
+  description?: string;
   value?: any;
   connected?: boolean;
 }
@@ -1213,6 +1308,65 @@ export interface WorkflowEdge {
 }
 
 // 工作流执行
+// 工作流定义接口
+export interface WorkflowDefinition {
+  id: string;
+  name: string;
+  description: string;
+  version: string;
+  nodes: WorkflowNode[];
+  edges: WorkflowEdge[];
+  variables: WorkflowVariable[];
+  triggers: WorkflowTrigger[];
+  metadata: WorkflowMetadata;
+  orchestrationConfig: WorkflowOrchestrationConfig;
+}
+
+export interface WorkflowVariable {
+  id: string;
+  name: string;
+  type: string;
+  defaultValue?: any;
+  description?: string;
+}
+
+export interface WorkflowTrigger {
+  id: string;
+  type: 'manual' | 'scheduled' | 'event' | 'webhook';
+  config: Record<string, any>;
+  enabled: boolean;
+}
+
+export interface WorkflowMetadata {
+  createdAt: Date;
+  updatedAt: Date;
+  author: string;
+  tags: string[];
+  category: string;
+  status: 'draft' | 'published' | 'deprecated';
+  permissions: WorkflowPermissions;
+  resourceRequirements?: {
+    cpu?: number;
+    memory?: number;
+    storage?: number;
+    network?: boolean;
+    gpu?: number;
+  };
+}
+
+export interface WorkflowPermissions {
+  read: string[];
+  write: string[];
+  execute: string[];
+}
+
+export interface WorkflowOrchestrationConfig {
+  mode: CapabilityOrchestrationMode;
+  timeout: number;
+  retryPolicy: RetryPolicy;
+  errorHandling: 'stop' | 'continue' | 'retry';
+}
+
 export interface WorkflowExecution {
   id: string;
   workflowId: string;
@@ -1347,3 +1501,81 @@ export interface OptimizationMetrics {
   resourceEfficiency: number;
   reliabilityImprovement: number;
 }
+
+
+export enum CapabilitySystemType {
+    WorkflowMetadata,
+
+    //==============================================================================
+    // │ Customer Service Simulation Types                                        │
+    //==============================================================================
+
+    /**
+     * @description Represents the capability to categorize a customer service request.
+     * @input CustomerServiceRequest - The raw customer request.
+     * @output CategorizedRequest - The request with added analysis and categorization.
+     */
+    CategorizeRequestCapability,
+
+    /**
+     * @description Represents the capability to route a categorized request to the correct department.
+     * @input CategorizedRequest - The categorized customer request.
+     * @output RoutedRequest - The request with added routing information.
+     */
+    RouteRequestCapability,
+
+    /**
+     * @description Represents the capability to send a confirmation notification to the customer.
+     * @input RoutedRequest - The routed customer request.
+     * @output ProcessedRequest - The final processed request with notification status.
+     */
+    SendNotificationCapability,
+
+    /**
+     * @description An Agent specialized in analyzing and categorizing incoming requests.
+     * It uses the `CategorizeRequestCapability`.
+     */
+    CategorizationAgent,
+
+    /**
+     * @description An Agent specialized in routing requests to the appropriate queue.
+     * It uses the `RouteRequestCapability`.
+     */
+    RoutingAgent,
+
+    /**
+     * @description An Agent specialized in notifying customers about their request status.
+     * It uses the `SendNotificationCapability`.
+     */
+    NotificationAgent,
+
+    /**
+     * @description A workflow that orchestrates the entire customer service request process.
+     * It coordinates CategorizationAgent, RoutingAgent, and NotificationAgent.
+     */
+    CustomerServiceWorkflow,
+}
+
+// 导出所有工作流相关的接口
+
+export type {
+    Agent2_0,
+    AgentMetadata,
+    CoreCapabilityModule, 
+    OptimizationConfig,
+    WorkflowDefinition, 
+    WorkflowNodeInput,
+    WorkflowNodeOutput, 
+    WorkflowVariable,
+    WorkflowTrigger,
+    WorkflowMetadata,
+    WorkflowPermissions, 
+    WorkflowOrchestrationConfig, 
+    WorkflowExecution,
+    NodeExecution, 
+    CollaborationConfig,
+    DeploymentConfig, 
+    ModelManagementConfig,
+    SecurityConfig,
+    InfrastructureConfig
+  };

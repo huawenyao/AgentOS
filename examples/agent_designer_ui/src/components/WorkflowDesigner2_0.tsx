@@ -30,8 +30,14 @@ import {
 } from '@ant-design/icons';
 import {
   CoreCapabilityModule, CoreCapabilityType, CapabilityOrchestrationMode,
-  Agent2_0, WorkflowNode, WorkflowEdge, WorkflowExecution
+  Agent2_0, WorkflowNode, WorkflowEdge, WorkflowExecution, WorkflowDefinition,
+  WorkflowVariable, WorkflowTrigger, WorkflowMetadata
 } from './CapabilitySystemTypes';
+import { useWorkflowState, useWorkflowOperations } from './WorkflowStateManager';
+import WorkflowVisualDesigner from './WorkflowVisualDesigner';
+import WorkflowManagerV2 from './WorkflowManagerV2';
+import { WorkflowEngine } from './WorkflowEngine';
+import { generateMockCapabilities, generateMockAgents } from '../data/mockData';
 import './WorkflowDesigner2_0.css';
 
 const { Search } = Input;
@@ -47,43 +53,15 @@ interface WorkflowDesigner2_0Props {
   mode?: 'design' | 'view' | 'debug';
 }
 
-interface WorkflowDefinition {
-  id: string;
-  name: string;
-  description: string;
-  version: string;
-  nodes: WorkflowNode[];
-  edges: WorkflowEdge[];
-  variables: WorkflowVariable[];
-  triggers: WorkflowTrigger[];
-  metadata: WorkflowMetadata;
+interface WorkflowVisualDesignerProps {
+  workflow: WorkflowDefinition;
+  capabilities: CoreCapabilityModule[];
+  onWorkflowChange: (workflow: WorkflowDefinition) => void;
+  onNodeSelect: (node: WorkflowNode | null) => void;
+  mode: 'design' | 'view' | 'debug';
 }
 
-interface WorkflowVariable {
-  id: string;
-  name: string;
-  type: string;
-  defaultValue?: any;
-  description?: string;
-  scope: 'global' | 'local';
-}
 
-interface WorkflowTrigger {
-  id: string;
-  type: 'manual' | 'scheduled' | 'event' | 'webhook';
-  config: any;
-  enabled: boolean;
-}
-
-interface WorkflowMetadata {
-  author: string;
-  createdAt: Date;
-  updatedAt: Date;
-  tags: string[];
-  category: string;
-  complexity: 'simple' | 'medium' | 'complex';
-  estimatedDuration: number;
-}
 
 interface CanvasState {
   zoom: number;
@@ -100,6 +78,12 @@ const WorkflowDesigner2_0: React.FC<WorkflowDesigner2_0Props> = ({
 }) => {
   const [form] = Form.useForm();
   const canvasRef = useRef<HTMLDivElement>(null);
+  
+  // 状态管理
+  const { state } = useWorkflowState();
+  const operations = useWorkflowOperations();
+  const [workflowEngine] = useState(() => new WorkflowEngine());
+  const [designMode, setDesignMode] = useState<'visual' | 'manager'>('visual');
   
   // 核心状态
   const [workflow, setWorkflow] = useState<WorkflowDefinition>({
@@ -122,7 +106,8 @@ const WorkflowDesigner2_0: React.FC<WorkflowDesigner2_0Props> = ({
     }
   });
   
-  const [capabilities, setCapabilities] = useState<CoreCapabilityModule[]>([]);
+  const [capabilities, setCapabilities] = useState<CoreCapabilityModule[]>(() => generateMockCapabilities());
+  const [availableAgents] = useState<Agent2_0[]>(() => generateMockAgents());
   const [canvasState, setCanvasState] = useState<CanvasState>({
     zoom: 1,
     pan: { x: 0, y: 0 },
@@ -144,6 +129,90 @@ const WorkflowDesigner2_0: React.FC<WorkflowDesigner2_0Props> = ({
   const [execution, setExecution] = useState<WorkflowExecution | null>(null);
   const [executionHistory, setExecutionHistory] = useState<WorkflowExecution[]>([]);
   
+  /**
+   * 执行工作流
+   */
+  const executeWorkflow = async () => {
+    setExecuting(true);
+    try {
+      // 验证工作流
+      const validation = validateWorkflow(workflow);
+      if (!validation.valid) {
+        message.error(`无法执行工作流: ${validation.errors.join(', ')}`);
+        return;
+      }
+      
+      // 创建执行实例
+      const newExecution: WorkflowExecution = {
+        id: `exec_${Date.now()}`,
+        workflowId: workflow.id,
+        status: 'running',
+        startTime: new Date(),
+        endTime: undefined,
+        progress: 0,
+        currentNode: undefined,
+        nodeExecutions: [],
+        metrics: {
+          totalDuration: 0,
+          nodeCount: workflow.nodes.length,
+          successCount: 0,
+          failureCount: 0,
+          averageNodeDuration: 0,
+          throughput: 0
+        }
+      };
+      
+      setExecution(newExecution);
+      setExecutionDrawerVisible(true);
+      
+      // TODO: 实际执行工作流
+      // 这里模拟执行过程
+      await simulateExecution(newExecution);
+      
+    } catch (error) {
+      message.error('工作流执行失败');
+      console.error('Execute workflow error:', error);
+    } finally {
+      setExecuting(false);
+    }
+  };
+  
+  /**
+   * 模拟工作流执行
+   */
+  const simulateExecution = async (execution: WorkflowExecution) => {
+    const totalNodes = workflow.nodes.length;
+    let completedNodes = 0;
+    
+    for (const node of workflow.nodes) {
+      // 更新当前执行节点
+      setExecution((prev: any) => prev ? {
+        ...prev,
+        currentNode: node.id,
+        progress: (completedNodes / totalNodes) * 100
+      } : null);
+      
+      // 模拟节点执行时间
+      await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
+      
+      // 更新节点状态
+      updateNode(node.id, { status: 'completed' });
+      
+      completedNodes++;
+    }
+    
+    // 完成执行
+    setExecution((prev: any) => prev ? {
+      ...prev,
+      status: 'completed',
+      endTime: new Date(),
+      progress: 100,
+      currentNode: null
+    } : null);
+    
+    message.success('工作流执行完成');
+  };
+
   /**
    * 渲染工作流连接线
    */
@@ -365,7 +434,7 @@ const WorkflowDesigner2_0: React.FC<WorkflowDesigner2_0Props> = ({
                   >
                     <List.Item.Meta
                       avatar={renderCapabilityTypeIcon(capability.type)}
-                      title={capability.name}
+                      title={capability?.name || '未知能力'}
                       description={capability.description}
                     />
                     <Tag color="blue">{capability.maturityLevel}</Tag>
@@ -392,7 +461,7 @@ const WorkflowDesigner2_0: React.FC<WorkflowDesigner2_0Props> = ({
                   >
                     <List.Item.Meta
                       avatar={renderCapabilityTypeIcon(capability.type)}
-                      title={capability.name}
+                      title={capability?.name || '未知能力'}
                       description={capability.description}
                     />
                     <Tag color="orange">{capability.maturityLevel}</Tag>
@@ -419,7 +488,7 @@ const WorkflowDesigner2_0: React.FC<WorkflowDesigner2_0Props> = ({
                   >
                     <List.Item.Meta
                       avatar={renderCapabilityTypeIcon(capability.type)}
-                      title={capability.name}
+                      title={capability?.name || '未知能力'}
                       description={capability.description}
                     />
                     <Tag color="green">{capability.maturityLevel}</Tag>
@@ -446,7 +515,7 @@ const WorkflowDesigner2_0: React.FC<WorkflowDesigner2_0Props> = ({
                   >
                     <List.Item.Meta
                       avatar={renderCapabilityTypeIcon(capability.type)}
-                      title={capability.name}
+                      title={capability?.name || '未知能力'}
                       description={capability.description}
                     />
                     <Tag color="purple">{capability.maturityLevel}</Tag>
@@ -820,7 +889,7 @@ const WorkflowDesigner2_0: React.FC<WorkflowDesigner2_0Props> = ({
     const newNode: WorkflowNode = {
       id: `node_${Date.now()}`,
       type: 'capability',
-      name: capability.name,
+      name: capability?.name || '未知能力',
       description: capability.description,
       position,
       size: { width: 200, height: 120 },
@@ -971,7 +1040,7 @@ const WorkflowDesigner2_0: React.FC<WorkflowDesigner2_0Props> = ({
     const errors: string[] = [];
     
     // 检查基本信息
-    if (!workflow.name.trim()) {
+    if (!(workflow.name || '').trim()) {
       errors.push('工作流名称不能为空');
     }
     
@@ -1079,9 +1148,15 @@ const WorkflowDesigner2_0: React.FC<WorkflowDesigner2_0Props> = ({
         }
         bodyStyle={{ padding: 0, height: 'calc(100vh - 200px)' }}
       >
-        <div className="designer-content">
-          {renderCanvas()}
-        </div>
+      <div className="designer-content">
+        <WorkflowVisualDesigner
+          workflow={workflow}
+          capabilities={capabilities}
+          onWorkflowChange={setWorkflow}
+          onNodeSelect={setSelectedNode}
+          mode={mode}
+        />
+      </div>
       </Card>
       
       {/* 能力库抽屉 */}
@@ -1101,86 +1176,7 @@ const WorkflowDesigner2_0: React.FC<WorkflowDesigner2_0Props> = ({
   /**
    * 执行工作流
    */
-  const executeWorkflow = async () => {
-    setExecuting(true);
-    try {
-      // 验证工作流
-      const validation = validateWorkflow(workflow);
-      if (!validation.valid) {
-        message.error(`无法执行工作流: ${validation.errors.join(', ')}`);
-        return;
-      }
-      
-      // 创建执行实例
-      const newExecution: WorkflowExecution = {
-        id: `exec_${Date.now()}`,
-        workflowId: workflow.id,
-        status: 'running',
-        startTime: new Date(),
-        endTime: undefined,
-        progress: 0,
-        currentNode: undefined,
-        nodeExecutions: [],
-        metrics: {
-          totalDuration: 0,
-          nodeCount: workflow.nodes.length,
-          successCount: 0,
-          failureCount: 0,
-          averageNodeDuration: 0,
-          throughput: 0
-        }
-      };
-      
-      setExecution(newExecution);
-      setExecutionDrawerVisible(true);
-      
-      // TODO: 实际执行工作流
-      // 这里模拟执行过程
-      await simulateExecution(newExecution);
-      
-    } catch (error) {
-      message.error('工作流执行失败');
-      console.error('Execute workflow error:', error);
-    } finally {
-      setExecuting(false);
-    }
-  };
-  
-  /**
-   * 模拟工作流执行
-   */
-  const simulateExecution = async (execution: WorkflowExecution) => {
-    const totalNodes = workflow.nodes.length;
-    let completedNodes = 0;
-    
-    for (const node of workflow.nodes) {
-      // 更新当前执行节点
-      setExecution((prev: any) => prev ? {
-        ...prev,
-        currentNode: node.id,
-        progress: (completedNodes / totalNodes) * 100
-      } : null);
-      
-      // 模拟节点执行时间
-      await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
-      
-      // 更新节点状态
-      updateNode(node.id, { status: 'completed' });
-      
-      completedNodes++;
-    }
-    
-    // 完成执行
-    setExecution((prev: any) => prev ? {
-      ...prev,
-      status: 'completed',
-      endTime: new Date(),
-      progress: 100,
-      currentNode: null
-    } : null);
-    
-    message.success('工作流执行完成');
-  };
+
   
   /**
    * 渲染能力类型图标
@@ -1354,7 +1350,7 @@ const WorkflowDesigner2_0: React.FC<WorkflowDesigner2_0Props> = ({
               >
                 <List.Item.Meta
                   avatar={renderCapabilityTypeIcon(capability.type)}
-                  title={capability.name}
+                  title={capability?.name || '未知能力'}
                   description={capability.description}
                 />
                 <Button 
@@ -1381,11 +1377,53 @@ const WorkflowDesigner2_0: React.FC<WorkflowDesigner2_0Props> = ({
   return (
     <div className="workflow-designer-2-0">
       {/* 工具栏 */}
-      {renderToolbar()}
+      <div className="designer-header">
+        <div className="header-title">
+          <h2>EFIAgent 2.0 工作流设计器</h2>
+        </div>
+        <div className="header-actions">
+          {renderToolbar()}
+          <Space style={{ marginLeft: 16 }}>
+            <Button.Group>
+              <Button 
+                type={designMode === 'visual' ? 'primary' : 'default'}
+                icon={<ApartmentOutlined />}
+                onClick={() => setDesignMode('visual')}
+              >
+                可视化设计
+              </Button>
+              <Button 
+                type={designMode === 'manager' ? 'primary' : 'default'}
+                icon={<SettingOutlined />}
+                onClick={() => setDesignMode('manager')}
+              >
+                工作流管理
+              </Button>
+            </Button.Group>
+          </Space>
+        </div>
+      </div>
       
-      {/* 主画布 */}
+      {/* 主内容区域 */}
       <div className="designer-content">
-        {renderCanvas()}
+        {designMode === 'visual' ? (
+          <WorkflowVisualDesigner
+            workflow={workflow}
+            capabilities={capabilities}
+            availableAgents={availableAgents}
+            onWorkflowChange={setWorkflow}
+            onNodeSelect={setSelectedNode}
+            mode={mode}
+          />
+        ) : (
+          <WorkflowManagerV2
+            workflows={[workflow]}
+            onWorkflowSelect={(w) => setWorkflow(w)}
+            onWorkflowCreate={(w) => setWorkflow(w)}
+            onWorkflowUpdate={setWorkflow}
+            onWorkflowDelete={() => {}}
+          />
+        )}
       </div>
       
       {/* 属性面板 */}
@@ -1396,8 +1434,6 @@ const WorkflowDesigner2_0: React.FC<WorkflowDesigner2_0Props> = ({
       
       {/* 执行监控 */}
       {renderExecutionDrawer()}
-      
-      {/* TODO: 添加设置模态框等其他UI组件 */}
     </div>
   );
 };

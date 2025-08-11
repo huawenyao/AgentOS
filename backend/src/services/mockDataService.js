@@ -943,6 +943,110 @@ class MockDataService {
     return { success: true, message: 'Agent停止成功' }
   }
 
+  // Agent实例操作方法
+  async createAgentInstance(data) {
+    await this.simulateDelay()
+    this.simulateRandomError()
+    const newInstance = {
+      id: Math.max(...this.agentInstances.map(i => i.id)) + 1,
+      ...data,
+      status: 'idle',
+      processId: null,
+      hostInfo: null,
+      startedAt: null,
+      stoppedAt: null,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+    this.agentInstances.push(newInstance)
+    return newInstance
+  }
+
+  async updateAgentInstance(id, data) {
+    await this.simulateDelay()
+    this.simulateRandomError()
+    const index = this.agentInstances.findIndex(i => i.id === parseInt(id))
+    if (index === -1) return null
+    
+    this.agentInstances[index] = {
+      ...this.agentInstances[index],
+      ...data,
+      updatedAt: new Date()
+    }
+    return this.agentInstances[index]
+  }
+
+  async deleteAgentInstance(id) {
+    await this.simulateDelay()
+    this.simulateRandomError()
+    const index = this.agentInstances.findIndex(i => i.id === parseInt(id))
+    if (index === -1) return false
+    
+    this.agentInstances.splice(index, 1)
+    return true
+  }
+
+  async startAgentInstance(id) {
+    await this.simulateDelay()
+    this.simulateRandomError()
+    const instance = this.agentInstances.find(i => i.id === parseInt(id))
+    if (!instance) return null
+    
+    instance.status = 'running'
+    instance.startedAt = new Date()
+    instance.stoppedAt = null
+    instance.processId = `pid_${Math.floor(Math.random() * 100000)}`
+    instance.hostInfo = {
+      hostname: `server-${Math.floor(Math.random() * 10) + 1}`,
+      ip: `192.168.1.${Math.floor(Math.random() * 200) + 100}`,
+      port: Math.floor(Math.random() * 1000) + 8000
+    }
+    instance.updatedAt = new Date()
+    
+    return { success: true, message: 'Agent实例启动成功' }
+  }
+
+  async stopAgentInstance(id) {
+    await this.simulateDelay()
+    this.simulateRandomError()
+    const instance = this.agentInstances.find(i => i.id === parseInt(id))
+    if (!instance) return null
+    
+    instance.status = 'stopped'
+    instance.stoppedAt = new Date()
+    instance.processId = null
+    instance.updatedAt = new Date()
+    
+    return { success: true, message: 'Agent实例停止成功' }
+  }
+
+  async restartAgentInstance(id) {
+    await this.simulateDelay()
+    this.simulateRandomError()
+    const instance = this.agentInstances.find(i => i.id === parseInt(id))
+    if (!instance) return null
+    
+    instance.status = 'running'
+    instance.startedAt = new Date()
+    instance.stoppedAt = null
+    instance.processId = `pid_${Math.floor(Math.random() * 100000)}`
+    instance.updatedAt = new Date()
+    
+    return { success: true, message: 'Agent实例重启成功' }
+  }
+
+  async pauseAgentInstance(id) {
+    await this.simulateDelay()
+    this.simulateRandomError()
+    const instance = this.agentInstances.find(i => i.id === parseInt(id))
+    if (!instance) return null
+    
+    instance.status = 'paused'
+    instance.updatedAt = new Date()
+    
+    return { success: true, message: 'Agent实例暂停成功' }
+  }
+
   // ==================== 系统配置相关 ====================
   
   /**

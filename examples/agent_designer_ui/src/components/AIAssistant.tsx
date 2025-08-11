@@ -106,7 +106,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({
                 recs.push({
                   capability: missingCap,
                   score: 0.9,
-                  reason: `${cap.name} 需要此能力作为必需依赖`,
+                  reason: `${cap?.name || '未知能力'} 需要此能力作为必需依赖`,
                   category: 'missing_dependency'
                 });
               }
@@ -418,7 +418,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({
                 }
                 title={
                   <Space>
-                    <span>{rec.capability.name}</span>
+                    <span>{rec.capability?.name || '未知能力'}</span>
                     <Tag color={getCategoryColor(rec.category)}>
                       {getCategoryLabel(rec.category)}
                     </Tag>

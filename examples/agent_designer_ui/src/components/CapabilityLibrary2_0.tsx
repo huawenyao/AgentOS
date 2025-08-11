@@ -13,26 +13,13 @@ import {
   Tag,
   Badge,
   Tooltip,
-  Modal,
   Drawer,
   Tabs,
   List,
   Avatar,
   Rate,
-  Progress,
   Statistic,
   Divider,
-  Space,
-  Menu,
-  Dropdown,
-  message,
-  Form,
-  Upload,
-  Switch,
-  Slider,
-  Tree,
-  Collapse,
-  Timeline,
   Alert,
   Empty,
   Spin,
@@ -44,51 +31,22 @@ import {
   Cascader,
 } from 'antd';
 import {
-  SearchOutlined,
   FilterOutlined,
-  PlusOutlined,
   DownloadOutlined,
-  UploadOutlined,
   StarOutlined,
   HeartOutlined,
-  ShareAltOutlined,
   EyeOutlined,
-  EditOutlined,
-  DeleteOutlined,
   CopyOutlined,
   ThunderboltOutlined,
   BulbOutlined,
   BookOutlined,
-  ApiOutlined,
   DatabaseOutlined,
-  CloudOutlined,
-  SecurityScanOutlined,
-  SettingOutlined,
-  MonitorOutlined,
-  TeamOutlined,
-  RocketOutlined,
-  ExperimentOutlined,
-  FunctionOutlined,
-  NodeIndexOutlined,
   ApartmentOutlined,
   InteractionOutlined,
   RobotOutlined,
-  EyeInvisibleOutlined,
-  LockOutlined,
-  UnlockOutlined,
   CheckCircleOutlined,
-  CloseCircleOutlined,
-  ExclamationCircleOutlined,
-  InfoCircleOutlined,
-  QuestionCircleOutlined,
-  ReloadOutlined,
-  SortAscendingOutlined,
   AppstoreOutlined,
   UnorderedListOutlined,
-  TagOutlined,
-  CalendarOutlined,
-  UserOutlined,
-  GlobalOutlined,
 } from '@ant-design/icons';
 import {
   CoreCapabilityModule,
@@ -98,18 +56,13 @@ import {
   CapabilityCategory,
   CapabilityMetadata,
   CapabilitySourceType,
-  ReasoningCapabilityType,
-  CognitiveCapabilityType,
-  LearningCapabilityType,
-  DecisionCapabilityType,
 } from './CapabilitySystemTypes';
+import { generateMockCapabilities } from '../data/mockData';
 import './CapabilityLibrary2_0.css';
 
 const { Search } = Input;
 const { Option } = Select;
 const { TabPane } = Tabs;
-const { Panel } = Collapse;
-const { CheckableTag } = Tag;
 
 interface CapabilityLibrary2_0Props {
   onCapabilitySelect?: (capability: CoreCapabilityModule) => void;
@@ -172,412 +125,8 @@ const CapabilityLibrary2_0: React.FC<CapabilityLibrary2_0Props> = ({
     verified: null
   });
 
-  // 模拟数据
-  const mockCapabilities: CoreCapabilityModule[] = [
-    {
-      id: 'cap_001',
-      name: '自然语言理解',
-      description: '基于Transformer架构的多语言自然语言理解模块，支持文本分类、情感分析、实体识别等任务',
-      type: CoreCapabilityType.COGNITIVE,
-      subType: CognitiveCapabilityType.UNDERSTANDING,
-      version: '2.1.0',
-      maturityLevel: CapabilityMaturityLevel.OPTIMIZED,
-      source: CapabilitySource.BUILTIN,
-      category: CapabilityCategory.NLP,
-      inputs: [
-        { 
-          id: 'input_001',
-          name: 'text', 
-          dataType: 'string', 
-          description: '待处理的文本内容',
-          required: true,
-          validation: {
-            type: 'string',
-            minLength: 1,
-            maxLength: 10000
-          },
-          defaultValue: undefined,
-          examples: []
-        }
-      ],
-      outputs: [
-        {
-          id: 'output_001',
-          name: 'understanding_result',
-          dataType: 'object',
-          description: '文本理解结果',
-          schema: {
-            sentiment: 'string',
-            entities: 'array',
-            intent: 'string',
-            confidence: 'number'
-          },
-          examples: []
-        }
-      ],
-      config: {
-        executionMode: 'async',
-        timeout: 30000,
-        retryPolicy: {
-          maxRetries: 3,
-          backoffStrategy: 'exponential',
-          initialDelay: 1000,
-          maxDelay: 10000,
-          retryableErrors: ['timeout', 'network_error']
-        },
-        qualityThreshold: 0.85,
-        performanceTarget: {
-          responseTime: 1000,
-          throughput: 100,
-          accuracy: 0.9,
-          availability: 0.99
-        },
-        securityLevel: 'medium',
-        accessControl: {
-          authentication: true,
-          authorization: ['read', 'execute'],
-          encryption: true,
-          auditLog: true
-        },
-        monitoring: {
-          enabled: true,
-          metricsCollection: true,
-          loggingLevel: 'info',
-          alerting: {
-            enabled: true,
-            thresholds: [
-              {
-                metric: 'accuracy',
-                operator: '<',
-                value: 0.85,
-                duration: 60,
-                severity: 'medium'
-              },
-              {
-                metric: 'latency',
-                operator: '>',
-                value: 1000,
-                duration: 30,
-                severity: 'high'
-              }
-            ],
-            channels: []
-          },
-          healthCheck: {
-            enabled: true,
-            interval: 30,
-            timeout: 5,
-            failureThreshold: 3,
-            successThreshold: 1
-          }
-        },
-        parameters: {
-          model: {
-            name: 'bert-base-multilingual',
-            version: '1.0',
-            max_length: 512,
-            batch_size: 32,
-            learning_rate: 2e-5
-          },
-          runtime: {
-            fallback: true
-          },
-          scaling: {
-            min_instances: 1,
-            max_instances: 10,
-            target_utilization: 0.7
-          }
-        }
-      },
-      dependencies: [],
-      metrics: {
-        avgResponseTime: 150,
-        throughput: 1000,
-        successRate: 0.98,
-        errorRate: 0.02,
-        accuracy: 0.95,
-        precision: 0.94,
-        recall: 0.96,
-        f1Score: 0.95,
-        usageCount: 15000,
-        activeUsers: 500,
-        avgCpuUsage: 45,
-        avgMemoryUsage: 60,
-        avgTokenUsage: 200,
-        lastUpdated: new Date('2024-01-20')
-      },
-      resources: [
-        {
-          type: 'cpu',
-          amount: 2,
-          unit: 'cores',
-          priority: 'medium'
-        },
-        {
-          type: 'memory',
-          amount: 4,
-          unit: 'GB',
-          priority: 'medium'
-        }
-      ],
-      sources: [
-        {
-          id: 'source_001',
-          type: CapabilitySourceType.BUILTIN,
-          name: 'Internal NLP Engine',
-          description: 'Built-in natural language processing engine',
-          config: {},
-          version: '2.1.0',
-          reliability: 0.98
-        }
-      ],
-      createdAt: new Date('2023-10-01'),
-      updatedAt: new Date('2024-01-20'),
-      author: 'NLP Team',
-      tags: ['nlp', 'understanding', 'transformer', 'multilingual'],
-      metadata: {
-        author: 'NLP Team',
-        organization: 'EFIAgent Corp',
-        license: 'MIT',
-        tags: ['nlp', 'understanding', 'transformer', 'multilingual'],
-        category: 'ai-language',
-        difficulty: 'intermediate',
-        rating: 4.8,
-        downloads: 5200,
-        featured: true,
-        verified: true,
-        documentation: 'https://docs.example.com/nlp',
-        examples: [
-          {
-            name: '情感分析示例',
-            description: '分析用户评论的情感倾向',
-            input: { text: '这个产品很棒！' },
-            output: { sentiment: 'positive', confidence: 0.95 },
-            code: 'const result = await nlp.analyze("这个产品很棒！");'
-          }
-        ],
-        implementation: {
-          language: 'python',
-          framework: 'transformers',
-          dependencies: ['torch', 'transformers', 'numpy'],
-          resources: {
-            cpu: '2 cores',
-            memory: '4GB',
-            gpu: 'optional'
-          }
-        },
-        changelog: [
-          {
-            version: '2.1.0',
-            date: new Date('2024-01-20'),
-            changes: ['增加多语言支持', '优化推理速度', '修复内存泄漏'],
-            breaking: false
-          }
-        ]
-      }
-    },
-    {
-      id: 'cap_002',
-      name: '逻辑推理引擎',
-      description: '基于符号逻辑和神经网络的混合推理引擎，支持演绎、归纳、类比等多种推理模式',
-      type: CoreCapabilityType.REASONING,
-      subType: ReasoningCapabilityType.LOGICAL,
-      version: '1.5.2',
-      source: CapabilitySource.BUILTIN,
-      maturityLevel: CapabilityMaturityLevel.DEFINED,
-      category: CapabilityCategory.REASONING,
-      inputs: [
-        { 
-          id: 'input_001',
-          name: 'premises', 
-          dataType: 'array', 
-          description: '前提条件列表',
-          required: true,
-          validation: {
-            type: 'array'
-          },
-          defaultValue: undefined,
-          examples: []
-        },
-        {
-          id: 'input_002',
-          name: 'reasoning_type',
-          dataType: 'string',
-          description: '推理类型：deductive, inductive, abductive',
-          required: true,
-          validation: {
-            type: 'string',
-            enum: ['deductive', 'inductive', 'abductive']
-          },
-          defaultValue: undefined,
-          examples: []
-        }
-      ],
-      outputs: [
-        {
-          id: 'output_001',
-          name: 'conclusion',
-          dataType: 'object',
-          description: '推理结论',
-          schema: {
-            result: 'string',
-            confidence: 'number',
-            reasoning_path: 'array'
-          },
-          examples: []
-        }
-      ],
-      config: {
-        executionMode: 'async',
-        timeout: 60000,
-        retryPolicy: {
-          maxRetries: 2,
-          backoffStrategy: 'exponential',
-          initialDelay: 1000,
-          maxDelay: 10000,
-          retryableErrors: ['timeout', 'network_error']
-        },
-        qualityThreshold: 0.8,
-        performanceTarget: {
-          responseTime: 5000,
-          throughput: 100,
-          accuracy: 0.9,
-          availability: 0.99
-        },
-        securityLevel: 'high',
-        accessControl: {
-          authentication: true,
-          authorization: ['reasoning_user', 'admin'],
-          encryption: true,
-          auditLog: true
-        },
-        monitoring: {
-          enabled: true,
-          metricsCollection: true,
-          loggingLevel: 'info',
-          alerting: {
-            enabled: true,
-            thresholds: [
-              {
-                metric: 'accuracy',
-                operator: '<',
-                value: 0.8,
-                duration: 300,
-                severity: 'high'
-              }
-            ],
-            channels: [
-              {
-                type: 'email',
-                config: { recipients: ['admin@example.com'] }
-              }
-            ]
-          },
-          healthCheck: {
-            enabled: true,
-            interval: 60,
-            timeout: 10,
-            failureThreshold: 3,
-            successThreshold: 1
-          }
-        },
-        parameters: {
-          model: {
-            name: 'hybrid-reasoning-v1',
-            version: '1.5',
-            max_depth: 10,
-            confidence_threshold: 0.7
-          },
-          runtime: {
-            fallback: false
-          },
-          scaling: {
-            min_instances: 1,
-            max_instances: 5,
-            target_utilization: 0.8
-          }
-        }
-      },
-      dependencies: [],
-      metrics: {
-        avgResponseTime: 3500,
-        throughput: 120,
-        successRate: 0.92,
-        errorRate: 0.08,
-        accuracy: 0.89,
-        precision: 0.87,
-        recall: 0.91,
-        f1Score: 0.89,
-        usageCount: 3200,
-        activeUsers: 85,
-        avgCpuUsage: 65,
-        avgMemoryUsage: 75,
-        avgTokenUsage: 450,
-        lastUpdated: new Date('2024-01-15')
-      },
-      resources: [
-        {
-          type: 'cpu',
-          amount: 4,
-          unit: 'cores',
-          priority: 'high'
-        },
-        {
-          type: 'memory',
-          amount: 8,
-          unit: 'GB',
-          priority: 'high'
-        }
-      ],
-      sources: [
-        {
-          id: 'source_002',
-          type: CapabilitySourceType.BUILTIN,
-          name: 'Hybrid Reasoning Engine',
-          description: 'Built-in hybrid reasoning engine combining symbolic and neural approaches',
-          config: {},
-          version: '1.5.2',
-          reliability: 0.92
-        }
-      ],
-      createdAt: new Date('2023-09-15'),
-      updatedAt: new Date('2024-01-15'),
-      author: 'Logic AI Team',
-      tags: ['reasoning', 'logic', 'inference'],
-      metadata: {
-        author: 'Logic AI Team',
-        organization: 'Reasoning Labs',
-        license: 'Apache-2.0',
-        tags: ['reasoning', 'logic', 'inference'],
-        category: 'ai-reasoning',
-        difficulty: 'advanced',
-        rating: 4.5,
-        downloads: 1800,
-        featured: false,
-        verified: true,
-        documentation: 'https://docs.example.com/reasoning',
-        examples: [],
-        implementation: {
-          language: 'python',
-          framework: 'pytorch',
-          dependencies: ['torch', 'transformers'],
-          resources: {
-            cpu: '4 cores',
-            memory: '8GB',
-            gpu: 'optional'
-          }
-        },
-        changelog: [
-          {
-            version: '1.5.2',
-            date: new Date('2024-01-15'),
-            changes: ['修复归纳推理bug', '优化推理路径生成', '增加超时控制'],
-            breaking: false
-          }
-        ]
-      }
-    }
-  ];
+  // 使用模拟数据生成器
+  const mockCapabilities = generateMockCapabilities(20);
 
   // 初始化数据
   useEffect(() => {
@@ -596,7 +145,7 @@ const CapabilityLibrary2_0: React.FC<CapabilityLibrary2_0Props> = ({
       if (searchText) {
         const searchLower = searchText.toLowerCase();
         const matchesSearch = 
-          cap.name.toLowerCase().includes(searchLower) ||
+          (cap?.name || '').toLowerCase().includes(searchLower) ||
           cap.description.toLowerCase().includes(searchLower) ||
           cap.metadata.tags.some(tag => tag.toLowerCase().includes(searchLower)) ||
           cap.metadata.author.toLowerCase().includes(searchLower);
@@ -641,8 +190,8 @@ const CapabilityLibrary2_0: React.FC<CapabilityLibrary2_0Props> = ({
       let aValue, bValue;
       switch (sortBy) {
         case 'name':
-          aValue = a.name;
-          bValue = b.name;
+          aValue = a?.name || '';
+          bValue = b?.name || '';
           break;
         case 'rating':
           aValue = a.metadata.rating;
@@ -726,13 +275,13 @@ const CapabilityLibrary2_0: React.FC<CapabilityLibrary2_0Props> = ({
           avatar={
             <Avatar 
               size={48} 
-              icon={getCapabilityIcon(capability.type)}
-              style={{ backgroundColor: getCapabilityColor(capability.type) }}
+              icon={getCapabilityIcon(capability.type, capability.category)}
+              style={{ backgroundColor: getCapabilityColor(capability.type, capability.category) }}
             />
           }
           title={
             <div className="capability-title">
-              <span>{capability.name}</span>
+              <span>{capability?.name || '未知能力'}</span>
               <div className="capability-badges">
                 {capability.metadata.featured && (
                   <Badge.Ribbon text="推荐" color="gold" />
@@ -750,16 +299,16 @@ const CapabilityLibrary2_0: React.FC<CapabilityLibrary2_0Props> = ({
                 <Tag color={getMaturityColor(capability.maturityLevel)}>
                   {capability.maturityLevel}
                 </Tag>
-                <Rate disabled defaultValue={capability.metadata.rating} />
+                <Rate disabled defaultValue={capability.metadata.rating || 0} />
                 <span className="downloads">
-                  <DownloadOutlined /> {capability.metadata.downloads}
+                  <DownloadOutlined /> {capability.metadata.downloads || 0}
                 </span>
               </div>
               <div className="capability-tags">
-                {capability.metadata.tags.slice(0, 3).map(tag => (
+                {capability.metadata.tags && capability.metadata.tags.slice(0, 3).map(tag => (
                   <Tag key={tag}>{tag}</Tag>
                 ))}
-                {capability.metadata.tags.length > 3 && (
+                {capability.metadata.tags && capability.metadata.tags.length > 3 && (
                   <Tag>+{capability.metadata.tags.length - 3}</Tag>
                 )}
               </div>
@@ -776,7 +325,7 @@ const CapabilityLibrary2_0: React.FC<CapabilityLibrary2_0Props> = ({
 
     return (
       <Drawer
-        title={selectedCapability.name}
+        title={selectedCapability?.name || '未知能力'}
         placement="right"
         width={720}
         open={detailDrawerVisible}
@@ -787,17 +336,17 @@ const CapabilityLibrary2_0: React.FC<CapabilityLibrary2_0Props> = ({
             <div className="capability-info">
               <Avatar 
                 size={64} 
-                icon={getCapabilityIcon(selectedCapability.type)}
-                style={{ backgroundColor: getCapabilityColor(selectedCapability.type) }}
+                icon={getCapabilityIcon(selectedCapability.type, selectedCapability.category)}
+                style={{ backgroundColor: getCapabilityColor(selectedCapability.type, selectedCapability.category) }}
               />
               <div className="info-content">
-                <h2>{selectedCapability.name}</h2>
+                <h2>{selectedCapability?.name || '未知能力'}</h2>
                 <p>{selectedCapability.description}</p>
                 <div className="meta-info">
                   <Tag color={getMaturityColor(selectedCapability.maturityLevel)}>
                     {selectedCapability.maturityLevel}
                   </Tag>
-                  <Rate disabled defaultValue={selectedCapability.metadata.rating} />
+                  <Rate disabled defaultValue={selectedCapability.metadata.rating || 0} />
                   <span>版本: {selectedCapability.version}</span>
                 </div>
               </div>
@@ -809,10 +358,10 @@ const CapabilityLibrary2_0: React.FC<CapabilityLibrary2_0Props> = ({
               <div className="overview-content">
                 <Row gutter={[16, 16]}>
                   <Col span={12}>
-                    <Statistic title="下载量" value={selectedCapability.metadata.downloads} />
+                    <Statistic title="下载量" value={selectedCapability.metadata.downloads || 0} />
                   </Col>
                   <Col span={12}>
-                    <Statistic title="评分" value={selectedCapability.metadata.rating} precision={1} />
+                    <Statistic title="评分" value={selectedCapability.metadata.rating || 0} precision={1} />
                   </Col>
                 </Row>
                 
@@ -820,16 +369,16 @@ const CapabilityLibrary2_0: React.FC<CapabilityLibrary2_0Props> = ({
                 
                 <div className="tags-section">
                   <h4>标签</h4>
-                  {selectedCapability.metadata.tags.map(tag => (
+                  {selectedCapability.metadata.tags && selectedCapability.metadata.tags.map(tag => (
                     <Tag key={tag}>{tag}</Tag>
                   ))}
                 </div>
                 
                 <div className="author-section">
                   <h4>作者信息</h4>
-                  <p>作者: {selectedCapability.metadata.author}</p>
-                  <p>组织: {selectedCapability.metadata.organization}</p>
-                  <p>许可证: {selectedCapability.metadata.license}</p>
+                  <p>作者: {selectedCapability.metadata.author || '未知'}</p>
+                  <p>组织: {selectedCapability.metadata.organization || '未知'}</p>
+                  <p>许可证: {selectedCapability.metadata.license || '未知'}</p>
                 </div>
               </div>
             </TabPane>
@@ -885,7 +434,27 @@ const CapabilityLibrary2_0: React.FC<CapabilityLibrary2_0Props> = ({
   };
 
   // 获取能力类型图标
-  const getCapabilityIcon = (type: CoreCapabilityType) => {
+  const getCapabilityIcon = (type: CoreCapabilityType, category?: CapabilityCategory) => {
+    // 优先根据分类显示图标
+    if (category) {
+      switch (category) {
+        case CapabilityCategory.SENTIMENT_ANALYSIS:
+          return <HeartOutlined />;
+        case CapabilityCategory.INTENT_RECOGNITION:
+          return <EyeOutlined />;
+        case CapabilityCategory.DIALOGUE_MANAGEMENT:
+          return <InteractionOutlined />;
+        case CapabilityCategory.KNOWLEDGE_BASE:
+        case CapabilityCategory.KNOWLEDGE_GRAPH:
+          return <DatabaseOutlined />;
+        case CapabilityCategory.NLP:
+          return <BookOutlined />;
+        default:
+          break;
+      }
+    }
+    
+    // 根据核心类型显示图标
     switch (type) {
       case CoreCapabilityType.COGNITIVE:
         return <BulbOutlined />;
@@ -901,7 +470,27 @@ const CapabilityLibrary2_0: React.FC<CapabilityLibrary2_0Props> = ({
   };
 
   // 获取能力类型颜色
-  const getCapabilityColor = (type: CoreCapabilityType) => {
+  const getCapabilityColor = (type: CoreCapabilityType, category?: CapabilityCategory) => {
+    // 优先根据分类显示颜色
+    if (category) {
+      switch (category) {
+        case CapabilityCategory.SENTIMENT_ANALYSIS:
+          return '#eb2f96'; // 粉红色
+        case CapabilityCategory.INTENT_RECOGNITION:
+          return '#13c2c2'; // 青色
+        case CapabilityCategory.DIALOGUE_MANAGEMENT:
+          return '#722ed1'; // 紫色
+        case CapabilityCategory.KNOWLEDGE_BASE:
+        case CapabilityCategory.KNOWLEDGE_GRAPH:
+          return '#fa8c16'; // 橙色
+        case CapabilityCategory.NLP:
+          return '#52c41a'; // 绿色
+        default:
+          break;
+      }
+    }
+    
+    // 根据核心类型显示颜色
     switch (type) {
       case CoreCapabilityType.COGNITIVE:
         return '#1890ff';

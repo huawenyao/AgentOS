@@ -26,8 +26,12 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import AgentDesigner2_0 from './AgentDesigner2_0';
 import AgentManager2_0 from './AgentManager2_0';
 import CapabilityLibrary2_0 from './CapabilityLibrary2_0';
-import CapabilityOrchestrator from './CapabilityOrchestrator';
-import WorkflowDesigner2_0 from './WorkflowDesigner2_0';
+
+import WorkflowDesignerWrapper from './WorkflowDesignerWrapper';
+import KnowledgeGraph from './KnowledgeGraph';
+import LearningCenter from './LearningCenter';
+import CollaborationSpace from './CollaborationSpace';
+import AnalyticsInsights from './AnalyticsInsights';
 import { Agent2_0, CoreCapabilityModule } from './CapabilitySystemTypes';
 import './EFIAgent2_0.css';
 
@@ -76,6 +80,8 @@ const EFIAgent2_0: React.FC<EFIAgent2_0Props> = ({
   const [collapsed, setCollapsed] = useState(false);
   const [currentView, setCurrentView] = useState(initialView);
   const [selectedAgent, setSelectedAgent] = useState<Agent2_0 | null>(null);
+  const [editingAgent, setEditingAgent] = useState<Agent2_0 | null>(null);
+  const [designerMode, setDesignerMode] = useState<'create' | 'edit'>('create');
   const [systemStats, setSystemStats] = useState<SystemStats>({
     totalAgents: 0,
     activeAgents: 0,
@@ -91,6 +97,24 @@ const EFIAgent2_0: React.FC<EFIAgent2_0Props> = ({
   const [settingsVisible, setSettingsVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   
+  /**
+   * 处理创建新Agent
+   */
+  const handleCreateAgent = () => {
+    setEditingAgent(null);
+    setDesignerMode('create');
+    setCurrentView('agent-designer');
+  };
+
+  /**
+   * 处理编辑Agent
+   */
+  const handleEditAgent = (agent: Agent2_0) => {
+    setEditingAgent(agent);
+    setDesignerMode('edit');
+    setCurrentView('agent-designer');
+  };
+
   /**
    * 初始化组件
    */
@@ -189,18 +213,14 @@ const EFIAgent2_0: React.FC<EFIAgent2_0Props> = ({
           <Menu.Item key="agent-manager" icon={<TeamOutlined />}>
             Agent管理
           </Menu.Item>
-          <Menu.Item key="agent-monitor" icon={<MonitorOutlined />}>
-            运行监控
-          </Menu.Item>
+      
         </SubMenu>
         
         <SubMenu key="capabilities" icon={<ThunderboltOutlined />} title="能力系统">
           <Menu.Item key="capability-library" icon={<BookOutlined />}>
             能力库
           </Menu.Item>
-          <Menu.Item key="capability-orchestrator" icon={<ApiOutlined />}>
-            能力编排
-          </Menu.Item>
+
           <Menu.Item key="capability-market" icon={<CloudOutlined />}>
             能力市场
           </Menu.Item>
@@ -454,7 +474,7 @@ const EFIAgent2_0: React.FC<EFIAgent2_0Props> = ({
                     type="primary" 
                     block 
                     icon={<AppstoreOutlined />}
-                    onClick={() => setCurrentView('agent-designer')}
+                    onClick={handleCreateAgent}
                   >
                     创建新Agent
                   </Button>
@@ -502,38 +522,31 @@ const EFIAgent2_0: React.FC<EFIAgent2_0Props> = ({
       case 'dashboard':
         return renderDashboard();
       case 'agent-designer':
-        return <Router><AgentDesigner2_0 /></Router>;
+        return <AgentDesigner2_0 
+          mode={designerMode}
+          editingAgent={editingAgent}
+          onBack={() => {
+            setCurrentView('agent-manager');
+            setEditingAgent(null);
+            setDesignerMode('create');
+          }}
+        />;
       case 'agent-manager':
-        return <Router><AgentManager2_0 /></Router>;
+        return <AgentManager2_0 onEditAgent={handleEditAgent} />;
       case 'capability-library':
         return <CapabilityLibrary2_0 />;
-      case 'capability-orchestrator':
-        return <CapabilityOrchestrator 
-          orchestrator={{
-            id: 'default',
-            name: '默认编排器',
-            description: '系统默认能力编排器',
-            mode: 'sequential' as any,
-            rules: [],
-            capabilityMapping: [],
-            executionStrategy: {
-              loadBalancing: 'round_robin',
-              failover: false,
-              circuitBreaker: { enabled: false, failureThreshold: 5, recoveryTimeout: 30000, halfOpenMaxCalls: 3 },
-              rateLimit: { enabled: false, requestsPerSecond: 100, burstSize: 10, strategy: 'token_bucket' }
-            },
-            optimization: {
-              enabled: false,
-              autoScaling: { enabled: false, minInstances: 1, maxInstances: 10, targetCpuUtilization: 70, targetMemoryUtilization: 80, scaleUpCooldown: 300, scaleDownCooldown: 600 },
-              caching: { enabled: false, strategy: 'lru', maxSize: 1000, ttl: 3600 },
-              prefetching: { enabled: false, strategy: 'predictive', lookaheadTime: 60 }
-            }
-          }}
-          capabilities={[]}
-          onChange={() => {}}
-        />;
       case 'workflow-designer':
-        return <WorkflowDesigner2_0 />;
+        return <WorkflowDesignerWrapper />;
+      case 'knowledge-graph':
+        return <KnowledgeGraph />;
+      case 'learning-center':
+        return <LearningCenter />;
+      case 'collaboration-space':
+        return <CollaborationSpace />;
+      case 'performance-analytics':
+      case 'usage-analytics':
+      case 'trend-analysis':
+        return <AnalyticsInsights visible={true} onClose={() => setCurrentView('dashboard')} />;
       default:
         return (
           <div style={{ padding: 24, textAlign: 'center' }}>
@@ -558,7 +571,7 @@ const EFIAgent2_0: React.FC<EFIAgent2_0Props> = ({
       'agent-manager': ['智能体管理', 'Agent管理'],
       'agent-monitor': ['智能体管理', '运行监控'],
       'capability-library': ['能力系统', '能力库'],
-      'capability-orchestrator': ['能力系统', '能力编排'],
+
       'capability-market': ['能力系统', '能力市场'],
       'workflow-designer': ['工作流', '工作流设计'],
       'workflow-templates': ['工作流', '模板库'],
@@ -576,58 +589,60 @@ const EFIAgent2_0: React.FC<EFIAgent2_0Props> = ({
   };
   
   return (
-    <Layout className="efi-agent-2-0">
-      {/* 侧边栏 */}
-      <Sider 
-        trigger={null} 
-        collapsible 
-        collapsed={collapsed}
-        width={240}
-        className="sidebar"
-      >
-        <div className="logo">
-          <img src="/logo.svg" alt="EFIAgent" />
-          {!collapsed && <span>EFIAgent 2.0</span>}
-        </div>
-        {renderSideMenu()}
-      </Sider>
-      
-      {/* 主布局 */}
-      <Layout className="site-layout">
-        {/* 顶部导航 */}
-        <Header className="header">
-          <div className="header-left">
-            <Button
-              type="text"
-              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-              onClick={() => setCollapsed(!collapsed)}
-              style={{ color: '#fff' }}
-            />
-            
-            <Breadcrumb className="breadcrumb">
-              <Breadcrumb.Item>
-                <HomeOutlined />
-              </Breadcrumb.Item>
-              {getBreadcrumb().map((item, index) => (
-                <Breadcrumb.Item key={index}>{item}</Breadcrumb.Item>
-              ))}
-            </Breadcrumb>
+    <Router>
+      <Layout className="efi-agent-2-0">
+        {/* 侧边栏 */}
+        <Sider 
+          trigger={null} 
+          collapsible 
+          collapsed={collapsed}
+          width={240}
+          className="sidebar"
+        >
+          <div className="logo">
+            <img src="/logo.svg" alt="EFIAgent" />
+            {!collapsed && <span>EFIAgent 2.0</span>}
           </div>
-          
-          <div className="header-right">
-            <Space size="middle">
-              {renderNotificationMenu()}
-              {renderUserMenu()}
-            </Space>
-          </div>
-        </Header>
+          {renderSideMenu()}
+        </Sider>
         
-        {/* 内容区 */}
-        <Content className="content">
-          {renderContent()}
-        </Content>
+        {/* 主布局 */}
+        <Layout className="site-layout">
+          {/* 顶部导航 */}
+          <Header className="header">
+            <div className="header-left">
+              <Button
+                type="text"
+                icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                onClick={() => setCollapsed(!collapsed)}
+                style={{ color: '#fff' }}
+              />
+              
+              <Breadcrumb className="breadcrumb">
+                <Breadcrumb.Item>
+                  <HomeOutlined />
+                </Breadcrumb.Item>
+                {getBreadcrumb().map((item, index) => (
+                  <Breadcrumb.Item key={index}>{item}</Breadcrumb.Item>
+                ))}
+              </Breadcrumb>
+            </div>
+            
+            <div className="header-right">
+              <Space size="middle">
+                {renderNotificationMenu()}
+                {renderUserMenu()}
+              </Space>
+            </div>
+          </Header>
+          
+          {/* 内容区 */}
+          <Content className="content">
+            {renderContent()}
+          </Content>
+        </Layout>
       </Layout>
-    </Layout>
+    </Router>
   );
 };
 

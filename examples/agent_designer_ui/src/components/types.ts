@@ -1,3 +1,5 @@
+import { WorkflowDefinition } from './CapabilitySystemTypes';
+
 /**
  * 类型定义文件
  * 定义可视化Agent开发模块中使用的各种类型
@@ -335,26 +337,8 @@ export interface LLMConfig {
 }
 
 // 工作流定义
-export interface WorkflowDefinition {
-  nodes: BaseNode[];
-  connections: Connection[];
-  variables?: WorkflowVariable[];
-  triggers?: WorkflowTrigger[];
-}
+// Import WorkflowDefinition, WorkflowVariable, and WorkflowTrigger from CapabilitySystemTypes
 
-// 工作流变量
-export interface WorkflowVariable {
-  name: string;
-  type: string;
-  defaultValue?: any;
-  description?: string;
-}
-
-// 工作流触发器
-export interface WorkflowTrigger {
-  type: 'manual' | 'schedule' | 'event' | 'webhook';
-  config: Record<string, any>;
-}
 
 // Agent评价
 export interface AgentReview {

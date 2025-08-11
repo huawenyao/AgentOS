@@ -96,7 +96,11 @@ interface Agent {
   }>;
 }
 
-const AgentManager: React.FC = () => {
+interface AgentManagerProps {
+  onEditAgent?: (agent: Agent) => void;
+}
+
+const AgentManager: React.FC<AgentManagerProps> = ({ onEditAgent }) => {
   const navigate = useNavigate();
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(false);
@@ -104,6 +108,8 @@ const AgentManager: React.FC = () => {
   const [editingAgent, setEditingAgent] = useState<Agent | null>(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [batchDeleteVisible, setBatchDeleteVisible] = useState(false);
+  const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [viewingAgent, setViewingAgent] = useState<Agent | null>(null);
   const [form] = Form.useForm();
   const apiService = ApiService;
 
@@ -318,6 +324,137 @@ const AgentManager: React.FC = () => {
     },
     {
       id: '3',
+      name: '创意写作助手',
+      description: '专业的创意写作和内容生成Agent，支持多种文体创作',
+      type: AgentType.CONVERSATIONAL,
+      status: AgentStatus.IDLE,
+      createdAt: '2024-01-12T08:30:00Z',
+      updatedAt: '2024-01-20T16:45:00Z',
+      lastRunAt: '2024-01-20T16:45:00Z',
+      author: '王五',
+      version: 1,
+      tags: ['创意写作', '内容生成', '文案创作', '多文体'],
+      workflow: {
+        nodes: [
+          {
+            id: 'topic-input-1',
+            type: 'input',
+            position: { x: 50, y: 100 },
+            data: { label: '写作主题', type: 'text' }
+          },
+          {
+            id: 'style-input-1',
+            type: 'input',
+            position: { x: 50, y: 200 },
+            data: { label: '写作风格', type: 'select' }
+          },
+          {
+            id: 'content-analysis-1',
+            type: 'capability',
+            position: { x: 250, y: 100 },
+            data: { label: '内容分析', capability: 'content-analysis' }
+          },
+          {
+            id: 'style-adaptation-1',
+            type: 'capability',
+            position: { x: 250, y: 200 },
+            data: { label: '风格适配', capability: 'style-adaptation' }
+          },
+          {
+            id: 'creative-generation-1',
+            type: 'capability',
+            position: { x: 450, y: 150 },
+            data: { label: '创意生成', capability: 'creative-writing' }
+          },
+          {
+            id: 'content-optimization-1',
+            type: 'capability',
+            position: { x: 650, y: 150 },
+            data: { label: '内容优化', capability: 'content-optimization' }
+          },
+          {
+            id: 'writing-output-1',
+            type: 'output',
+            position: { x: 850, y: 150 },
+            data: { label: '创作内容', type: 'document' }
+          }
+        ],
+        edges: [
+          { id: 'e1-3', source: 'topic-input-1', target: 'content-analysis-1' },
+          { id: 'e2-4', source: 'style-input-1', target: 'style-adaptation-1' },
+          { id: 'e3-5', source: 'content-analysis-1', target: 'creative-generation-1' },
+          { id: 'e4-5', source: 'style-adaptation-1', target: 'creative-generation-1' },
+          { id: 'e5-6', source: 'creative-generation-1', target: 'content-optimization-1' },
+          { id: 'e6-7', source: 'content-optimization-1', target: 'writing-output-1' }
+        ]
+      },
+      components: [
+        { id: 'content-analysis-component', type: 'content-analysis', name: '内容分析器' },
+        { id: 'style-adaptation-component', type: 'style-adaptation', name: '风格适配器' },
+        { id: 'creative-writing-component', type: 'creative-writing', name: '创意写作引擎' },
+        { id: 'content-optimization-component', type: 'content-optimization', name: '内容优化器' }
+      ],
+      config: {
+        properties: {
+          writingStyles: 'formal,casual,creative,academic,marketing',
+          contentTypes: 'article,story,poem,script,advertisement',
+          maxLength: 5000,
+          language: 'zh-CN',
+          creativityLevel: 'high'
+        }
+      },
+      metrics: {
+        totalRuns: 892,
+        successRate: 94.2,
+        avgExecutionTime: 2.1
+      },
+      llmConfig: {
+        provider: 'openai',
+        model: 'gpt-4-turbo',
+        temperature: 0.8,
+        maxTokens: 4096
+      },
+      systemPrompt: '你是一个专业的创意写作助手，擅长各种文体的创作，能够根据用户需求生成高质量的原创内容。',
+      capabilities: [
+        {
+          capabilityId: 'content_analysis',
+          enabled: true,
+          config: {
+            analysisDepth: 'deep',
+            keywordExtraction: true,
+            sentimentAnalysis: true
+          }
+        },
+        {
+          capabilityId: 'style_adaptation',
+          enabled: true,
+          config: {
+            supportedStyles: ['formal', 'casual', 'creative', 'academic', 'marketing'],
+            adaptationLevel: 'high'
+          }
+        },
+        {
+          capabilityId: 'creative_writing',
+          enabled: true,
+          config: {
+            creativityLevel: 0.8,
+            originalityCheck: true,
+            plagiarismDetection: true
+          }
+        },
+        {
+          capabilityId: 'content_optimization',
+          enabled: true,
+          config: {
+            grammarCheck: true,
+            readabilityOptimization: true,
+            seoOptimization: false
+          }
+        }
+      ]
+    },
+    {
+      id: '4',
       name: '代码审查助手',
       description: '自动化代码审查和质量检测Agent',
       type: AgentType.AUDIT,
@@ -325,7 +462,7 @@ const AgentManager: React.FC = () => {
       createdAt: '2024-01-08T14:20:00Z',
       updatedAt: '2024-01-19T11:30:00Z',
       lastRunAt: '2024-01-19T11:30:00Z',
-      author: '王五',
+      author: '赵六',
       version: 1,
       tags: ['代码审查', '质量检测', '自动化'],
       workflow: {
@@ -437,7 +574,7 @@ const AgentManager: React.FC = () => {
       ]
     },
     {
-      id: '4',
+      id: '5',
       name: '知识管理系统',
       description: '企业知识库管理和智能问答Agent',
       type: AgentType.MEMORY,
@@ -445,7 +582,7 @@ const AgentManager: React.FC = () => {
       createdAt: '2024-01-12T16:45:00Z',
       updatedAt: '2024-01-21T09:10:00Z',
       lastRunAt: '2024-01-21T09:10:00Z',
-      author: '赵六',
+      author: '孙七',
       version: 1,
       tags: ['知识管理', '问答系统', '企业应用'],
       workflow: {
@@ -567,7 +704,7 @@ const AgentManager: React.FC = () => {
       ]
     },
     {
-      id: '5',
+      id: '6',
       name: '文档生成器',
       description: '自动生成技术文档和API文档的Agent',
       type: AgentType.EXECUTION,
@@ -575,7 +712,7 @@ const AgentManager: React.FC = () => {
       createdAt: '2024-01-05T11:20:00Z',
       updatedAt: '2024-01-17T13:55:00Z',
       lastRunAt: '2024-01-17T13:55:00Z',
-      author: '孙七',
+      author: '周八',
       version: 2,
       tags: ['文档生成', '自动化', 'API文档'],
       workflow: {
@@ -1010,11 +1147,30 @@ const AgentManager: React.FC = () => {
     }
   };
 
+  /**
+   * 查看Agent详情
+   * @param agent Agent对象
+   */
+  const handleViewAgent = (agent: Agent) => {
+    setViewingAgent(agent);
+    setDetailModalVisible(true);
+  };
+
+  /**
+   * 编辑Agent配置
+   * @param agent Agent对象
+   */
   const handleEditAgent = (agent: Agent) => {
     // 将Agent配置数据存储到localStorage，供Agent设计器使用
     localStorage.setItem('editingAgent', JSON.stringify(agent));
-    // 跳转到Agent设计器页面
-    navigate('/agent-designer?mode=edit&id=' + agent.id);
+    
+    // 如果父组件提供了回调函数，使用回调函数
+    if (onEditAgent) {
+      onEditAgent(agent);
+    } else {
+      // 否则使用路由跳转，支持路径参数
+      navigate(`/agent-designer/${agent.id}`);
+    }
   };
 
   const handleSaveAgent = async () => {
@@ -1163,7 +1319,7 @@ const AgentManager: React.FC = () => {
             <Button 
               type="text" 
               icon={<EyeOutlined />} 
-              onClick={() => message.info('查看详情功能开发中')}
+              onClick={() => handleViewAgent(record)}
             />
           </Tooltip>
           <Tooltip title="编辑">
@@ -1409,6 +1565,261 @@ const AgentManager: React.FC = () => {
             </Select>
           </Form.Item>
         </Form>
+      </Modal>
+
+      {/* Agent详情查看模态框 */}
+      <Modal
+        title={
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Avatar 
+              size={32} 
+              icon={<RobotOutlined />} 
+              style={{ 
+                backgroundColor: viewingAgent ? getTypeColor(viewingAgent.type) : '#1890ff',
+                marginRight: 12
+              }}
+            />
+            <div>
+              <div style={{ fontSize: 16, fontWeight: 600 }}>
+                {viewingAgent?.name || 'Agent详情'}
+              </div>
+              <div style={{ fontSize: 12, color: '#666', fontWeight: 400 }}>
+                {viewingAgent ? getTypeText(viewingAgent.type) : ''}
+              </div>
+            </div>
+          </div>
+        }
+        open={detailModalVisible}
+        onCancel={() => {
+          setDetailModalVisible(false);
+          setViewingAgent(null);
+        }}
+        footer={[
+          <Button key="edit" type="primary" onClick={() => {
+            if (viewingAgent) {
+              setDetailModalVisible(false);
+              handleEditAgent(viewingAgent);
+            }
+          }}>
+            <EditOutlined /> 编辑配置
+          </Button>,
+          <Button key="close" onClick={() => {
+            setDetailModalVisible(false);
+            setViewingAgent(null);
+          }}>
+            关闭
+          </Button>
+        ]}
+        width={800}
+        style={{ top: 20 }}
+      >
+        {viewingAgent && (
+          <div style={{ maxHeight: '70vh', overflowY: 'auto' }}>
+            {/* 基本信息 */}
+            <Card size="small" title="基本信息" style={{ marginBottom: 16 }}>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <div style={{ marginBottom: 8 }}>
+                    <Text strong>Agent ID: </Text>
+                    <Text code>{viewingAgent.id}</Text>
+                  </div>
+                  <div style={{ marginBottom: 8 }}>
+                    <Text strong>名称: </Text>
+                    <Text>{viewingAgent.name}</Text>
+                  </div>
+                  <div style={{ marginBottom: 8 }}>
+                    <Text strong>类型: </Text>
+                    <Tag color={getTypeColor(viewingAgent.type)}>{getTypeText(viewingAgent.type)}</Tag>
+                  </div>
+                  <div style={{ marginBottom: 8 }}>
+                    <Text strong>状态: </Text>
+                    <Badge status={getStatusColor(viewingAgent.status) as any} text={getStatusText(viewingAgent.status)} />
+                  </div>
+                </Col>
+                <Col span={12}>
+                  <div style={{ marginBottom: 8 }}>
+                    <Text strong>作者: </Text>
+                    <Text>{viewingAgent.author}</Text>
+                  </div>
+                  <div style={{ marginBottom: 8 }}>
+                    <Text strong>版本: </Text>
+                    <Text>{viewingAgent.version}</Text>
+                  </div>
+                  <div style={{ marginBottom: 8 }}>
+                    <Text strong>创建时间: </Text>
+                    <Text>{new Date(viewingAgent.createdAt).toLocaleString()}</Text>
+                  </div>
+                  <div style={{ marginBottom: 8 }}>
+                    <Text strong>最后运行: </Text>
+                    <Text>{viewingAgent.lastRunAt ? new Date(viewingAgent.lastRunAt).toLocaleString() : '从未运行'}</Text>
+                  </div>
+                </Col>
+              </Row>
+              <div style={{ marginTop: 12 }}>
+                <Text strong>描述: </Text>
+                <div style={{ marginTop: 4, padding: 8, backgroundColor: '#f5f5f5', borderRadius: 4 }}>
+                  {viewingAgent.description}
+                </div>
+              </div>
+              <div style={{ marginTop: 12 }}>
+                <Text strong>标签: </Text>
+                <div style={{ marginTop: 4 }}>
+                  {viewingAgent.tags.map(tag => (
+                    <Tag key={tag} style={{ marginBottom: 4 }}>{tag}</Tag>
+                  ))}
+                </div>
+              </div>
+            </Card>
+
+            {/* 运行指标 */}
+            <Card size="small" title="运行指标" style={{ marginBottom: 16 }}>
+              <Row gutter={16}>
+                <Col span={8}>
+                  <Statistic
+                    title="总运行次数"
+                    value={viewingAgent.metrics?.totalRuns || 0}
+                    prefix={<SyncOutlined />}
+                  />
+                </Col>
+                <Col span={8}>
+                  <Statistic
+                    title="成功率"
+                    value={viewingAgent.metrics?.successRate || 0}
+                    suffix="%"
+                    precision={1}
+                    valueStyle={{ color: (viewingAgent.metrics?.successRate || 0) > 90 ? '#3f8600' : '#cf1322' }}
+                  />
+                </Col>
+                <Col span={8}>
+                  <Statistic
+                    title="平均执行时间"
+                    value={viewingAgent.metrics?.avgExecutionTime || 0}
+                    suffix="s"
+                    precision={1}
+                    prefix={<ClockCircleOutlined />}
+                  />
+                </Col>
+              </Row>
+            </Card>
+
+            {/* LLM配置 */}
+            {viewingAgent.llmConfig && (
+              <Card size="small" title="LLM配置" style={{ marginBottom: 16 }}>
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <div style={{ marginBottom: 8 }}>
+                      <Text strong>提供商: </Text>
+                      <Tag color="blue">{viewingAgent.llmConfig.provider}</Tag>
+                    </div>
+                    <div style={{ marginBottom: 8 }}>
+                      <Text strong>模型: </Text>
+                      <Text code>{viewingAgent.llmConfig.model}</Text>
+                    </div>
+                  </Col>
+                  <Col span={12}>
+                    <div style={{ marginBottom: 8 }}>
+                      <Text strong>温度: </Text>
+                      <Text>{viewingAgent.llmConfig.temperature || 'N/A'}</Text>
+                    </div>
+                    <div style={{ marginBottom: 8 }}>
+                      <Text strong>最大Token: </Text>
+                      <Text>{viewingAgent.llmConfig.maxTokens || 'N/A'}</Text>
+                    </div>
+                  </Col>
+                </Row>
+                {viewingAgent.systemPrompt && (
+                  <div style={{ marginTop: 12 }}>
+                    <Text strong>系统提示词: </Text>
+                    <div style={{ marginTop: 4, padding: 8, backgroundColor: '#f5f5f5', borderRadius: 4, fontSize: 12 }}>
+                      {viewingAgent.systemPrompt}
+                    </div>
+                  </div>
+                )}
+              </Card>
+            )}
+
+            {/* 能力配置 */}
+            {viewingAgent.capabilities && viewingAgent.capabilities.length > 0 && (
+              <Card size="small" title="能力配置" style={{ marginBottom: 16 }}>
+                {viewingAgent.capabilities.map((capability, index) => (
+                  <div key={index} style={{ 
+                    marginBottom: 12, 
+                    padding: 12, 
+                    border: '1px solid #d9d9d9', 
+                    borderRadius: 4,
+                    backgroundColor: capability.enabled ? '#f6ffed' : '#fff2f0'
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                      <Text strong>{capability.capabilityId}</Text>
+                      <Tag color={capability.enabled ? 'green' : 'red'}>
+                        {capability.enabled ? '已启用' : '已禁用'}
+                      </Tag>
+                    </div>
+                    <div style={{ fontSize: 12, color: '#666' }}>
+                      <Text strong>配置: </Text>
+                      <pre style={{ margin: 0, fontSize: 11, backgroundColor: '#f5f5f5', padding: 4, borderRadius: 2 }}>
+                        {JSON.stringify(capability.config, null, 2)}
+                      </pre>
+                    </div>
+                  </div>
+                ))}
+              </Card>
+            )}
+
+            {/* 工作流配置 */}
+            {viewingAgent.workflow && (
+              <Card size="small" title="工作流配置" style={{ marginBottom: 16 }}>
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Text strong>节点数量: </Text>
+                    <Text>{viewingAgent.workflow.nodes?.length || 0}</Text>
+                  </Col>
+                  <Col span={12}>
+                    <Text strong>连接数量: </Text>
+                    <Text>{viewingAgent.workflow.edges?.length || 0}</Text>
+                  </Col>
+                </Row>
+                <div style={{ marginTop: 12 }}>
+                  <Text strong>节点列表: </Text>
+                  <div style={{ marginTop: 4, maxHeight: 150, overflowY: 'auto' }}>
+                    {viewingAgent.workflow.nodes?.map((node, index) => (
+                      <div key={index} style={{ 
+                        padding: 6, 
+                        margin: '4px 0', 
+                        backgroundColor: '#f5f5f5', 
+                        borderRadius: 4,
+                        fontSize: 12
+                      }}>
+                        <Text strong>{node.data?.label || node.id}</Text>
+                        <Text type="secondary" style={{ marginLeft: 8 }}>({node.type})</Text>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </Card>
+            )}
+
+            {/* 其他配置 */}
+            {viewingAgent.config && (
+              <Card size="small" title="其他配置">
+                <div style={{ fontSize: 12 }}>
+                  <Text strong>属性配置: </Text>
+                  <pre style={{ 
+                    marginTop: 4, 
+                    padding: 8, 
+                    backgroundColor: '#f5f5f5', 
+                    borderRadius: 4, 
+                    fontSize: 11,
+                    maxHeight: 200,
+                    overflowY: 'auto'
+                  }}>
+                    {JSON.stringify(viewingAgent.config.properties, null, 2)}
+                  </pre>
+                </div>
+              </Card>
+            )}
+          </div>
+        )}
       </Modal>
 
       {/* 批量删除确认对话框 */}

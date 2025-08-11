@@ -77,30 +77,7 @@
   padding: 8px; /* 添加内边距 */
 }
 
-/* 节点库容器 */
-.node-palette-container {
-  width: 280px;
-  min-width: 280px;
-  max-width: 400px;
-  height: 100%;
-  background: white;
-  border: 1px solid #e8e8e8;
-  border-radius: 6px;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  flex-shrink: 0; /* 防止被压缩 */
-}
-
-.node-palette-container.hidden {
-  width: 0;
-  min-width: 0;
-  max-width: 0;
-  opacity: 0;
-  pointer-events: none;
-  border: none;
-  margin: 0;
-  padding: 0;
-}
+/* 移除节点库容器样式 */
 
 .workflow-container {
   flex: 1;
@@ -382,10 +359,7 @@
     padding: 12px 16px;
   }
   
-  .node-palette-container {
-    width: 240px;
-    min-width: 240px;
-  }
+  /* 移除节点库容器样式 */
   
   .workflow-content {
     gap: 4px;
@@ -411,10 +385,7 @@
     min-height: calc(100vh - 80px); /* 大屏幕可能有更高的导航栏 */
   }
   
-  .node-palette-container {
-    width: 320px;
-    min-width: 320px;
-  }
+  /* 移除节点库容器样式 */
 }
 
 /* 动画效果 */

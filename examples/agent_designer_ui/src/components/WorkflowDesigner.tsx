@@ -42,12 +42,13 @@ import {
   CheckCircleOutlined,
   CloseCircleOutlined,
   WarningOutlined,
-  AppstoreOutlined
+  // AppstoreOutlined - 移除节点库图标
 } from '@ant-design/icons';
 import { BaseNode, AgentType, AgentStatus, Workflow, WorkflowStatus, Connection as WorkflowConnection } from './types';
 import { useGlobalState } from './StateManager';
 import WorkflowEngine from './WorkflowEngine';
-import NodePalette from './NodePalette';
+import { generateMockCapabilities, generateMockAgents } from '../data/mockData';
+// 移除NodePalette导入
 import './WorkflowDesigner.css';
 
 // 工作流设计器属性接口
@@ -258,9 +259,11 @@ const WorkflowDesigner: React.FC<WorkflowDesignerProps> = ({
   const [executionEngineVisible, setExecutionEngineVisible] = useState<boolean>(false);
   const [currentWorkflow, setCurrentWorkflow] = useState<Workflow | null>(null);
   
-  // 节点库状态
-  const [nodePaletteVisible, setNodePaletteVisible] = useState<boolean>(true);
-  const [draggedNodeType, setDraggedNodeType] = useState<string | null>(null);
+  // 模拟数据状态
+  const [mockCapabilities] = useState(() => generateMockCapabilities());
+  const [mockAgents] = useState(() => generateMockAgents());
+  
+  // 移除节点库相关状态
   
   // 历史记录状态（用于撤销/重做）
   const [history, setHistory] = useState<{nodes: Node<NodeData>[]; edges: Edge<EdgeData>[]}[]>([]);
@@ -1076,54 +1079,6 @@ const WorkflowDesigner: React.FC<WorkflowDesignerProps> = ({
     fileInput.click();
   }, [setNodes, setEdges]);
   
-  // 处理拖拽开始
-  const onDragStart = useCallback((nodeType: string) => {
-    setDraggedNodeType(nodeType);
-  }, []);
-  
-  // 处理拖拽结束
-  const onDragEnd = useCallback(() => {
-    setDraggedNodeType(null);
-  }, []);
-  
-  // 处理画布拖拽放置
-  const onDrop = useCallback((event: React.DragEvent) => {
-    event.preventDefault();
-    
-    console.log('Drop event triggered');
-    
-    // 获取节点类型
-    const nodeType = event.dataTransfer.getData('application/reactflow') || draggedNodeType;
-    console.log('Node type:', nodeType);
-    
-    if (!nodeType) {
-      console.log('No node type found');
-      return;
-    }
-    
-    // 获取ReactFlow容器的边界
-    const reactFlowWrapper = event.currentTarget as HTMLElement;
-    const bounds = reactFlowWrapper.getBoundingClientRect();
-    console.log('ReactFlow bounds:', bounds);
-    
-    // 计算相对于ReactFlow容器的位置
-    const position = {
-      x: event.clientX - bounds.left - 75, // 减去节点宽度的一半
-      y: event.clientY - bounds.top - 25   // 减去节点高度的一半
-    };
-    
-    console.log('Adding node at position:', position);
-    addNewNodeAtPosition(nodeType, position);
-    setDraggedNodeType(null);
-  }, [draggedNodeType, addNewNodeAtPosition]);
-  
-  // 处理画布拖拽悬停
-  const onDragOver = useCallback((event: React.DragEvent) => {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = 'move';
-    console.log('Drag over canvas');
-  }, []);
-  
   // 执行工作流
   const executeWorkflow = useCallback(() => {
     // 验证工作流
@@ -1301,6 +1256,28 @@ const WorkflowDesigner: React.FC<WorkflowDesignerProps> = ({
                   <Select.Option value={AgentType.EXECUTION}>执行Agent</Select.Option>
                   <Select.Option value={AgentType.AUDIT}>审计Agent</Select.Option>
                   <Select.Option value={AgentType.MEMORY}>记忆Agent</Select.Option>
+                </Select>
+              </Form.Item>
+              
+              <Form.Item name="agentId" label="选择Agent">
+                <Select placeholder="选择一个Agent" allowClear>
+                  {mockAgents.map(agent => (
+                    <Select.Option key={agent.id} value={agent.id}>
+                      {agent.name} - {agent.description}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Collapse.Panel>
+            
+            <Collapse.Panel header="能力配置" key="capability">
+              <Form.Item name="capabilityId" label="选择能力">
+                <Select placeholder="选择一个能力模块" allowClear>
+                  {mockCapabilities.map(capability => (
+                    <Select.Option key={capability.id} value={capability.id}>
+                      {capability.name} - {capability.type}
+                    </Select.Option>
+                  ))}
                 </Select>
               </Form.Item>
             </Collapse.Panel>
@@ -1489,14 +1466,7 @@ const WorkflowDesigner: React.FC<WorkflowDesignerProps> = ({
             </Button>
           </Tooltip>
           
-          <Tooltip title={nodePaletteVisible ? '隐藏节点库' : '显示节点库'}>
-            <Button 
-              icon={<AppstoreOutlined />}
-              onClick={() => setNodePaletteVisible(!nodePaletteVisible)}
-            >
-              节点库
-            </Button>
-          </Tooltip>
+          {/* 移除节点库按钮 */}
         </div>
         
         <Divider type="vertical" />
@@ -1527,14 +1497,7 @@ const WorkflowDesigner: React.FC<WorkflowDesignerProps> = ({
       </div>
       
       <div className="workflow-content">
-         {/* 节点库 */}
-         <div className={`node-palette-container ${!nodePaletteVisible ? 'hidden' : ''}`}>
-           <NodePalette
-             onDragStart={onDragStart}
-             onDragEnd={onDragEnd}
-             onAddNode={addNewNode}
-           />
-         </div>
+         {/* 移除节点库容器 */}
          
           <div className="workflow-container">
           <ReactFlowProvider>
@@ -1545,8 +1508,6 @@ const WorkflowDesigner: React.FC<WorkflowDesignerProps> = ({
               onEdgesChange={handleEdgesChange}
               onConnect={onConnect}
               onSelectionChange={onSelectionChange}
-              onDrop={onDrop}
-              onDragOver={onDragOver}
               nodeTypes={nodeTypes}
               edgeTypes={edgeTypes}
               deleteKeyCode={['Backspace', 'Delete']}
@@ -1640,5 +1601,255 @@ const WorkflowDesigner: React.FC<WorkflowDesignerProps> = ({
       </div>
     );
   };
-  
-  export default WorkflowDesigner;
+
+      <div className="workflow-toolbar">
+        <div className="toolbar-group">
+          <Tooltip title="撤销">
+            <Button 
+              icon={<UndoOutlined />} 
+              onClick={undo}
+              disabled={historyIndex <= 0}
+            />
+          </Tooltip>
+          <Tooltip title="重做">
+            <Button 
+              icon={<RedoOutlined />} 
+              onClick={redo}
+              disabled={historyIndex >= history.length - 1}
+            />
+          </Tooltip>
+        </div>
+        
+        <Divider type="vertical" />
+        
+        <div className="toolbar-group">
+          <Tooltip title="添加开始节点">
+            <Button 
+              type="primary" 
+              onClick={() => addNewNode('start')}
+            >
+              开始
+            </Button>
+          </Tooltip>
+          <Tooltip title="添加结束节点">
+            <Button 
+              type="primary" 
+              onClick={() => addNewNode('end')}
+            >
+              结束
+            </Button>
+          </Tooltip>
+          <Tooltip title="添加条件节点">
+            <Button 
+              onClick={() => addNewNode('condition')}
+            >
+              条件
+            </Button>
+          </Tooltip>
+          <Tooltip title="添加错误处理节点">
+            <Button 
+              danger 
+              onClick={() => addNewNode('error')}
+            >
+              错误处理
+            </Button>
+          </Tooltip>
+        </div>
+        
+        <Divider type="vertical" />
+        
+        <div className="toolbar-group">
+          <Tooltip title="添加规划Agent">
+            <Button 
+              onClick={() => addNewNode('planning')}
+            >
+              规划Agent
+            </Button>
+          </Tooltip>
+          <Tooltip title="添加执行Agent">
+            <Button 
+              onClick={() => addNewNode('execution')}
+            >
+              执行Agent
+            </Button>
+          </Tooltip>
+          <Tooltip title="添加审计Agent">
+            <Button 
+              onClick={() => addNewNode('audit')}
+            >
+              审计Agent
+            </Button>
+          </Tooltip>
+          <Tooltip title="添加记忆Agent">
+            <Button 
+              onClick={() => addNewNode('memory')}
+            >
+              记忆Agent
+            </Button>
+          </Tooltip>
+        </div>
+        
+        <Divider type="vertical" />
+        
+        <div className="toolbar-group">
+          <Tooltip title="删除选中">
+            <Button 
+              danger 
+              icon={<DeleteOutlined />} 
+              onClick={deleteSelected}
+              disabled={selectedElements.length === 0}
+            />
+          </Tooltip>
+        </div>
+        
+        <div className="toolbar-spacer"></div>
+
+        <div className="toolbar-group">
+          <Tooltip title="验证工作流">
+            <Button 
+              icon={<InfoCircleOutlined />} 
+              onClick={validateWorkflow}
+            >
+              验证
+            </Button>
+          </Tooltip>
+          <Tooltip title="执行工作流">
+            <Button 
+              type="primary"
+              icon={<PlayCircleOutlined />} 
+              onClick={executeWorkflow}
+            >
+              执行
+            </Button>
+          </Tooltip>
+        </div>
+
+        <Divider type="vertical" />
+
+        <div className="toolbar-group">
+          <Tooltip title="导入工作流">
+            <Button 
+              icon={<ImportOutlined />} 
+              onClick={importWorkflow}
+            />
+          </Tooltip>
+          <Tooltip title="导出工作流">
+            <Button 
+              icon={<ExportOutlined />} 
+              onClick={exportWorkflow}
+            />
+          </Tooltip>
+          <Tooltip title="保存工作流">
+            <Button 
+              type="primary" 
+              icon={<SaveOutlined />} 
+              onClick={saveWorkflow}
+            >
+              保存
+            </Button>
+          </Tooltip>
+        </div>
+      </div>
+
+      <div className="workflow-content">
+        <div className="workflow-container">
+          <ReactFlowProvider>
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              onNodesChange={handleNodesChange}
+              onEdgesChange={handleEdgesChange}
+              onConnect={onConnect}
+              onSelectionChange={onSelectionChange}
+              nodeTypes={nodeTypes}
+              edgeTypes={edgeTypes}
+              deleteKeyCode={['Backspace', 'Delete']}
+              multiSelectionKeyCode={['Control', 'Meta']}
+              snapToGrid
+              snapGrid={[15, 15]}
+              defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+              minZoom={0.2}
+              maxZoom={4}
+              attributionPosition="bottom-right"
+              connectionLineType={ConnectionLineType.SmoothStep}
+              connectionLineStyle={{ stroke: '#1890ff' }}
+              fitView
+            >
+              <Controls />
+              <Background color="#aaa" gap={16} />
+              <MiniMap
+                nodeStrokeColor={(n) => {
+                  return n.selected ? '#1890ff' : '#999';
+                }}
+                nodeColor={(n) => {
+                  return n.selected ? '#1890ff' : '#fff';
+                }}
+              />
+              <Panel position="top-right">
+                <Button
+                  type="primary"
+                  onClick={() => setPropertiesVisible(!propertiesVisible)}
+                  icon={<SettingOutlined />}
+                >
+                  属性面板
+                </Button>
+              </Panel>
+            </ReactFlow>
+          </ReactFlowProvider>
+        </div>
+        
+        <Drawer
+          title="属性面板"
+          placement="right"
+          closable={true}
+          onClose={() => setPropertiesVisible(false)}
+          open={propertiesVisible}
+          width={350}
+        >
+          {renderPropertiesPanel()}
+        </Drawer>
+      </div>
+      
+      <Modal
+        title="保存工作流"
+        open={saveModalVisible}
+        onOk={confirmSaveWorkflow}
+        onCancel={() => setSaveModalVisible(false)}
+        confirmLoading={isLoading}
+      >
+        <Form layout="vertical">
+          <Form.Item label="工作流名称" required>
+            <Input 
+              value={workflowName} 
+              onChange={e => setWorkflowName(e.target.value)} 
+              placeholder="请输入工作流名称"
+            />
+          </Form.Item>
+          <Form.Item label="工作流描述">
+            <Input.TextArea 
+              value={workflowDescription} 
+              onChange={e => setWorkflowDescription(e.target.value)} 
+              placeholder="请输入工作流描述"
+              rows={4}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <WorkflowEngine
+        visible={executionEngineVisible}
+        workflow={currentWorkflow}
+        onClose={() => {
+          setExecutionEngineVisible(false);
+          setCurrentWorkflow(null);
+        }}
+        onExecutionComplete={(execution) => {
+          console.log('工作流执行完成:', execution);
+          message.success('工作流执行完成');
+        }}
+      />
+    </div>
+  );
+};
+
+export default WorkflowDesigner;

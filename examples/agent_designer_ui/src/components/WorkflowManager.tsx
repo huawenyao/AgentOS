@@ -731,7 +731,7 @@ const WorkflowManager: React.FC = () => {
               <Col span={12}>
                 <div style={{ marginBottom: 16 }}>
                   <Text strong>工作流名称：</Text>
-                  <div>{selectedWorkflow.name}</div>
+                  <div>{selectedWorkflow.name || '未命名工作流'}</div>
                 </div>
                 <div style={{ marginBottom: 16 }}>
                   <Text strong>描述：</Text>

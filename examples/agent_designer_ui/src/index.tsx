@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import EFIAgent2_0 from './components/EFIAgent2_0';
 import { ConfigProvider, theme } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
+import EFIAgent2_0 from './components/EFIAgent2_0';
 
 // 导入全局样式
 import './index.css';

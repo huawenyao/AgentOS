@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams, useParams } from 'react-router-dom';
 import ReactFlow, {
   Controls,
   Background,
@@ -133,7 +133,7 @@ const AgentDesigner: React.FC = () => {
     
     // 检查组件配置完整性
     components.forEach((component, index) => {
-      if (!component.name || component.name.trim() === '') {
+      if (!(component.name || '').trim()) {
         errors.push(`第${index + 1}个组件缺少名称`);
       }
       
@@ -413,12 +413,16 @@ const AgentDesigner: React.FC = () => {
     return false;
   }, [setNodes, setEdges]);
 
+  // 获取路由参数
+  const { agentId } = useParams<{ agentId?: string }>();
+
   // 检查是否为编辑模式并加载Agent数据
   useEffect(() => {
     const mode = searchParams.get('mode');
-    const agentId = searchParams.get('id');
+    const queryAgentId = searchParams.get('id');
+    const currentAgentId = agentId || queryAgentId;
     
-    if (mode === 'edit' && agentId) {
+    if ((mode === 'edit' && currentAgentId) || agentId) {
       // 从localStorage获取编辑的Agent数据
       const editingAgentData = localStorage.getItem('editingAgent');
       if (editingAgentData) {
@@ -460,6 +464,9 @@ const AgentDesigner: React.FC = () => {
           console.error('解析Agent数据失败:', error);
           message.error('加载Agent配置失败');
         }
+      } else if (currentAgentId) {
+        // 如果localStorage中没有数据，但有agentId，尝试从其他地方加载
+        message.warning('未找到Agent编辑数据，请从Agent管理页面重新进入编辑模式');
       }
     } else {
       // 如果没有编辑数据，尝试恢复设计状态
@@ -468,7 +475,7 @@ const AgentDesigner: React.FC = () => {
         message.info('已恢复上次的设计状态');
       }
     }
-  }, [searchParams, setNodes, setEdges, saveForm, restoreDesignState]);
+  }, [agentId, searchParams, setNodes, setEdges, saveForm, restoreDesignState]);
 
   // 定期保存设计状态
   useEffect(() => {
@@ -572,10 +579,10 @@ const AgentDesigner: React.FC = () => {
                         onClick={() => addCapability(capability.id)}
                       >
                         <div className="capability-icon">
-                          <img src={capability.icon} alt={capability.name} />
+                          <img src={capability.icon} alt={capability?.name || '未知能力'} />
                         </div>
                         <div className="capability-info">
-                          <h4>{capability.name}</h4>
+                          <h4>{capability?.name || '未知能力'}</h4>
                           <p>{capability.description}</p>
                         </div>
                       </div>

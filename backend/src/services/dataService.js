@@ -675,10 +675,222 @@ class DataService {
     })
   }
 
-  // ==================== 监控相关 ====================
+  // ==================== Agent实例相关 ====================
   
   /**
    * 获取Agent实例列表
+   */
+  async getAgents(filters = {}, pagination = {}) {
+    if (this.useMockData) {
+      const agents = await mockDataService.getAgentInstances(filters)
+      const { page = 1, limit = 10 } = pagination
+      const { offset } = this.buildPaginationParams(page, limit)
+      
+      return {
+        agents: agents.slice(offset, offset + parseInt(limit)),
+        pagination: {
+          total: agents.length,
+          page: parseInt(page),
+          limit: parseInt(limit),
+          totalPages: Math.ceil(agents.length / parseInt(limit))
+        }
+      }
+    }
+
+    const { page = 1, limit = 10, sortBy = 'createdAt', sortOrder = 'desc' } = pagination
+    const { offset } = this.buildPaginationParams(page, limit)
+    const order = this.buildOrderParams(sortBy, sortOrder)
+    
+    const where = {}
+    if (filters.status) where.status = filters.status
+    if (filters.configId) where.configId = filters.configId
+    if (filters.environment) where.environment = filters.environment
+    if (filters.ownerId) where.ownerId = filters.ownerId
+    if (filters.q) Object.assign(where, this.buildSearchCondition(filters.q, ['name', 'description']))
+
+    const { count, rows: agents } = await AgentInstance.findAndCountAll({
+      where,
+      include: [
+        {
+          model: AgentConfig,
+          as: 'config',
+          attributes: ['id', 'name', 'type'],
+          include: [{
+            model: AgentTemplate,
+            as: 'template',
+            attributes: ['id', 'name', 'iconUrl']
+          }]
+        },
+        {
+          model: User,
+          as: 'owner',
+          attributes: ['id', 'username', 'avatarUrl']
+        }
+      ],
+      order,
+      limit: parseInt(limit),
+      offset
+    })
+
+    return {
+      agents,
+      pagination: {
+        total: count,
+        page: parseInt(page),
+        limit: parseInt(limit),
+        totalPages: Math.ceil(count / parseInt(limit))
+      }
+    }
+  }
+
+  /**
+   * 根据ID获取Agent实例
+   */
+  async getAgentById(id) {
+    if (this.useMockData) {
+      return await mockDataService.getAgentInstanceById(id)
+    }
+
+    return await AgentInstance.findByPk(id, {
+      include: [
+        {
+          model: AgentConfig,
+          as: 'config',
+          include: [{
+            model: AgentTemplate,
+            as: 'template'
+          }]
+        },
+        {
+          model: User,
+          as: 'owner',
+          attributes: ['id', 'username', 'avatarUrl']
+        }
+      ]
+    })
+  }
+
+  /**
+   * 创建Agent实例
+   */
+  async createAgent(data) {
+    if (this.useMockData) {
+      return await mockDataService.createAgentInstance(data)
+    }
+
+    const agent = await AgentInstance.create(data)
+    return await this.getAgentById(agent.id)
+  }
+
+  /**
+   * 更新Agent实例
+   */
+  async updateAgent(id, data) {
+    if (this.useMockData) {
+      return await mockDataService.updateAgentInstance(id, data)
+    }
+
+    const agent = await AgentInstance.findByPk(id)
+    if (!agent) return null
+    
+    await agent.update(data)
+    return await this.getAgentById(id)
+  }
+
+  /**
+   * 删除Agent实例
+   */
+  async deleteAgent(id) {
+    if (this.useMockData) {
+      return await mockDataService.deleteAgentInstance(id)
+    }
+
+    const agent = await AgentInstance.findByPk(id)
+    if (!agent) return false
+    
+    await agent.destroy()
+    return true
+  }
+
+  /**
+   * 启动Agent实例
+   */
+  async startAgentInstance(id) {
+    if (this.useMockData) {
+      return await mockDataService.startAgentInstance(id)
+    }
+
+    const agent = await AgentInstance.findByPk(id)
+    if (!agent) return null
+    
+    await agent.update({
+      status: 'running',
+      startedAt: new Date(),
+      stoppedAt: null
+    })
+    
+    return { success: true, message: 'Agent启动成功' }
+  }
+
+  /**
+   * 停止Agent实例
+   */
+  async stopAgentInstance(id) {
+    if (this.useMockData) {
+      return await mockDataService.stopAgentInstance(id)
+    }
+
+    const agent = await AgentInstance.findByPk(id)
+    if (!agent) return null
+    
+    await agent.update({
+      status: 'stopped',
+      stoppedAt: new Date()
+    })
+    
+    return { success: true, message: 'Agent停止成功' }
+  }
+
+  /**
+   * 重启Agent实例
+   */
+  async restartAgentInstance(id) {
+    if (this.useMockData) {
+      return await mockDataService.restartAgentInstance(id)
+    }
+
+    const agent = await AgentInstance.findByPk(id)
+    if (!agent) return null
+    
+    await agent.update({
+      status: 'running',
+      startedAt: new Date(),
+      stoppedAt: null
+    })
+    
+    return { success: true, message: 'Agent重启成功' }
+  }
+
+  /**
+   * 暂停Agent实例
+   */
+  async pauseAgentInstance(id) {
+    if (this.useMockData) {
+      return await mockDataService.pauseAgentInstance(id)
+    }
+
+    const agent = await AgentInstance.findByPk(id)
+    if (!agent) return null
+    
+    await agent.update({
+      status: 'paused'
+    })
+    
+    return { success: true, message: 'Agent暂停成功' }
+  }
+
+  /**
+   * 获取Agent实例列表（兼容旧接口）
    */
   async getAgentInstances(filters = {}, pagination = {}) {
     if (this.useMockData) {

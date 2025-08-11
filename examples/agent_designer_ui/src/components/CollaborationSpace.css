@@ -1,0 +1,545 @@
+.collaboration-space {
+  padding: 24px;
+  background: #f5f5f5;
+  min-height: 100vh;
+}
+
+.collaboration-space .ant-card {
+  margin-bottom: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.collaboration-space .ant-card-head {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.collaboration-space .ant-card-head-title {
+  font-weight: 600;
+}
+
+.project-item {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 0;
+  margin-bottom: 0;
+  padding: 12px 16px;
+  border: none;
+  border-bottom: 1px solid #f0f0f0;
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+
+
+.project-details {
+  height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+.project-details .ant-card-body {
+  padding: 24px;
+}
+
+.project-details .ant-tabs-content-holder {
+  max-height: calc(100vh - 300px);
+  overflow-y: auto;
+}
+
+.collaboration-space .ant-list-item {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 16px 0;
+  width: 100% !important;
+}
+
+.collaboration-space .ant-list-item:last-child {
+  border-bottom: none;
+}
+
+.collaboration-space .ant-list-item-meta-title {
+  margin-bottom: 8px;
+}
+
+.collaboration-space .ant-list-item-meta-description {
+  color: #666;
+}
+
+.collaboration-space .ant-list-item-action {
+  margin-left: 16px;
+}
+
+.collaboration-space .ant-statistic-title {
+  font-size: 14px;
+  color: #666;
+}
+
+.collaboration-space .ant-statistic-content {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.collaboration-space .ant-progress-line {
+  margin: 0;
+}
+
+.collaboration-space .ant-tag {
+  margin: 2px;
+  border-radius: 4px;
+}
+
+.collaboration-space .ant-tabs-tab {
+  font-weight: 500;
+}
+
+.collaboration-space .ant-comment {
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+}
+
+.collaboration-space .ant-comment:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.collaboration-space .ant-comment-inner {
+  padding: 0;
+}
+
+.collaboration-space .ant-comment-avatar {
+  margin-right: 12px;
+}
+
+.collaboration-space .ant-comment-content-author {
+  margin-bottom: 4px;
+}
+
+.collaboration-space .ant-comment-content-detail {
+  margin-bottom: 8px;
+}
+
+.collaboration-space .ant-comment-actions {
+  margin-top: 8px;
+}
+
+.collaboration-space .ant-comment-actions li {
+  display: inline-block;
+  margin-right: 16px;
+}
+
+.collaboration-space .ant-avatar {
+  border: 1px solid #f0f0f0;
+}
+
+.collaboration-space .ant-modal-header {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.collaboration-space .ant-modal-body {
+  padding: 24px;
+}
+
+.collaboration-space .ant-form-item-label > label {
+  font-weight: 500;
+}
+
+.collaboration-space .ant-btn {
+  border-radius: 6px;
+}
+
+.collaboration-space .ant-input {
+  border-radius: 6px;
+}
+
+.collaboration-space .ant-select-selector {
+  border-radius: 6px;
+}
+
+.collaboration-space .ant-card-small .ant-card-head {
+  min-height: 42px;
+}
+
+.collaboration-space .ant-card-small .ant-card-body {
+  padding: 16px;
+}
+
+.collaboration-space .ant-divider {
+  margin: 12px 0;
+}
+
+.collaboration-space .ant-space-item {
+  display: inline-flex;
+  align-items: center;
+}
+
+.collaboration-space .ant-typography {
+  margin-bottom: 0;
+}
+
+.collaboration-space .ant-btn-text {
+  padding: 4px 8px;
+  height: auto;
+}
+
+.collaboration-space .ant-btn-text:hover {
+  background-color: #f5f5f5;
+}
+
+.collaboration-space .ant-btn-text.ant-btn-dangerous:hover {
+  background-color: #fff2f0;
+  color: #ff4d4f;
+}
+
+.collaboration-space .ant-progress-circle {
+  margin-bottom: 8px;
+}
+
+.collaboration-space .ant-progress-circle .ant-progress-text {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.collaboration-space .ant-timeline {
+  margin-top: 16px;
+}
+
+.collaboration-space .ant-timeline-item-content {
+  margin-left: 16px;
+}
+
+.collaboration-space .ant-timeline-item-tail {
+  border-left: 2px solid #f0f0f0;
+}
+
+.collaboration-space .ant-timeline-item-head {
+  background: #fff;
+  border: 2px solid #f0f0f0;
+}
+
+.collaboration-space .ant-timeline-item-head-blue {
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
+.collaboration-space .ant-timeline-item-head-green {
+  border-color: #52c41a;
+  color: #52c41a;
+}
+
+.collaboration-space .ant-calendar {
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+}
+
+.collaboration-space .ant-calendar-header {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 16px;
+}
+
+.collaboration-space .ant-calendar-body {
+  padding: 16px;
+}
+
+.collaboration-space .ant-steps {
+  margin-bottom: 24px;
+}
+
+.collaboration-space .ant-steps-item-title {
+  font-weight: 500;
+}
+
+.collaboration-space .ant-collapse {
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+}
+
+.collaboration-space .ant-collapse-item {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.collaboration-space .ant-collapse-item:last-child {
+  border-bottom: none;
+}
+
+.collaboration-space .ant-collapse-header {
+  padding: 16px 24px;
+  font-weight: 500;
+}
+
+.collaboration-space .ant-collapse-content {
+  border-top: 1px solid #f0f0f0;
+}
+
+.collaboration-space .ant-collapse-content-box {
+  padding: 16px 24px;
+}
+
+.collaboration-space .ant-alert {
+  margin-bottom: 16px;
+  border-radius: 6px;
+}
+
+.collaboration-space .ant-badge {
+  margin-right: 8px;
+}
+
+.collaboration-space .ant-badge-count {
+  background-color: #1890ff;
+  border-color: #1890ff;
+}
+
+.collaboration-space .ant-upload {
+  width: 100%;
+}
+
+.collaboration-space .ant-upload-drag {
+  border: 2px dashed #d9d9d9;
+  border-radius: 8px;
+  background: #fafafa;
+  transition: all 0.3s ease;
+}
+
+.collaboration-space .ant-upload-drag:hover {
+  border-color: #1890ff;
+  background: #f0f8ff;
+}
+
+.collaboration-space .ant-upload-drag.ant-upload-drag-hover {
+  border-color: #1890ff;
+  background: #f0f8ff;
+}
+
+.collaboration-space .ant-drawer-header {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.collaboration-space .ant-card-body {
+  padding: 24px;
+}
+
+.collaboration-space .ant-list {
+  width: 100% !important;
+}
+
+.collaboration-space .ant-list-item-meta {
+  width: 100% !important;
+}
+
+.collaboration-space .ant-list-item-content {
+  width: 100% !important;
+}
+
+/* 项目列表Card组件样式优化 */
+.collaboration-space .ant-card .ant-card-body {
+  padding: 0 !important;
+}
+
+.collaboration-space .ant-list {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.collaboration-space .ant-list-item {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  width: 100% !important;
+}
+
+.collaboration-space .project-item {
+  margin: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.collaboration-space .ant-list-item-main {
+  width: 100% !important;
+}
+
+.collaboration-space .ant-list-item-extra {
+  margin-left: 8px !important;
+}
+
+/* 表格式布局样式 */
+.collaboration-space .project-item:last-child {
+  border-bottom: none;
+}
+
+.collaboration-space .project-item:hover {
+  background-color: #f5f5f5;
+}
+
+.collaboration-space .project-item.selected {
+  background-color: #e6f7ff;
+  border-bottom-color: #1890ff;
+}
+
+.collaboration-space .project-item.selected:hover {
+  background-color: #e6f7ff;
+}
+
+/* 项目详情模态框样式 */
+.project-details-modal .ant-modal-body {
+  padding: 24px;
+}
+
+.project-details-modal .ant-tabs-content-holder {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.project-details-modal .ant-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.collaboration-space .ant-popover-inner {
+  border-radius: 8px;
+}
+
+.collaboration-space .ant-popover-arrow {
+  border-color: #fff;
+}
+
+@media (max-width: 768px) {
+  .collaboration-space {
+    padding: 16px;
+  }
+  
+  .collaboration-space .ant-col {
+    margin-bottom: 16px;
+  }
+  
+  .project-details {
+    height: auto;
+    max-height: none;
+  }
+  
+  .project-details .ant-tabs-content-holder {
+    max-height: none;
+  }
+}
+
+@media (max-width: 576px) {
+  .collaboration-space {
+    padding: 12px;
+  }
+  
+  .collaboration-space .ant-card {
+    margin-bottom: 12px;
+  }
+  
+  .project-item {
+    padding: 12px;
+  }
+  
+  .collaboration-space .ant-statistic-content {
+    font-size: 20px;
+  }
+  
+  .collaboration-space .ant-modal {
+    margin: 0;
+    max-width: 100vw;
+  }
+  
+  .collaboration-space .ant-modal-body {
+    padding: 16px;
+  }
+  
+  .collaboration-space .ant-comment {
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+  }
+  
+  .collaboration-space .ant-comment-avatar {
+    margin-right: 8px;
+  }
+}
+
+/* 自定义滚动条 */
+.collaboration-space ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.collaboration-space ::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.collaboration-space ::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.collaboration-space ::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* 动画效果 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.collaboration-space .ant-card {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.collaboration-space .project-item {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.collaboration-space .project-item:nth-child(1) { animation-delay: 0.1s; }
+.collaboration-space .project-item:nth-child(2) { animation-delay: 0.2s; }
+.collaboration-space .project-item:nth-child(3) { animation-delay: 0.3s; }
+.collaboration-space .project-item:nth-child(4) { animation-delay: 0.4s; }
+
+/* 状态指示器 */
+.collaboration-space .status-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.collaboration-space .status-indicator.active {
+  background-color: #52c41a;
+  animation: pulse 2s infinite;
+}
+
+.collaboration-space .status-indicator.completed {
+  background-color: #1890ff;
+}
+
+.collaboration-space .status-indicator.paused {
+  background-color: #faad14;
+}
+
+.collaboration-space .status-indicator.archived {
+  background-color: #d9d9d9;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(82, 196, 26, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(82, 196, 26, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(82, 196, 26, 0);
+  }
+}

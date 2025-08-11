@@ -219,7 +219,7 @@ const RealTimeValidator: React.FC<RealTimeValidatorProps> = ({
             type: 'error',
             category: 'dependency',
             title: '缺少必需依赖',
-            description: `能力"${cap.name}"需要依赖"${dep.capabilityId}"`,
+            description: `能力"${cap?.name || '未知能力'}"需要依赖"${dep.capabilityId}"`,
             suggestion: '添加所需的依赖能力或移除当前能力',
             severity: 'high',
             affectedComponents: [cap.id]
@@ -232,7 +232,7 @@ const RealTimeValidator: React.FC<RealTimeValidatorProps> = ({
             type: 'warning',
             category: 'dependency',
             title: '缺少可选依赖',
-            description: `能力"${cap.name}"建议添加依赖"${dep.capabilityId}"以获得更好的性能`,
+            description: `能力"${cap?.name || '未知能力'}"建议添加依赖"${dep.capabilityId}"以获得更好的性能`,
             suggestion: '考虑添加可选依赖以增强功能',
             severity: 'medium',
             affectedComponents: [cap.id]
@@ -351,7 +351,7 @@ const RealTimeValidator: React.FC<RealTimeValidatorProps> = ({
           type: 'warning',
           category: 'performance',
           title: '超时时间过长',
-          description: `能力"${cap.name}"的超时时间为${cap.config.timeout}ms，可能影响响应性`,
+          description: `能力"${cap?.name || '未知能力'}"的超时时间为${cap.config.timeout}ms，可能影响响应性`,
           suggestion: '考虑减少超时时间或优化处理逻辑',
           severity: 'low',
           affectedComponents: [cap.id]
@@ -376,7 +376,7 @@ const RealTimeValidator: React.FC<RealTimeValidatorProps> = ({
           type: 'warning',
           category: 'security',
           title: '安全级别较低',
-          description: `能力"${cap.name}"的安全级别为低，可能存在安全风险`,
+          description: `能力"${cap?.name || '未知能力'}"的安全级别为低，可能存在安全风险`,
           suggestion: '提升安全级别并启用相应的安全措施',
           severity: 'medium',
           affectedComponents: [cap.id]
@@ -390,7 +390,7 @@ const RealTimeValidator: React.FC<RealTimeValidatorProps> = ({
           type: 'error',
           category: 'security',
           title: '缺少身份验证',
-          description: `能力"${cap.name}"未启用身份验证`,
+          description: `能力"${cap?.name || '未知能力'}"未启用身份验证`,
           suggestion: '启用身份验证以保护能力访问',
           severity: 'high',
           affectedComponents: [cap.id]
@@ -403,7 +403,7 @@ const RealTimeValidator: React.FC<RealTimeValidatorProps> = ({
           type: 'warning',
           category: 'security',
           title: '缺少数据加密',
-          description: `能力"${cap.name}"未启用数据加密`,
+          description: `能力"${cap?.name || '未知能力'}"未启用数据加密`,
           suggestion: '启用数据加密以保护敏感信息',
           severity: 'medium',
           affectedComponents: [cap.id]
@@ -528,12 +528,12 @@ const RealTimeValidator: React.FC<RealTimeValidatorProps> = ({
 
     capabilities.forEach(cap => {
       if (!cap.config.accessControl.authentication) {
-        vulnerabilities.push(`${cap.name}: 缺少身份验证`);
-        recommendations.push(`为${cap.name}启用身份验证`);
+        vulnerabilities.push(`${cap?.name || '未知能力'}: 缺少身份验证`);
+        recommendations.push(`为${cap?.name || '未知能力'}启用身份验证`);
       }
       if (!cap.config.accessControl.encryption) {
-        vulnerabilities.push(`${cap.name}: 缺少数据加密`);
-        recommendations.push(`为${cap.name}启用数据加密`);
+        vulnerabilities.push(`${cap?.name || '未知能力'}: 缺少数据加密`);
+        recommendations.push(`为${cap?.name || '未知能力'}启用数据加密`);
       }
     });
 
@@ -580,7 +580,7 @@ const RealTimeValidator: React.FC<RealTimeValidatorProps> = ({
     if (!agent || capabilities.length === 0) return;
 
     try {
-      const executionPath = capabilities.map(cap => cap.name);
+      const executionPath = capabilities.map(cap => cap?.name || '未知能力');
       
       const estimatedCost = {
         computational: capabilities.reduce((sum, cap) => {
@@ -598,7 +598,7 @@ const RealTimeValidator: React.FC<RealTimeValidatorProps> = ({
         executionPath,
         dataFlow: {
           input: { type: 'multimodal', data: 'sample input' },
-          processing: capabilities.map(cap => ({ capability: cap.name, status: 'ready' })),
+          processing: capabilities.map(cap => ({ capability: cap?.name || '未知能力', status: 'ready' })),
           output: { type: 'structured', data: 'processed result' }
         },
         estimatedCost

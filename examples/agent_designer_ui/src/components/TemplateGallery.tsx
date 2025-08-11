@@ -114,7 +114,7 @@ const TemplateGallery: React.FC = () => {
     if (searchText) {
       const lowerSearchText = searchText.toLowerCase();
       result = result.filter(template => 
-        template.name.toLowerCase().includes(lowerSearchText) ||
+        (template.name || '').toLowerCase().includes(lowerSearchText) ||
         template.description.toLowerCase().includes(lowerSearchText) ||
         template.type.toLowerCase().includes(lowerSearchText) ||
         (template.tags && template.tags.some(tag => tag.toLowerCase().includes(lowerSearchText)))
@@ -216,7 +216,7 @@ const TemplateGallery: React.FC = () => {
           {template.featured && (
             <Badge.Ribbon text="推荐" color="gold" />
           )}
-          <Title level={4} data-testid="template-name">{template.name}</Title>
+          <Title level={4} data-testid="template-name">{template.name || '未命名模板'}</Title>
           <Tag color="blue" data-testid="template-type">{template.type}</Tag>
           <Tag color={getDifficultyColor(template.difficulty || '')}>
             {getDifficultyText(template.difficulty || '')}
@@ -260,7 +260,7 @@ const TemplateGallery: React.FC = () => {
               {template.featured && (
                 <Badge dot color="gold" />
               )}
-              <Title level={5} data-testid="template-name">{template.name}</Title>
+              <Title level={5} data-testid="template-name">{template.name || '未命名模板'}</Title>
               <Tag color="blue" data-testid="template-type">{template.type}</Tag>
               <Tag color={getDifficultyColor(template.difficulty || '')}>
                 {getDifficultyText(template.difficulty || '')}

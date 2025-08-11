@@ -1,0 +1,621 @@
+/**
+ * EFIAgent 2.0 工作流节点编辑器样式
+ */
+
+/* 基础样式 */
+.workflow-node-editor {
+  .ant-modal-body {
+    padding: 16px;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  
+  .ant-modal-header {
+    border-bottom: 1px solid #f0f0f0;
+    padding: 16px 24px;
+  }
+  
+  .ant-modal-footer {
+    border-top: 1px solid #f0f0f0;
+    padding: 10px 16px;
+    text-align: right;
+  }
+}
+
+/* 基本配置样式 */
+.basic-config {
+  .ant-form-item {
+    margin-bottom: 16px;
+  }
+  
+  .ant-form-item-label {
+    font-weight: 500;
+  }
+  
+  .ant-select-selection-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* 高级配置样式 */
+.advanced-config {
+  .ant-card {
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .ant-card-head {
+    background: #fafafa;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .ant-card-head-title {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .ant-card-body {
+    padding: 16px;
+  }
+  
+  .ant-slider {
+    margin: 8px 0;
+  }
+  
+  .ant-radio-group {
+    display: flex;
+    gap: 16px;
+  }
+}
+
+/* 端口配置样式 */
+.ports-config {
+  .port-editor {
+    border: 1px solid #f0f0f0;
+    border-radius: 6px;
+    padding: 16px;
+    background: #fafafa;
+  }
+  
+  .port-editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    
+    .ant-typography {
+      margin: 0;
+      color: #262626;
+    }
+  }
+  
+  .port-config {
+    width: 100%;
+    
+    .ant-row {
+      align-items: center;
+    }
+    
+    .ant-input,
+    .ant-select {
+      border-radius: 4px;
+    }
+    
+    .ant-switch {
+      margin: 0 auto;
+      display: block;
+    }
+  }
+  
+  .ant-list-item {
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+  
+  .ant-list-item-action {
+    margin-left: 8px;
+  }
+}
+
+/* 预览配置样式 */
+.preview-config {
+  .ant-descriptions {
+    margin-bottom: 24px;
+  }
+  
+  .ant-descriptions-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #262626;
+    margin-bottom: 16px;
+  }
+  
+  .ant-descriptions-item-label {
+    font-weight: 500;
+    color: #595959;
+    background: #fafafa;
+  }
+  
+  .ant-descriptions-item-content {
+    color: #262626;
+  }
+  
+  pre {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    max-height: 300px;
+    overflow: auto;
+    border: 1px solid #d9d9d9;
+  }
+}
+
+/* 标签页样式 */
+.ant-tabs {
+  .ant-tabs-nav {
+    margin-bottom: 16px;
+  }
+  
+  .ant-tabs-tab {
+    padding: 8px 16px;
+    
+    .anticon {
+      margin-right: 6px;
+    }
+  }
+  
+  .ant-tabs-tab-active {
+    .ant-tabs-tab-btn {
+      color: #1890ff;
+      font-weight: 500;
+    }
+  }
+  
+  .ant-tabs-content-holder {
+    padding: 0;
+  }
+}
+
+/* 表单样式增强 */
+.ant-form {
+  .ant-form-item-explain-error {
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  
+  .ant-form-item-has-error {
+    .ant-input,
+    .ant-select-selector,
+    .ant-input-number {
+      border-color: #ff4d4f;
+      box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.2);
+    }
+  }
+  
+  .ant-form-item-required {
+    .ant-form-item-label > label::before {
+      color: #ff4d4f;
+    }
+  }
+}
+
+/* 按钮样式 */
+.ant-btn {
+  border-radius: 6px;
+  font-weight: 400;
+  
+  &.ant-btn-primary {
+    background: #1890ff;
+    border-color: #1890ff;
+    box-shadow: 0 2px 4px rgba(24, 144, 255, 0.2);
+    
+    &:hover {
+      background: #40a9ff;
+      border-color: #40a9ff;
+      box-shadow: 0 4px 8px rgba(24, 144, 255, 0.3);
+    }
+  }
+  
+  &.ant-btn-danger {
+    background: #ff4d4f;
+    border-color: #ff4d4f;
+    color: white;
+    
+    &:hover {
+      background: #ff7875;
+      border-color: #ff7875;
+    }
+  }
+  
+  &.ant-btn-dashed {
+    border-style: dashed;
+    
+    &:hover {
+      border-color: #1890ff;
+      color: #1890ff;
+    }
+  }
+}
+
+/* 输入组件样式 */
+.ant-input,
+.ant-input-number,
+.ant-select-selector {
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: #40a9ff;
+  }
+  
+  &:focus,
+  &.ant-input-focused,
+  &.ant-select-focused .ant-select-selector {
+    border-color: #1890ff;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+  }
+}
+
+/* 选择器样式 */
+.ant-select {
+  .ant-select-arrow {
+    color: #bfbfbf;
+  }
+  
+  &.ant-select-open .ant-select-arrow {
+    color: #1890ff;
+  }
+}
+
+/* 开关样式 */
+.ant-switch {
+  &.ant-switch-checked {
+    background-color: #1890ff;
+  }
+}
+
+/* 滑块样式 */
+.ant-slider {
+  .ant-slider-track {
+    background-color: #1890ff;
+  }
+  
+  .ant-slider-handle {
+    border-color: #1890ff;
+    
+    &:hover {
+      border-color: #40a9ff;
+    }
+  }
+  
+  .ant-slider-mark-text {
+    font-size: 12px;
+    color: #8c8c8c;
+  }
+}
+
+/* 标签样式 */
+.ant-tag {
+  border-radius: 4px;
+  font-size: 12px;
+  padding: 2px 8px;
+  
+  &.ant-tag-blue {
+    background: #e6f7ff;
+    border-color: #91d5ff;
+    color: #1890ff;
+  }
+  
+  &.ant-tag-green {
+    background: #f6ffed;
+    border-color: #b7eb8f;
+    color: #52c41a;
+  }
+  
+  &.ant-tag-orange {
+    background: #fff7e6;
+    border-color: #ffd591;
+    color: #fa8c16;
+  }
+}
+
+/* 警告框样式 */
+.ant-alert {
+  border-radius: 6px;
+  
+  &.ant-alert-error {
+    background: #fff2f0;
+    border-color: #ffccc7;
+    
+    .ant-alert-icon {
+      color: #ff4d4f;
+    }
+  }
+  
+  .ant-alert-message {
+    font-weight: 500;
+  }
+  
+  .ant-alert-description {
+    margin-top: 4px;
+    
+    ul {
+      margin: 0;
+      padding-left: 16px;
+      
+      li {
+        margin-bottom: 4px;
+        
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}
+
+/* 卡片样式 */
+.ant-card {
+  .ant-card-head {
+    .ant-card-head-title {
+      display: flex;
+      align-items: center;
+      
+      .anticon {
+        margin-right: 8px;
+        color: #1890ff;
+      }
+    }
+  }
+}
+
+/* 列表样式 */
+.ant-list {
+  .ant-list-item {
+    transition: background-color 0.3s ease;
+    
+    &:hover {
+      background-color: #fafafa;
+    }
+  }
+}
+
+/* 描述列表样式 */
+.ant-descriptions {
+  .ant-descriptions-item {
+    padding-bottom: 8px;
+  }
+  
+  &.ant-descriptions-bordered {
+    .ant-descriptions-item-label {
+      width: 30%;
+    }
+    
+    .ant-descriptions-item-content {
+      width: 70%;
+    }
+  }
+}
+
+/* 分割线样式 */
+.ant-divider {
+  margin: 16px 0;
+  border-color: #f0f0f0;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .workflow-node-editor {
+    .ant-modal {
+      width: 95% !important;
+      margin: 10px;
+    }
+    
+    .ports-config {
+      .ant-col {
+        margin-bottom: 16px;
+      }
+    }
+    
+    .port-config {
+      .ant-col {
+        margin-bottom: 8px;
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .workflow-node-editor {
+    .ant-modal-body {
+      padding: 12px;
+    }
+    
+    .ant-form-item {
+      margin-bottom: 12px;
+    }
+    
+    .ant-tabs-tab {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+  }
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.workflow-node-editor {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.port-editor {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* 加载状态样式 */
+.ant-spin-container {
+  position: relative;
+}
+
+.ant-spin {
+  .ant-spin-dot {
+    color: #1890ff;
+  }
+}
+
+/* 工具提示样式 */
+.ant-tooltip {
+  .ant-tooltip-inner {
+    background: rgba(0, 0, 0, 0.85);
+    border-radius: 4px;
+    font-size: 12px;
+    padding: 6px 8px;
+  }
+  
+  .ant-tooltip-arrow {
+    &::before {
+      background: rgba(0, 0, 0, 0.85);
+    }
+  }
+}
+
+/* 自定义滚动条 */
+.ant-modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ant-modal-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.ant-modal-body::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+  
+  &:hover {
+    background: #a8a8a8;
+  }
+}
+
+/* 代码块样式 */
+pre {
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+    
+    &:hover {
+      background: #a8a8a8;
+    }
+  }
+}
+
+/* 状态指示器 */
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  
+  &.status-idle {
+    color: #8c8c8c;
+  }
+  
+  &.status-running {
+    color: #1890ff;
+  }
+  
+  &.status-success {
+    color: #52c41a;
+  }
+  
+  &.status-error {
+    color: #ff4d4f;
+  }
+  
+  &.status-warning {
+    color: #fa8c16;
+  }
+}
+
+/* 优先级指示器 */
+.priority-indicator {
+  &.priority-low {
+    color: #52c41a;
+  }
+  
+  &.priority-medium {
+    color: #fa8c16;
+  }
+  
+  &.priority-high {
+    color: #ff4d4f;
+  }
+}
+
+/* 类型标签 */
+.type-tag {
+  &.type-capability {
+    background: #e6f7ff;
+    border-color: #91d5ff;
+    color: #1890ff;
+  }
+  
+  &.type-condition {
+    background: #fff7e6;
+    border-color: #ffd591;
+    color: #fa8c16;
+  }
+  
+  &.type-control {
+    background: #f6ffed;
+    border-color: #b7eb8f;
+    color: #52c41a;
+  }
+  
+  &.type-agent {
+    background: #f9f0ff;
+    border-color: #d3adf7;
+    color: #722ed1;
+  }
+  
+  &.type-integration {
+    background: #fff0f6;
+    border-color: #ffadd2;
+    color: #eb2f96;
+  }
+}

@@ -43,11 +43,17 @@ const CapabilityLibrary: React.FC = () => {
       case 'nlp':
       case 'text_summary':
       case 'translation':
-      case 'sentiment_analysis':
         return '自然语言处理';
+      case 'sentiment_analysis':
+        return '情感分析';
+      case 'intent_recognition':
+        return '意图识别';
+      case 'dialogue_management':
+        return '对话管理';
       case 'knowledge_graph':
+      case 'knowledge_base_query':
       case 'data_processing':
-        return '数据处理';
+        return '知识库';
       case 'multimodal':
       case 'image_generation':
       case 'speech_recognition':
@@ -92,7 +98,16 @@ const CapabilityLibrary: React.FC = () => {
         tags.push('代码生成', 'AI');
         break;
       case 'sentiment_analysis':
-        tags.push('情感分析', 'AI');
+        tags.push('情感分析', 'AI', '情感识别');
+        break;
+      case 'intent_recognition':
+        tags.push('意图识别', 'AI', '意图理解');
+        break;
+      case 'dialogue_management':
+        tags.push('对话管理', 'AI', '多理论对话');
+        break;
+      case 'knowledge_base_query':
+        tags.push('知识库查询', '知识检索', '智能问答');
         break;
       case 'text_summary':
         tags.push('文本摘要', 'AI');
@@ -132,6 +147,12 @@ const CapabilityLibrary: React.FC = () => {
         return 'CG';
       case 'sentiment_analysis':
         return 'SA';
+      case 'intent_recognition':
+        return 'IR';
+      case 'dialogue_management':
+        return 'DM';
+      case 'knowledge_base_query':
+        return 'KB';
       case 'text_summary':
         return 'TS';
       case 'translation':
@@ -193,7 +214,7 @@ const CapabilityLibrary: React.FC = () => {
     if (searchText) {
       const lowerSearchText = searchText.toLowerCase();
       result = result.filter(capability => 
-        capability.name.toLowerCase().includes(lowerSearchText) ||
+        (capability?.name || '').toLowerCase().includes(lowerSearchText) ||
         capability.description.toLowerCase().includes(lowerSearchText) ||
         capability.type.toLowerCase().includes(lowerSearchText) ||
         (capability.tags && capability.tags.some(tag => tag.toLowerCase().includes(lowerSearchText)))
@@ -224,7 +245,7 @@ const CapabilityLibrary: React.FC = () => {
     const newComponent: Component = {
       id: `${capability.type}_${Date.now()}`,
       type: capability.type as unknown as ComponentType,
-      name: capability.name,
+      name: capability?.name || '未知能力',
       category: NodeCategory.CAPABILITY,
       description: capability.description,
       properties: [],
@@ -232,7 +253,7 @@ const CapabilityLibrary: React.FC = () => {
     };
     stateManager.addComponent(newComponent);
     
-    message.success(`已添加${capability.name}组件到当前Agent`);
+    message.success(`已添加${capability?.name || '未知能力'}组件到当前Agent`);
     stateManager.setActiveTab('designer');
   };
 
@@ -257,7 +278,7 @@ const CapabilityLibrary: React.FC = () => {
       // 目前模拟添加
       const newCapability: Capability = {
         id: `cap_${Date.now()}`,
-        name: values.name,
+        name: values?.name || '未知能力',
         type: values.type,
         description: values.description,
         config_schema: values.config_schema || {},
@@ -309,7 +330,7 @@ const CapabilityLibrary: React.FC = () => {
       >
         <div className="capability-card-header">
           <span className="capability-icon">{capability.icon}</span>
-          <Title level={4} data-testid="capability-name">{capability.name}</Title>
+          <Title level={4} data-testid="capability-name">{capability?.name || '未知能力'}</Title>
           <Tag color="blue" data-testid="capability-type">{capability.type}</Tag>
         </div>
         
@@ -383,6 +404,9 @@ const CapabilityLibrary: React.FC = () => {
             <Option value="image_generation">图像生成</Option>
             <Option value="code_generation">代码生成</Option>
             <Option value="sentiment_analysis">情感分析</Option>
+            <Option value="intent_recognition">意图识别</Option>
+            <Option value="dialogue_management">对话管理</Option>
+            <Option value="knowledge_base_query">知识库查询</Option>
             <Option value="text_summary">文本摘要</Option>
             <Option value="translation">翻译</Option>
             <Option value="speech_recognition">语音识别</Option>
@@ -411,7 +435,10 @@ const CapabilityLibrary: React.FC = () => {
         items={[
           { label: "全部", key: "all" },
           { label: "自然语言处理", key: "自然语言处理" },
-          { label: "数据处理", key: "数据处理" },
+          { label: "情感分析", key: "情感分析" },
+          { label: "意图识别", key: "意图识别" },
+          { label: "对话管理", key: "对话管理" },
+          { label: "知识库", key: "知识库" },
           { label: "多模态处理", key: "多模态处理" },
           { label: "工具集成", key: "工具集成" },
           { label: "通信交互", key: "通信交互" },
@@ -482,7 +509,7 @@ const CapabilityLibrary: React.FC = () => {
                 {selectedCapability.icon}
               </div>
               <div className="capability-detail-info">
-                <Title level={4}>{selectedCapability.name}</Title>
+                <Title level={4}>{selectedCapability?.name || '未知能力'}</Title>
                 <div className="capability-detail-meta">
                   <Tag color="blue">{selectedCapability.type}</Tag>
                   <Tag color="cyan">{selectedCapability.category}</Tag>

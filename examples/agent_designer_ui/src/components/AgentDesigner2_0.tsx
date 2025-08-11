@@ -22,9 +22,11 @@ import {
 } from '@ant-design/icons';
 import ReactFlow, {
   Controls, Background, MiniMap, addEdge, useNodesState, 
-  useEdgesState, NodeTypes, OnSelectionChangeParams,
-  Node, Edge, Connection
+  useEdgesState, NodeTypes, EdgeTypes, OnSelectionChangeParams,
+  Node, Edge, Connection, ReactFlowProvider, ReactFlowInstance,
+  MarkerType, Position, Panel as ReactFlowPanel
 } from 'reactflow';
+import 'reactflow/dist/style.css';
 import {
   CoreCapabilityType, CognitiveCapabilityType, ReasoningCapabilityType,
   DecisionCapabilityType, LearningCapabilityType, CapabilitySourceType,
@@ -33,17 +35,30 @@ import {
   KnowledgeGraphConfig, LearningConfig, CollaborationConfig,
   DeploymentConfig, AgentMetadata, CapabilitySource, CapabilityCategory
 } from './CapabilitySystemTypes';
+import {
+  generateMockCapabilities,
+  generateMockAgents,
+  generateMockWorkflows
+} from '../data/mockData';
 import AIAssistant from './AIAssistant';
 import RealTimeValidator from './RealTimeValidator';
 import CoreCapabilityModules from './CoreCapabilityModules';
+import CapabilityConfigPanel from './CapabilityConfigPanel';
+import IntelligentCapabilityConfig from './IntelligentCapabilityConfig';
+import EnhancedCapabilityLibrary from './EnhancedCapabilityLibrary';
+import VisualCapabilityOrchestrator from './VisualCapabilityOrchestrator';
 import './AgentDesigner.css';
 import './AgentDesigner2_0.css';
 import './AIAssistant.css';
 import './RealTimeValidator.css';
 import './CoreCapabilityModules.css';
+import './CapabilityConfigPanel.css';
+import './IntelligentCapabilityConfig.css';
+import './EnhancedCapabilityLibrary.css';
+import './VisualCapabilityOrchestrator.css';
 
 const { TabPane } = Tabs;
-const { Panel } = Collapse;
+const { Panel: CollapsePanel } = Collapse;
 const { Option } = Select;
 const { TextArea } = Input;
 
@@ -75,9 +90,11 @@ const MATURITY_COLORS = {
 interface AgentDesigner2_0Props {
   mode?: 'create' | 'edit' | 'view';
   agentId?: string;
+  editingAgent?: Agent2_0 | null;
+  onBack?: () => void;
 }
 
-const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', agentId }) => {
+const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', agentId, editingAgent, onBack }) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [form] = Form.useForm();
@@ -86,7 +103,6 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
   const [agent, setAgent] = useState<Agent2_0 | null>(null);
   const [capabilities, setCapabilities] = useState<CoreCapabilityModule[]>([]);
   const [selectedCapability, setSelectedCapability] = useState<CoreCapabilityModule | null>(null);
-  const [orchestrator, setOrchestrator] = useState<CapabilityOrchestrator | null>(null);
   const [knowledgeGraph, setKnowledgeGraph] = useState<KnowledgeGraphConfig | null>(null);
   const [learning, setLearning] = useState<LearningConfig | null>(null);
   const [collaboration, setCollaboration] = useState<CollaborationConfig | null>(null);
@@ -106,13 +122,198 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
   const [validatorVisible, setValidatorVisible] = useState(false);
   const [coreModulesVisible, setCoreModulesVisible] = useState(false);
   
+  // 智能配置组件状态
+  const [intelligentConfigVisible, setIntelligentConfigVisible] = useState(false);
+  const [enhancedLibraryVisible, setEnhancedLibraryVisible] = useState(false);
+  const [visualOrchestratorVisible, setVisualOrchestratorVisible] = useState(false);
+  
   // ReactFlow状态
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
+  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);
   
   // 能力库数据
   const [availableCapabilities, setAvailableCapabilities] = useState<CoreCapabilityModule[]>([]);
+
+  // 自定义节点组件
+  const CapabilityNodeComponent: React.FC<{ data: any }> = ({ data }) => {
+    const getStatusColor = (status: string) => {
+      const colorMap = {
+        idle: '#8c8c8c',
+        running: '#1890ff',
+        success: '#52c41a',
+        error: '#ff4d4f',
+        warning: '#fa8c16'
+      };
+      return colorMap[status as keyof typeof colorMap] || '#8c8c8c';
+    };
+    
+    const getCapabilityIcon = (type: CoreCapabilityType) => {
+      const iconMap = {
+        [CoreCapabilityType.COGNITIVE]: <BulbOutlined />,
+        [CoreCapabilityType.REASONING]: <ThunderboltOutlined />,
+        [CoreCapabilityType.DECISION]: <BulbOutlined />,
+        [CoreCapabilityType.LEARNING]: <BookOutlined />
+      };
+      return iconMap[type] || <SettingOutlined />;
+    };
+    
+    return (
+      <div className={`capability-node ${data.status || 'idle'}`}>
+        <div className="node-header">
+          <div className="node-icon" style={{ color: getStatusColor(data.status || 'idle') }}>
+            {getCapabilityIcon(data.capability?.type)}
+          </div>
+          <div className="node-title">
+            <span style={{ fontWeight: 'bold' }}>{data.capability?.name || '未知能力'}</span>
+            <span style={{ fontSize: '11px', color: '#999' }}>v{data.capability?.version || '1.0.0'}</span>
+          </div>
+          <div className="node-status">
+            <Badge 
+              status={data.status === 'success' ? 'success' : 
+                     data.status === 'error' ? 'error' : 
+                     data.status === 'running' ? 'processing' : 'default'}
+            />
+          </div>
+        </div>
+        
+        <div className="node-content">
+          <div className="node-metrics">
+            <div className="metric-item">
+              <CheckCircleOutlined style={{ fontSize: 10 }} />
+              <span>{((data.metrics?.successRate || 1.0) * 100).toFixed(1)}%</span>
+            </div>
+          </div>
+          
+          <div className="node-tags">
+            <Tag size="small" color={data.capability?.type === CoreCapabilityType.COGNITIVE ? 'blue' : 
+                                     data.capability?.type === CoreCapabilityType.REASONING ? 'green' :
+                                     data.capability?.type === CoreCapabilityType.DECISION ? 'orange' : 'purple'}>
+              {data.capability?.type || 'unknown'}
+            </Tag>
+          </div>
+        </div>
+        
+        {/* 连接点 */}
+        <div className="node-handles">
+          <div className="handle handle-input" />
+          <div className="handle handle-output" />
+        </div>
+      </div>
+    );
+  };
+
+  // 自定义边组件
+  const CapabilityEdgeComponent: React.FC<any> = ({
+    id,
+    sourceX,
+    sourceY,
+    targetX,
+    targetY,
+    sourcePosition,
+    targetPosition,
+    data
+  }) => {
+    const edgePath = `M${sourceX},${sourceY} C${sourceX + 50},${sourceY} ${targetX - 50},${targetY} ${targetX},${targetY}`;
+    
+    return (
+      <>
+        <path
+          id={id}
+          style={{
+            stroke: data?.errorRate > 0.1 ? '#ff4d4f' : 
+                   data?.latency > 1000 ? '#fa8c16' : '#52c41a',
+            strokeWidth: Math.max(1, (data?.weight || 1) * 2),
+            fill: 'none'
+          }}
+          className="react-flow__edge-path"
+          d={edgePath}
+          markerEnd={MarkerType.ArrowClosed}
+        />
+        {data && (
+          <text>
+            <textPath href={`#${id}`} style={{ fontSize: 10, fill: '#666' }} startOffset="50%" textAnchor="middle">
+              {data.latency || 100}ms
+            </textPath>
+          </text>
+        )}
+      </>
+    );
+  };
+
+  // 节点和边类型映射
+  const nodeTypes: NodeTypes = {
+    capability: CapabilityNodeComponent
+  };
+
+  const edgeTypes: EdgeTypes = {
+    capability: CapabilityEdgeComponent
+  };
   
+  /**
+   * 处理连接创建
+   */
+  const onConnect = useCallback((params: Connection) => {
+    const newEdge = {
+      ...params,
+      id: `edge-${params.source}-${params.target}`,
+      type: 'capability',
+      data: {
+        weight: 1.0,
+        latency: 100,
+        throughput: 1000,
+        errorRate: 0.01
+      }
+    };
+    
+    setEdges((eds) => addEdge(newEdge, eds));
+  }, [setEdges]);
+
+  /**
+   * 处理节点选择
+   */
+  const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
+    setSelectedNode(node);
+    setSelectedEdge(null);
+    
+    // 更新节点选中状态
+    setNodes(nds => nds.map(n => ({
+      ...n,
+      data: {
+        ...n.data,
+        isSelected: n.id === node.id
+      }
+    })));
+    
+    // 如果点击的是能力节点，设置选中的能力
+    if (node.data.capability) {
+      setSelectedCapability(node.data.capability);
+    }
+    
+    console.log('Selected node:', node);
+  }, [setNodes]);
+
+  /**
+   * 处理边选择
+   */
+  const onEdgeClick = useCallback((event: React.MouseEvent, edge: Edge) => {
+    setSelectedEdge(edge);
+    setSelectedNode(null);
+    
+    // 更新边选中状态
+    setEdges(eds => eds.map(e => ({
+      ...e,
+      data: {
+        ...e.data,
+        isSelected: e.id === edge.id
+      }
+    })));
+    
+    console.log('Selected edge:', edge);
+  }, [setEdges]);
+
   /**
    * 初始化组件
    */
@@ -127,17 +328,22 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
   const initializeDesigner = async () => {
     setLoading(true);
     try {
-      if (mode === 'edit' && agentId) {
-        // 加载现有Agent配置
-        const existingAgent = await loadAgent(agentId);
+      if (mode === 'edit') {
+        // 优先使用传入的editingAgent数据
+        let existingAgent = editingAgent;
+        
+        // 如果没有传入editingAgent，则从localStorage或API加载
+        if (!existingAgent && agentId) {
+          existingAgent = await loadAgent(agentId);
+        }
+        
         if (existingAgent) {
           setAgent(existingAgent);
           setCapabilities(existingAgent.capabilities || []);
-          setOrchestrator(existingAgent.orchestrator);
           setKnowledgeGraph(existingAgent.knowledgeGraph || null);
-          setLearning(existingAgent.learning || null);
-          setCollaboration(existingAgent.collaboration || null);
-          setDeployment(existingAgent.deployment || null);
+          setLearning(existingAgent.learningConfig || null);
+          setCollaboration(existingAgent.collaborationConfig || null);
+          setDeployment(existingAgent.deploymentConfig || null);
           setMetadata(existingAgent.metadata || null);
           
           // 设置表单基础信息
@@ -145,14 +351,14 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
             name: existingAgent.name,
             description: existingAgent.description,
             version: existingAgent.version,
-            category: existingAgent.category,
-            difficulty: existingAgent.difficulty,
-            tags: existingAgent.tags
+            category: existingAgent.metadata?.category || '',
+            difficulty: existingAgent.metadata?.difficulty || 'beginner',
+            tags: existingAgent.metadata?.tags || []
           });
           
           // 生成能力流程图
           if (existingAgent.capabilities && existingAgent.capabilities.length > 0) {
-            generateFlowFromCapabilities(existingAgent.capabilities);
+            (existingAgent.capabilities);
           }
           
           console.log('Agent loaded successfully:', {
@@ -160,9 +366,9 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
             name: existingAgent.name,
             capabilitiesCount: existingAgent.capabilities?.length || 0,
             hasKnowledgeGraph: !!existingAgent.knowledgeGraph,
-            hasLearning: !!existingAgent.learning,
-            hasCollaboration: !!existingAgent.collaboration,
-            hasDeployment: !!existingAgent.deployment,
+            hasLearning: !!existingAgent.learningConfig,
+            hasCollaboration: !!existingAgent.collaborationConfig,
+            hasDeployment: !!existingAgent.deploymentConfig,
             hasMetadata: !!existingAgent.metadata
           });
         } else {
@@ -173,7 +379,11 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
         // 创建新Agent的默认配置
         const newAgent = createDefaultAgent();
         setAgent(newAgent);
-        setOrchestrator(newAgent.orchestrator);
+        setKnowledgeGraph(newAgent.knowledgeGraph || null);
+        setLearning(newAgent.learningConfig || null);
+        setCollaboration(newAgent.collaborationConfig || null);
+        setDeployment(newAgent.deploymentConfig || null);
+        setMetadata(newAgent.metadata || null);
       }
     } catch (error) {
       message.error('初始化设计器失败');
@@ -203,13 +413,15 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
       name: '',
       description: '',
       version: '1.0.0',
+      type: 'agent',
       status: AgentStatus.IDLE,
       capabilities: [],
-      orchestrator: {
-        id: `orchestrator_${Date.now()}`,
-        name: '默认编排器',
-        description: '基于规则的能力编排器',
+      orchestrationConfig: {
         mode: CapabilityOrchestrationMode.SEQUENTIAL,
+        priority: 50,
+        executionTimeout: 30,
+        retryCount: 0,
+        errorHandling: 'stop',
         rules: [],
         capabilityMapping: [],
         executionStrategy: {
@@ -492,406 +704,12 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
    * 加载可用能力库
    */
   const loadAvailableCapabilities = async () => {
-    // TODO: 从API加载能力库
-    // 临时创建示例能力
-    const sampleCapabilities: CoreCapabilityModule[] = [
-      {
-        id: 'cognitive_perception_001',
-        name: '多模态感知',
-        description: '处理文本、图像、音频等多种输入模态',
-        type: CoreCapabilityType.COGNITIVE,
-        subType: CognitiveCapabilityType.PERCEPTION,
-        version: '1.0.0',
-        maturityLevel: CapabilityMaturityLevel.DEFINED,
-        source: CapabilitySource.BUILTIN,
-        category: CapabilityCategory.PERCEPTION,
-        config: {
-          executionMode: 'async',
-          timeout: 30000,
-          retryPolicy: {
-            maxRetries: 3,
-            backoffStrategy: 'exponential',
-            initialDelay: 1000,
-            maxDelay: 10000,
-            retryableErrors: ['timeout', 'network_error']
-          },
-          qualityThreshold: 0.8,
-          performanceTarget: {
-            responseTime: 5000,
-            throughput: 100,
-            accuracy: 0.9,
-            availability: 0.99
-          },
-          securityLevel: 'medium',
-          accessControl: {
-            authentication: true,
-            authorization: ['read', 'execute'],
-            encryption: true,
-            auditLog: true
-          },
-          monitoring: {
-            enabled: true,
-            metricsCollection: true,
-            loggingLevel: 'info',
-            alerting: {
-              enabled: true,
-              thresholds: [],
-              channels: []
-            },
-            healthCheck: {
-              enabled: true,
-              interval: 30,
-              timeout: 5,
-              failureThreshold: 3,
-              successThreshold: 1
-            }
-          },
-          parameters: {
-            supportedFormats: ['text', 'image', 'audio'],
-            maxFileSize: '10MB',
-            processingMode: 'batch'
-          }
-        },
-        inputs: [
-          {
-            id: 'input_data',
-            name: '输入数据',
-            description: '待处理的多模态数据',
-            dataType: 'multimodal',
-            required: true,
-            validation: {
-              type: 'object',
-              custom: 'validateMultimodalData'
-            },
-            examples: [
-              { type: 'text', content: '这是一段文本' },
-              { type: 'image', url: 'https://example.com/image.jpg' }
-            ]
-          }
-        ],
-        outputs: [
-          {
-            id: 'processed_data',
-            name: '处理结果',
-            description: '感知处理后的结构化数据',
-            dataType: 'object',
-            schema: {
-              type: 'object',
-              properties: {
-                modality: { type: 'string' },
-                content: { type: 'any' },
-                confidence: { type: 'number' },
-                metadata: { type: 'object' }
-              }
-            },
-            examples: [
-              {
-                modality: 'text',
-                content: { text: '这是一段文本', entities: [] },
-                confidence: 0.95,
-                metadata: { language: 'zh-CN' }
-              }
-            ]
-          }
-        ],
-        dependencies: [],
-        metrics: {
-          avgResponseTime: 2500,
-          throughput: 80,
-          successRate: 0.95,
-          errorRate: 0.05,
-          accuracy: 0.92,
-          precision: 0.90,
-          recall: 0.88,
-          f1Score: 0.89,
-          usageCount: 1250,
-          activeUsers: 45,
-          avgCpuUsage: 65,
-          avgMemoryUsage: 512,
-          avgTokenUsage: 150,
-          lastUpdated: new Date()
-        },
-        resources: [
-          {
-            type: 'cpu',
-            amount: 2,
-            unit: 'cores',
-            priority: 'medium'
-          },
-          {
-            type: 'memory',
-            amount: 4,
-            unit: 'GB',
-            priority: 'high'
-          }
-        ],
-        sources: [
-          {
-            id: 'openai_gpt4v',
-            type: CapabilitySourceType.LLM_MODELS,
-            name: 'GPT-4 Vision',
-            description: 'OpenAI GPT-4 with vision capabilities',
-            config: {
-              model: 'gpt-4-vision-preview',
-              maxTokens: 4096
-            },
-            version: '1.0',
-            reliability: 0.95
-          }
-        ],
-        createdAt: new Date('2024-01-01'),
-        updatedAt: new Date(),
-        author: 'EFIAgent Team',
-        tags: ['multimodal', 'perception', 'ai'],
-        metadata: {
-          author: 'EFIAgent Team',
-          organization: 'EFIAgent',
-          license: 'MIT',
-          tags: ['multimodal', 'perception', 'ai'],
-          category: 'cognitive',
-          difficulty: 'intermediate',
-          rating: 4.5,
-          downloads: 1250,
-          featured: true,
-          verified: true,
-          documentation: 'https://docs.efiagent.com/capabilities/multimodal-perception',
-          examples: [
-            {
-              name: '文本处理示例',
-              description: '处理文本输入的基本示例',
-              input: { type: 'text', content: '这是一段测试文本' },
-              output: { modality: 'text', content: { text: '这是一段测试文本', entities: [] }, confidence: 0.95 },
-              code: 'const result = await capability.process({ type: "text", content: "这是一段测试文本" });'
-            }
-          ],
-          changelog: [
-            {
-              version: '1.0.0',
-              date: new Date('2024-01-01'),
-              changes: ['初始版本发布', '支持多模态感知'],
-              breaking: false
-            }
-          ],
-          implementation: {
-            language: 'TypeScript',
-            framework: 'React',
-            dependencies: ['@openai/api', 'tensorflow'],
-            resources: {
-              cpu: '2 cores',
-              memory: '4GB',
-              gpu: 'optional'
-            }
-          }
-        }
-      },
-      {
-        id: 'reasoning_logical_001',
-        name: '逻辑推理引擎',
-        description: '基于规则和知识图谱的逻辑推理能力',
-        type: CoreCapabilityType.REASONING,
-        subType: ReasoningCapabilityType.LOGICAL,
-        version: '1.2.0',
-        maturityLevel: CapabilityMaturityLevel.QUANTIFIED,
-        source: CapabilitySource.BUILTIN,
-        category: CapabilityCategory.REASONING,
-        author: 'EFIAgent Team',
-        tags: ['logical', 'reasoning', 'knowledge-based'],
-        config: {
-          executionMode: 'sync',
-          timeout: 15000,
-          retryPolicy: {
-            maxRetries: 2,
-            backoffStrategy: 'linear',
-            initialDelay: 500,
-            maxDelay: 5000,
-            retryableErrors: ['computation_error']
-          },
-          qualityThreshold: 0.9,
-          performanceTarget: {
-            responseTime: 3000,
-            throughput: 200,
-            accuracy: 0.95,
-            availability: 0.999
-          },
-          securityLevel: 'high',
-          accessControl: {
-            authentication: true,
-            authorization: ['read', 'execute', 'admin'],
-            encryption: true,
-            auditLog: true
-          },
-          monitoring: {
-            enabled: true,
-            metricsCollection: true,
-            loggingLevel: 'debug',
-            alerting: {
-              enabled: true,
-              thresholds: [],
-              channels: []
-            },
-            healthCheck: {
-              enabled: true,
-              interval: 15,
-              timeout: 3,
-              failureThreshold: 2,
-              successThreshold: 1
-            }
-          },
-          parameters: {
-            reasoningDepth: 5,
-            confidenceThreshold: 0.8,
-            maxInferences: 100
-          }
-        },
-        inputs: [
-          {
-            id: 'premises',
-            name: '前提条件',
-            description: '推理的前提条件和事实',
-            dataType: 'array',
-            required: true,
-            validation: {
-              type: 'array',
-              minLength: 1
-            },
-            examples: [
-              ['所有人都会死', '苏格拉底是人']
-            ]
-          },
-          {
-            id: 'query',
-            name: '查询目标',
-            description: '需要推理验证的目标',
-            dataType: 'string',
-            required: true,
-            validation: {
-              type: 'string',
-              minLength: 1
-            },
-            examples: ['苏格拉底会死吗？']
-          }
-        ],
-        outputs: [
-          {
-            id: 'conclusion',
-            name: '推理结论',
-            description: '逻辑推理的结论和置信度',
-            dataType: 'object',
-            schema: {
-              type: 'object',
-              properties: {
-                result: { type: 'boolean' },
-                confidence: { type: 'number' },
-                reasoning_path: { type: 'array' },
-                explanation: { type: 'string' }
-              }
-            },
-            examples: [
-              {
-                result: true,
-                confidence: 0.98,
-                reasoning_path: ['premise1', 'premise2', 'modus_ponens'],
-                explanation: '根据三段论推理，苏格拉底会死'
-              }
-            ]
-          }
-        ],
-        dependencies: [
-          {
-            capabilityId: 'knowledge_graph_001',
-            type: 'optional',
-            condition: 'enhanced_reasoning'
-          }
-        ],
-        metrics: {
-          avgResponseTime: 1800,
-          throughput: 150,
-          successRate: 0.98,
-          errorRate: 0.02,
-          accuracy: 0.96,
-          precision: 0.94,
-          recall: 0.92,
-          f1Score: 0.93,
-          usageCount: 2100,
-          activeUsers: 78,
-          avgCpuUsage: 45,
-          avgMemoryUsage: 256,
-          avgTokenUsage: 80,
-          lastUpdated: new Date()
-        },
-        resources: [
-          {
-            type: 'cpu',
-            amount: 1,
-            unit: 'cores',
-            priority: 'medium'
-          },
-          {
-            type: 'memory',
-            amount: 2,
-            unit: 'GB',
-            priority: 'medium'
-          }
-        ],
-        sources: [
-          {
-            id: 'prolog_engine',
-            type: CapabilitySourceType.CUSTOM_MODULE,
-            name: 'Prolog推理引擎',
-            description: '基于Prolog的逻辑推理引擎',
-            config: {
-              engine: 'swi-prolog',
-              timeout: 10000
-            },
-            version: '8.4.0',
-            reliability: 0.99
-          }
-        ],
-        createdAt: new Date('2024-01-15'),
-        updatedAt: new Date(),
-        metadata: {
-          author: 'Logic Team',
-          organization: 'EFIAgent',
-          license: 'MIT',
-          tags: ['logic', 'reasoning', 'inference'],
-          category: 'reasoning',
-          difficulty: 'advanced',
-          rating: 4.8,
-          downloads: 2100,
-          featured: true,
-          verified: true,
-          documentation: 'https://docs.efiagent.com/capabilities/logical-reasoning',
-          examples: [
-            {
-              name: '三段论推理示例',
-              description: '经典的三段论逻辑推理示例',
-              input: { premises: ['所有人都会死', '苏格拉底是人'], query: '苏格拉底会死吗？' },
-              output: { result: true, confidence: 0.98, reasoning_path: ['premise1', 'premise2', 'modus_ponens'], explanation: '根据三段论推理，苏格拉底会死' },
-              code: 'const result = await capability.reason({ premises: ["所有人都会死", "苏格拉底是人"], query: "苏格拉底会死吗？" });'
-            }
-          ],
-          changelog: [
-            {
-              version: '1.2.0',
-              date: new Date('2024-01-15'),
-              changes: ['增强推理深度', '优化性能', '支持更复杂的逻辑规则'],
-              breaking: false
-            }
-          ],
-          implementation: {
-            language: 'TypeScript',
-            framework: 'Prolog',
-            dependencies: ['swi-prolog', 'logic-engine'],
-            resources: {
-              cpu: '1 core',
-              memory: '2GB'
-            }
-          }
-        }
-      }
-    ];
-    
-    setAvailableCapabilities(sampleCapabilities);
+    try {
+      const mockCapabilities = generateMockCapabilities();
+      setAvailableCapabilities(mockCapabilities);
+    } catch (error) {
+      console.error('加载能力库失败:', error);
+    }
   };
   
   /**
@@ -927,45 +745,18 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
 
         const node: Node = {
           id: cap.id,
-          type: 'default',
+          type: 'capability',
           position: { x: typeIndex * xSpacing, y: yOffset + capIndex * ySpacing },
           data: {
-            label: (
-              <div className={`capability-node ${getCapabilityTypeClass(cap.type as CoreCapabilityType)} fade-in`}>
-                <div className={`capability-type-badge ${getCapabilityTypeClass(cap.type as CoreCapabilityType)}`}>
-                  {cap.type.charAt(0).toUpperCase()}
-                </div>
-                <div className="capability-header">
-                  <div className="capability-icon" style={{ backgroundColor: CAPABILITY_COLORS[cap.type as CoreCapabilityType] }}>
-                    {CAPABILITY_ICONS[cap.type as CoreCapabilityType]}
-                  </div>
-                  <div className="capability-info">
-                    <h3>{cap.name}</h3>
-                    <p>{cap.description}</p>
-                  </div>
-                </div>
-                <div className="capability-description">
-                  版本: {cap.version}
-                </div>
-                <div className="capability-metrics">
-                  <div className="capability-metric">
-                    <Badge 
-                      color={MATURITY_COLORS[cap.maturityLevel]} 
-                      text={cap.maturityLevel}
-                      size="small"
-                    />
-                  </div>
-                  <div className="capability-metric">
-                    <Tag 
-                      color={CAPABILITY_COLORS[cap.type as CoreCapabilityType]}
-                    >
-                      {cap.type}
-                    </Tag>
-                  </div>
-                </div>
-              </div>
-            ),
-            capability: cap
+            id: cap.id,
+            name: cap?.name || '未知能力',
+            description: cap.description,
+            type: cap.type,
+            version: cap.version,
+            maturityLevel: cap.maturityLevel,
+            capability: cap,
+            isSelected: false,
+            isConnecting: false
           },
           className: 'react-flow__node-capability',
           style: {
@@ -989,7 +780,11 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
             id: `${dep.capabilityId}-${cap.id}`,
             source: dep.capabilityId,
             target: cap.id,
-            type: 'smoothstep',
+            type: 'capability',
+            data: {
+              dependencyType: dep.type,
+              isSelected: false
+            },
             style: {
               stroke: dep.type === 'required' ? '#ff4d4f' : '#52c41a',
               strokeWidth: 2
@@ -998,6 +793,12 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
             labelStyle: {
               fontSize: 12,
               fontWeight: 'bold'
+            },
+            markerEnd: {
+              type: MarkerType.ArrowClosed,
+              width: 20,
+              height: 20,
+              color: dep.type === 'required' ? '#ff4d4f' : '#52c41a'
             }
           };
           newEdges.push(edge);
@@ -1021,7 +822,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
     setCapabilities(prev => [...prev, newCapability]);
     generateFlowFromCapabilities([...capabilities, newCapability]);
     setCapabilityDrawerVisible(false);
-    message.success(`已添加能力: ${capability.name}`);
+    message.success(`已添加能力: ${capability?.name || '未知能力'}`);
   };
   
   /**
@@ -1041,6 +842,22 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
   };
   
   /**
+   * 更新编排配置
+   */
+  const updateOrchestrationConfig = useCallback((updates: Partial<Agent2_0['orchestrationConfig']>) => {
+    if (!agent) return;
+    
+    const updatedAgent = {
+      ...agent,
+      orchestrationConfig: {
+        ...agent.orchestrationConfig,
+        ...updates
+      }
+    };
+    setAgent(updatedAgent);
+  }, [agent]);
+
+  /**
    * 保存Agent配置
    */
   const handleSaveAgent = async () => {
@@ -1058,7 +875,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
         description: values.description,
         version: values.version || agent.version,
         capabilities,
-        orchestrator: orchestrator!,
+        orchestrationConfig: agent.orchestrationConfig,
         metadata: {
           ...agent.metadata,
           updatedAt: new Date(),
@@ -1099,7 +916,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
   const validateAgentConfig = (): { isValid: boolean; errors: string[] } => {
     const errors: string[] = [];
     
-    if (!agent?.name || agent.name.trim() === '') {
+    if (!(agent?.name || '').trim()) {
       errors.push('Agent名称不能为空');
     }
     
@@ -1113,7 +930,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
         if (dep.type === 'required') {
           const depExists = capabilities.some(c => c.id === dep.capabilityId);
           if (!depExists) {
-            errors.push(`能力"${cap.name}"缺少必需的依赖: ${dep.capabilityId}`);
+            errors.push(`能力"${cap?.name || '未知能力'}"缺少必需的依赖: ${dep.capabilityId}`);
           }
         }
       });
@@ -1251,156 +1068,73 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
    * 渲染能力配置面板
    */
   const renderCapabilityPanel = () => {
-    if (!selectedCapability) {
-      return (
-        <div className="empty-panel">
-          <div className="empty-content">
-            <BulbOutlined style={{ fontSize: 48, color: '#d9d9d9' }} />
-            <p>选择一个能力模块查看详细配置</p>
-          </div>
-        </div>
-      );
-    }
-    
     return (
-      <div className="capability-config-panel">
-        <div className="panel-header">
-          <div className="capability-title">
-            {CAPABILITY_ICONS[selectedCapability.type]}
-            <span>{selectedCapability.name}</span>
-            <Tag color={CAPABILITY_COLORS[selectedCapability.type]}>
-              {selectedCapability.type}
-            </Tag>
-          </div>
-          <Button 
-            type="text" 
-            danger 
-            icon={<DeleteOutlined />}
-            onClick={() => handleRemoveCapability(selectedCapability.id)}
-          >
-            移除
-          </Button>
-        </div>
-        
-        <Collapse defaultActiveKey={['basic', 'config']} ghost>
-          <Panel header="基本信息" key="basic">
-            <div className="capability-basic-info">
-              <p><strong>描述:</strong> {selectedCapability.description}</p>
-              <p><strong>版本:</strong> {selectedCapability.version}</p>
-              <p><strong>成熟度:</strong> 
-                <Badge 
-                  color={MATURITY_COLORS[selectedCapability.maturityLevel]} 
-                  text={selectedCapability.maturityLevel}
-                />
-              </p>
-              <p><strong>作者:</strong> {selectedCapability.author}</p>
-              <div className="capability-tags">
-                {selectedCapability.tags.map(tag => (
-                  <Tag key={tag}>{tag}</Tag>
-                ))}
-              </div>
+      <div className="capability-panel">
+        {/* 已选择能力列表 */}
+        <Card title="已选择的能力模块" size="small" style={{ marginBottom: 16 }}>
+          {capabilities.length === 0 ? (
+            <div className="empty-capabilities">
+              <BulbOutlined style={{ fontSize: 24, color: '#d9d9d9' }} />
+              <p style={{ color: '#999', margin: '8px 0 0 0' }}>暂无能力模块</p>
             </div>
-          </Panel>
-          
-          <Panel header="执行配置" key="config">
-            <Form layout="vertical" size="small">
-              <Form.Item label="执行模式">
-                <Select 
-                  value={selectedCapability.config.executionMode}
-                  onChange={(value) => {
-                    // TODO: 更新能力配置
+          ) : (
+            <div className="capability-list">
+              {capabilities.map(capability => (
+                <Card 
+                  key={capability.id}
+                  size="small"
+                  className={`capability-item ${selectedCapability?.id === capability.id ? 'selected' : ''}`}
+                  style={{ 
+                    marginBottom: 8, 
+                    cursor: 'pointer',
+                    border: selectedCapability?.id === capability.id ? '2px solid #1890ff' : '1px solid #d9d9d9'
                   }}
+                  onClick={() => setSelectedCapability(capability)}
+                  title={
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ color: CAPABILITY_COLORS[capability.type as CoreCapabilityType] }}>
+                        {CAPABILITY_ICONS[capability.type as CoreCapabilityType]}
+                      </span>
+                      <span>{capability?.name || '未知能力'}</span>
+                      <Tag color={CAPABILITY_COLORS[capability.type as CoreCapabilityType]} size="small">
+                        {capability.type}
+                      </Tag>
+                    </div>
+                  }
                 >
-                  <Option value="sync">同步</Option>
-                  <Option value="async">异步</Option>
-                  <Option value="stream">流式</Option>
-                </Select>
-              </Form.Item>
-              
-              <Form.Item label="超时时间(ms)">
-                <InputNumber 
-                  value={selectedCapability.config.timeout}
-                  min={1000}
-                  max={300000}
-                  step={1000}
-                  onChange={(value) => {
-                    // TODO: 更新能力配置
-                  }}
-                />
-              </Form.Item>
-              
-              <Form.Item label="质量阈值">
-                <Slider 
-                  value={selectedCapability.config.qualityThreshold}
-                  min={0}
-                  max={1}
-                  step={0.01}
-                  marks={{ 0: '0', 0.5: '0.5', 1: '1' }}
-                  onChange={(value) => {
-                    // TODO: 更新能力配置
-                  }}
-                />
-              </Form.Item>
-              
-              <Form.Item label="安全级别">
-                <Radio.Group 
-                  value={selectedCapability.config.securityLevel}
-                  onChange={(e) => {
-                    // TODO: 更新能力配置
-                  }}
-                >
-                  <Radio value="low">低</Radio>
-                  <Radio value="medium">中</Radio>
-                  <Radio value="high">高</Radio>
-                  <Radio value="critical">关键</Radio>
-                </Radio.Group>
-              </Form.Item>
-            </Form>
-          </Panel>
-          
-          <Panel header="性能指标" key="metrics">
-            <div className="capability-metrics">
-              <div className="metric-item">
-                <span>平均响应时间:</span>
-                <span>{selectedCapability.metrics.avgResponseTime}ms</span>
-              </div>
-              <div className="metric-item">
-                <span>吞吐量:</span>
-                <span>{selectedCapability.metrics.throughput}/s</span>
-              </div>
-              <div className="metric-item">
-                <span>成功率:</span>
-                <Progress 
-                  percent={selectedCapability.metrics.successRate * 100} 
-                  size="small" 
-                  status={selectedCapability.metrics.successRate > 0.9 ? 'success' : 'normal'}
-                />
-              </div>
-              <div className="metric-item">
-                <span>准确率:</span>
-                <Progress 
-                  percent={selectedCapability.metrics.accuracy * 100} 
-                  size="small" 
-                  status={selectedCapability.metrics.accuracy > 0.9 ? 'success' : 'normal'}
-                />
-              </div>
-            </div>
-          </Panel>
-          
-          <Panel header="资源需求" key="resources">
-            <div className="resource-requirements">
-              {selectedCapability.resources.map((resource, index) => (
-                <div key={index} className="resource-item">
-                  <span className="resource-type">{resource.type.toUpperCase()}:</span>
-                  <span className="resource-amount">{resource.amount} {resource.unit}</span>
-                  <Tag color={resource.priority === 'high' ? 'red' : resource.priority === 'medium' ? 'orange' : 'green'}>
-                    {resource.priority}
-                  </Tag>
-                </div>
+                  <p style={{ margin: 0, fontSize: '12px', color: '#666' }}>
+                    {capability.description}
+                  </p>
+                </Card>
               ))}
             </div>
-          </Panel>
-        </Collapse>
+          )}
+        </Card>
+        
+        {/* 能力配置面板 */}
+        {!selectedCapability ? (
+          <div className="empty-panel">
+            <div className="empty-content">
+              <BulbOutlined style={{ fontSize: 48, color: '#d9d9d9' }} />
+              <p>选择一个能力模块查看详细配置</p>
+            </div>
+          </div>
+        ) : (
+          <CapabilityConfigPanel 
+            capability={selectedCapability}
+            onConfigChange={(config) => {
+              // 更新能力配置
+              const updatedCapabilities = capabilities.map(cap => 
+                cap.id === selectedCapability.id 
+                  ? { ...cap, config: { ...cap.config, ...config } }
+                  : cap
+              );
+              setCapabilities(updatedCapabilities);
+              setSelectedCapability({ ...selectedCapability, config: { ...selectedCapability.config, ...config } });
+            }}
+            onRemove={() => handleRemoveCapability(selectedCapability.id)}
+          />
+        )}
       </div>
     );
   };
@@ -1443,7 +1177,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
                 title={
                   <div className="card-title">
                     {CAPABILITY_ICONS[capability.type]}
-                    <span>{capability.name}</span>
+                    <span>{capability?.name || '未知能力'}</span>
                     <Tag color={CAPABILITY_COLORS[capability.type]}>
                       {capability.type}
                     </Tag>
@@ -1481,6 +1215,763 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
     );
   };
   
+  /**
+   * 渲染编排配置面板
+   */
+  const renderOrchestrationPanel = () => {
+    if (!agent?.orchestrationConfig) return <div>编排配置未初始化</div>;
+
+    return (
+      <div className="orchestration-panel">
+        <Card title="编排模式配置" size="small" style={{ marginBottom: 16 }}>
+          <Form.Item label="编排模式">
+            <Select
+              value={agent.orchestrationConfig.mode}
+              onChange={(value) => updateOrchestrationConfig({ mode: value })}
+              style={{ width: '100%' }}
+            >
+              <Option value={CapabilityOrchestrationMode.SEQUENTIAL}>顺序执行</Option>
+              <Option value={CapabilityOrchestrationMode.PARALLEL}>并行执行</Option>
+              <Option value={CapabilityOrchestrationMode.CONDITIONAL}>条件执行</Option>
+              <Option value={CapabilityOrchestrationMode.ADAPTIVE}>自适应执行</Option>
+            </Select>
+          </Form.Item>
+          
+          <Form.Item label="优先级权重">
+            <Slider
+              value={agent.orchestrationConfig.priority}
+              onChange={(value) => updateOrchestrationConfig({ priority: value })}
+              min={0}
+              max={100}
+              marks={{ 0: '低', 50: '中', 100: '高' }}
+            />
+          </Form.Item>
+        </Card>
+
+        <Card title="能力映射规则" size="small" style={{ marginBottom: 16 }}>
+          <div style={{ marginBottom: 12 }}>
+            <Button 
+              type="primary" 
+              icon={<PlusOutlined />}
+              onClick={() => {
+                const newMapping = {
+                  id: `mapping_${Date.now()}`,
+                  sourceCapability: '',
+                  targetCapability: '',
+                  mappingType: 'direct' as const,
+                  conditions: [],
+                  priority: 50
+                };
+                updateOrchestrationConfig({ 
+                  capabilityMapping: [...(agent?.orchestrationConfig?.capabilityMapping || []), newMapping] 
+                });
+              }}
+            >
+              添加映射规则
+            </Button>
+          </div>
+          
+          {(agent?.orchestrationConfig?.capabilityMapping || []).map((mapping, index) => (
+            <Card key={mapping.id} size="small" style={{ marginBottom: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <Select
+                  placeholder="源能力"
+                  value={mapping.sourceCapability}
+                  onChange={(value) => {
+                    const updatedMappings = [...(agent?.orchestrationConfig?.capabilityMapping || [])];
+                    updatedMappings[index] = { ...mapping, sourceCapability: value };
+                    updateOrchestrationConfig({ capabilityMapping: updatedMappings });
+                  }}
+                  style={{ flex: 1 }}
+                >
+                  {capabilities.map(cap => (
+                    <Option key={cap.id} value={cap.id}>{cap?.name || '未知能力'}</Option>
+                  ))}
+                </Select>
+                
+                <span>→</span>
+                
+                <Select
+                  placeholder="目标能力"
+                  value={mapping.targetCapability}
+                  onChange={(value) => {
+                    const updatedMappings = [...(agent?.orchestrationConfig?.capabilityMapping || [])];
+                    updatedMappings[index] = { ...mapping, targetCapability: value };
+                    updateOrchestrationConfig({ capabilityMapping: updatedMappings });
+                  }}
+                  style={{ flex: 1 }}
+                >
+                  {capabilities.map(cap => (
+                    <Option key={cap.id} value={cap.id}>{cap?.name || '未知能力'}</Option>
+                  ))}
+                </Select>
+                
+                <Button 
+                  type="text" 
+                  danger 
+                  icon={<DeleteOutlined />}
+                  onClick={() => {
+                    const updatedMappings = (agent?.orchestrationConfig?.capabilityMapping || []).filter((_, i) => i !== index);
+                    updateOrchestrationConfig({ capabilityMapping: updatedMappings });
+                  }}
+                />
+              </div>
+            </Card>
+          ))}
+        </Card>
+
+        <Card title="执行策略" size="small">
+          <Form.Item label="超时设置 (秒)">
+            <InputNumber
+              value={agent?.orchestrationConfig?.executionTimeout}
+              onChange={(value) => updateOrchestrationConfig({ executionTimeout: value || 30 })}
+              min={1}
+              max={3600}
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+          
+          <Form.Item label="重试次数">
+            <InputNumber
+              value={agent?.orchestrationConfig?.retryCount}
+              onChange={(value) => updateOrchestrationConfig({ retryCount: value || 0 })}
+              min={0}
+              max={10}
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+          
+          <Form.Item label="错误处理策略">
+            <Radio.Group
+              value={agent?.orchestrationConfig?.errorHandling}
+              onChange={(e) => updateOrchestrationConfig({ errorHandling: e.target.value })}
+            >
+              <Radio value="stop">停止执行</Radio>
+              <Radio value="continue">继续执行</Radio>
+              <Radio value="fallback">降级处理</Radio>
+            </Radio.Group>
+          </Form.Item>
+        </Card>
+      </div>
+    );
+  };
+
+  /**
+   * 渲染知识图谱配置面板
+   */
+  const renderKnowledgeGraphPanel = () => {
+    if (!knowledgeGraph) return <div>知识图谱未初始化</div>;
+
+    return (
+      <div className="knowledge-graph-panel">
+        <Card title="本体层配置" size="small" style={{ marginBottom: 16 }}>
+          <Form.Item label="本体层数量">
+            <InputNumber
+              value={knowledgeGraph.ontologyLayers?.length || 0}
+              disabled
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+          
+          <Form.Item label="概念总数">
+            <InputNumber
+              value={Number(knowledgeGraph.ontologyLayers?.reduce((sum, layer) => sum + (layer.concepts?.length || 0), 0)) || 0}
+              disabled
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+          
+          <Form.Item label="关系总数">
+            <InputNumber
+              value={knowledgeGraph.ontologyLayers?.reduce((sum, layer) => sum + (layer.relations?.length || 0), 0) || 0}
+              disabled
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+
+          <div style={{ marginBottom: 12 }}>
+            <strong>本体层管理</strong>
+            <Button 
+              type="link" 
+              icon={<PlusOutlined />}
+              onClick={() => {
+                const newOntologyLayer = {
+                  id: `ontology_${Date.now()}`,
+                  name: '新本体层',
+                  concepts: [],
+                  relations: [],
+                  constraints: []
+                };
+                setKnowledgeGraph({
+                  ...knowledgeGraph,
+                  ontologyLayers: [...knowledgeGraph.ontologyLayers, newOntologyLayer]
+                });
+              }}
+            >
+              添加本体层
+            </Button>
+          </div>
+          
+          {knowledgeGraph.ontologyLayers?.map((layer, index) => (
+            <Card key={layer.id} size="small" style={{ marginBottom: 8 }}>
+              <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                <Input
+                  placeholder="本体层名称"
+                  value={layer.name}
+                  onChange={(e) => {
+                    const updatedLayers = [...knowledgeGraph.ontologyLayers];
+                    updatedLayers[index] = { ...layer, name: e.target.value };
+                    setKnowledgeGraph({
+                      ...knowledgeGraph,
+                      ontologyLayers: updatedLayers
+                    });
+                  }}
+                  style={{ flex: 1 }}
+                />
+                <span style={{ flex: 1 }}>概念: {layer.concepts?.length || 0}</span>
+                <span style={{ flex: 1 }}>关系: {layer.relations?.length || 0}</span>
+                <Button 
+                  type="text" 
+                  danger 
+                  icon={<DeleteOutlined />}
+                  onClick={() => {
+                    const updatedLayers = knowledgeGraph.ontologyLayers.filter((_, i) => i !== index);
+                    setKnowledgeGraph({
+                      ...knowledgeGraph,
+                      ontologyLayers: updatedLayers
+                    });
+                  }}
+                />
+              </div>
+            </Card>
+          )) || []}
+        </Card>
+
+        <Card title="事实层配置" size="small" style={{ marginBottom: 16 }}>
+          <Form.Item label="事实层数量">
+            <InputNumber
+              value={knowledgeGraph.factLayers?.length || 0}
+              disabled
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+          
+          <Form.Item label="事实总数">
+            <InputNumber
+              value={knowledgeGraph.factLayers?.reduce((sum, layer) => sum + (layer.facts?.length || 0), 0) || 0}
+              disabled
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+          
+          <Form.Item label="更新策略">
+            <Select
+              value={knowledgeGraph.updateStrategy || 'real_time'}
+              onChange={(value) => setKnowledgeGraph({
+                ...knowledgeGraph,
+                updateStrategy: value
+              })}
+              style={{ width: '100%' }}
+            >
+              <Option value="real_time">实时更新</Option>
+              <Option value="batch">批量更新</Option>
+              <Option value="hybrid">混合模式</Option>
+            </Select>
+          </Form.Item>
+        </Card>
+
+        <Card title="规则层配置" size="small">
+          <Form.Item label="规则层数量">
+            <InputNumber
+              value={knowledgeGraph.ruleLayers?.length || 0}
+              disabled
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+          
+          <Form.Item label="时序层数量">
+            <InputNumber
+              value={knowledgeGraph.temporalLayers?.length || 0}
+              disabled
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+        </Card>
+      </div>
+    );
+  };
+
+  /**
+   * 渲染学习配置面板
+   */
+  const renderLearningPanel = () => {
+    if (!learning) return <div>学习配置未初始化</div>;
+
+    return (
+      <div className="learning-panel">
+        <Card title="学习策略" size="small" style={{ marginBottom: 16 }}>
+          <Form.Item label="学习模式">
+            <Radio.Group
+              value={learning.mode || 'supervised'}
+              onChange={(e) => setLearning({
+                ...learning,
+                mode: e.target.value
+              })}
+            >
+              <Radio value="supervised">监督学习</Radio>
+              <Radio value="unsupervised">无监督学习</Radio>
+              <Radio value="reinforcement">强化学习</Radio>
+              <Radio value="transfer">迁移学习</Radio>
+            </Radio.Group>
+          </Form.Item>
+          
+          <Form.Item label="学习率">
+            <Slider
+              value={learning.learningRate || 0.01}
+              onChange={(value) => setLearning({
+                ...learning,
+                learningRate: value
+              })}
+              min={0.001}
+              max={1}
+              step={0.001}
+              marks={{
+                0.001: '0.001',
+                0.01: '0.01',
+                0.1: '0.1',
+                1: '1'
+              }}
+            />
+          </Form.Item>
+          
+          <Form.Item label="批次大小">
+            <InputNumber
+              value={learning.batchSize || 32}
+              onChange={(value) => setLearning({
+                ...learning,
+                batchSize: value || 32
+              })}
+              min={1}
+              max={1024}
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+        </Card>
+        
+        <Card title="模型配置" size="small" style={{ marginBottom: 16 }}>
+          <Form.Item label="模型类型">
+            <Select
+              value={learning.modelType || 'neural_network'}
+              onChange={(value) => setLearning({
+                ...learning,
+                modelType: value
+              })}
+              style={{ width: '100%' }}
+            >
+              <Option value="neural_network">神经网络</Option>
+              <Option value="decision_tree">决策树</Option>
+              <Option value="random_forest">随机森林</Option>
+              <Option value="svm">支持向量机</Option>
+              <Option value="transformer">Transformer</Option>
+            </Select>
+          </Form.Item>
+          
+          <Form.Item label="优化器">
+            <Select
+              value={learning.optimizer || 'adam'}
+              onChange={(value) => setLearning({
+                ...learning,
+                optimizer: value
+              })}
+              style={{ width: '100%' }}
+            >
+              <Option value="adam">Adam</Option>
+              <Option value="sgd">SGD</Option>
+              <Option value="rmsprop">RMSprop</Option>
+              <Option value="adagrad">Adagrad</Option>
+            </Select>
+          </Form.Item>
+        </Card>
+        
+        <Card title="训练配置" size="small">
+          <Form.Item label="最大轮数">
+            <InputNumber
+              value={learning.maxEpochs || 100}
+              onChange={(value) => setLearning({
+                ...learning,
+                maxEpochs: value || 100
+              })}
+              min={1}
+              max={10000}
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+          
+          <Form.Item label="早停耐心值">
+            <InputNumber
+              value={learning.patience || 10}
+              onChange={(value) => setLearning({
+                ...learning,
+                patience: value || 10
+              })}
+              min={1}
+              max={100}
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+          
+          <Form.Item label="验证比例">
+            <Slider
+              value={learning.validationSplit || 0.2}
+              onChange={(value) => setLearning({
+                ...learning,
+                validationSplit: value
+              })}
+              min={0.1}
+              max={0.5}
+              step={0.05}
+              marks={{
+                0.1: '10%',
+                0.2: '20%',
+                0.3: '30%',
+                0.5: '50%'
+              }}
+            />
+          </Form.Item>
+        </Card>
+      </div>
+    );
+  };
+
+  /**
+   * 渲染部署配置面板
+   */
+  const renderDeploymentPanel = () => {
+    if (!deployment) return <div>部署配置未初始化</div>;
+
+    return (
+      <div className="deployment-panel">
+        <Card title="环境配置" size="small" style={{ marginBottom: 16 }}>
+          <Form.Item label="部署环境">
+            <Radio.Group
+              value={deployment.environment || 'development'}
+              onChange={(e) => setDeployment({
+                ...deployment,
+                environment: e.target.value
+              })}
+            >
+              <Radio value="development">开发环境</Radio>
+              <Radio value="staging">测试环境</Radio>
+              <Radio value="production">生产环境</Radio>
+            </Radio.Group>
+          </Form.Item>
+          
+          <Form.Item label="基础设施平台">
+            <Select
+              value={deployment.infrastructure?.platform || 'kubernetes'}
+              onChange={(value) => setDeployment({
+                ...deployment,
+                infrastructure: {
+                  ...deployment.infrastructure,
+                  platform: value
+                }
+              })}
+              style={{ width: '100%' }}
+            >
+              <Option value="kubernetes">Kubernetes</Option>
+              <Option value="docker">Docker</Option>
+              <Option value="serverless">Serverless</Option>
+              <Option value="vm">虚拟机</Option>
+            </Select>
+          </Form.Item>
+        </Card>
+        
+        <Card title="资源配置" size="small" style={{ marginBottom: 16 }}>
+          <Form.Item label="CPU请求 (核)">
+            <InputNumber
+              value={deployment.infrastructure?.resources?.cpu?.request || 1}
+              onChange={(value) => setDeployment({
+                ...deployment,
+                infrastructure: {
+                  ...deployment.infrastructure,
+                  resources: {
+                    ...deployment.infrastructure?.resources,
+                    cpu: {
+                      ...deployment.infrastructure?.resources?.cpu,
+                      request: value || 1
+                    }
+                  }
+                }
+              })}
+              min={0.1}
+              max={32}
+              step={0.1}
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+          
+          <Form.Item label="内存请求 (GB)">
+            <InputNumber
+              value={deployment.infrastructure?.resources?.memory?.request || 2}
+              onChange={(value) => setDeployment({
+                ...deployment,
+                infrastructure: {
+                  ...deployment.infrastructure,
+                  resources: {
+                    ...deployment.infrastructure?.resources,
+                    memory: {
+                      ...deployment.infrastructure?.resources?.memory,
+                      request: value || 2
+                    }
+                  }
+                }
+              })}
+              min={0.5}
+              max={128}
+              step={0.5}
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+        </Card>
+        
+        <Card title="扩缩容配置" size="small">
+          <Form.Item label="启用水平扩缩容">
+            <Switch
+              checked={deployment.scaling?.horizontal?.enabled || false}
+              onChange={(checked) => setDeployment({
+                ...deployment,
+                scaling: {
+                  ...deployment.scaling,
+                  horizontal: {
+                    ...deployment.scaling?.horizontal,
+                    enabled: checked
+                  }
+                }
+              })}
+            />
+          </Form.Item>
+          
+          {deployment.scaling?.horizontal?.enabled && (
+            <>
+              <Form.Item label="最小副本数">
+                <InputNumber
+                  value={deployment.scaling?.horizontal?.minReplicas || 1}
+                  onChange={(value) => setDeployment({
+                    ...deployment,
+                    scaling: {
+                      ...deployment.scaling,
+                      horizontal: {
+                        ...deployment.scaling?.horizontal,
+                        minReplicas: value || 1
+                      }
+                    }
+                  })}
+                  min={1}
+                  max={100}
+                  style={{ width: '100%' }}
+                />
+              </Form.Item>
+              
+              <Form.Item label="最大副本数">
+                <InputNumber
+                  value={deployment.scaling?.horizontal?.maxReplicas || 10}
+                  onChange={(value) => setDeployment({
+                    ...deployment,
+                    scaling: {
+                      ...deployment.scaling,
+                      horizontal: {
+                        ...deployment.scaling?.horizontal,
+                        maxReplicas: value || 10
+                      }
+                    }
+                  })}
+                  min={1}
+                  max={1000}
+                  style={{ width: '100%' }}
+                />
+              </Form.Item>
+            </>
+          )}
+        </Card>
+      </div>
+    );
+  };
+
+  /**
+   * 渲染原始学习配置面板（保留原有逻辑）
+   */
+  const renderOriginalLearningPanel = () => {
+    if (!learning) return <div>学习配置未初始化</div>;
+
+    return (
+      <div className="learning-panel">
+        <Card title="学习策略" size="small" style={{ marginBottom: 16 }}>
+          <Form.Item label="学习类型">
+            <Checkbox.Group
+              value={learning.strategies?.map(s => s.type) || []}
+              onChange={(checkedValues) => {
+                const newStrategies = checkedValues.map(type => ({
+                  type: type as LearningCapabilityType,
+                  enabled: true,
+                  parameters: {}
+                }));
+                setLearning({ ...learning, strategies: newStrategies });
+              }}
+            >
+              <Checkbox value="supervised">监督学习</Checkbox>
+              <Checkbox value="unsupervised">无监督学习</Checkbox>
+              <Checkbox value="reinforcement">强化学习</Checkbox>
+              <Checkbox value="transfer">迁移学习</Checkbox>
+              <Checkbox value="meta">元学习</Checkbox>
+            </Checkbox.Group>
+          </Form.Item>
+          
+          <Form.Item label="学习频率">
+            <Select
+              value={learning.frequency}
+              onChange={(value) => setLearning({ ...learning, frequency: value })}
+              style={{ width: '100%' }}
+            >
+              <Option value="continuous">持续学习</Option>
+              <Option value="batch">批量学习</Option>
+              <Option value="scheduled">定时学习</Option>
+              <Option value="triggered">触发学习</Option>
+            </Select>
+          </Form.Item>
+          
+          <Form.Item label="学习率">
+            <Slider
+              value={learning.learningRate}
+              onChange={(value) => setLearning({ ...learning, learningRate: value })}
+              min={0.001}
+              max={1}
+              step={0.001}
+              marks={{ 0.001: '0.001', 0.1: '0.1', 1: '1.0' }}
+            />
+          </Form.Item>
+        </Card>
+
+        <Card title="数据收集配置" size="small" style={{ marginBottom: 16 }}>
+          <Form.Item label="数据源类型">
+            <Select
+              mode="multiple"
+              value={learning.dataCollection.sources.map(s => s.type)}
+              onChange={(values) => {
+                const newSources = values.map(type => ({
+                  type,
+                  enabled: true,
+                  config: {}
+                }));
+                setLearning({
+                  ...learning,
+                  dataCollection: {
+                    ...learning.dataCollection,
+                    sources: newSources
+                  }
+                });
+              }}
+              placeholder="选择数据源"
+              style={{ width: '100%' }}
+            >
+              <Option value="interaction">交互数据</Option>
+              <Option value="feedback">反馈数据</Option>
+              <Option value="performance">性能数据</Option>
+              <Option value="environment">环境数据</Option>
+            </Select>
+          </Form.Item>
+          
+          <Form.Item label="数据质量阈值">
+            <Slider
+              value={learning.dataCollection.qualityThreshold}
+              onChange={(value) => setLearning({
+                ...learning,
+                dataCollection: {
+                  ...learning.dataCollection,
+                  qualityThreshold: value
+                }
+              })}
+              min={0}
+              max={100}
+              marks={{ 0: '0%', 50: '50%', 100: '100%' }}
+            />
+          </Form.Item>
+          
+          <Form.Item label="存储策略">
+            <Radio.Group
+              value={learning.dataCollection.storageStrategy}
+              onChange={(e) => setLearning({
+                ...learning,
+                dataCollection: {
+                  ...learning.dataCollection,
+                  storageStrategy: e.target.value
+                }
+              })}
+            >
+              <Radio value="memory">内存存储</Radio>
+              <Radio value="disk">磁盘存储</Radio>
+              <Radio value="cloud">云端存储</Radio>
+            </Radio.Group>
+          </Form.Item>
+        </Card>
+
+        <Card title="模型配置" size="small">
+          <Form.Item label="模型类型">
+            <Select
+              value={learning.modelConfig.type}
+              onChange={(value) => setLearning({
+                ...learning,
+                modelConfig: {
+                  ...learning.modelConfig,
+                  type: value
+                }
+              })}
+              style={{ width: '100%' }}
+            >
+              <Option value="neural_network">神经网络</Option>
+              <Option value="decision_tree">决策树</Option>
+              <Option value="svm">支持向量机</Option>
+              <Option value="ensemble">集成模型</Option>
+            </Select>
+          </Form.Item>
+          
+          <Form.Item label="训练批次大小">
+            <InputNumber
+              value={learning.modelConfig.batchSize}
+              onChange={(value) => setLearning({
+                ...learning,
+                modelConfig: {
+                  ...learning.modelConfig,
+                  batchSize: value || 32
+                }
+              })}
+              min={1}
+              max={1024}
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+          
+          <Form.Item label="最大训练轮数">
+            <InputNumber
+              value={learning.modelConfig.maxEpochs}
+              onChange={(value) => setLearning({
+                ...learning,
+                modelConfig: {
+                  ...learning.modelConfig,
+                  maxEpochs: value || 100
+                }
+              })}
+              min={1}
+              max={10000}
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+        </Card>
+      </div>
+    );
+  };
+
+
+
   /**
    * 渲染保存对话框
    */
@@ -1547,9 +2038,9 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
         <div className="save-summary">
           <h4>配置摘要</h4>
           <p>能力模块数量: {capabilities.length}</p>
-          <p>编排模式: {orchestrator?.mode}</p>
-          <p>知识图谱: {agent?.knowledgeGraph.enabled ? '启用' : '禁用'}</p>
-          <p>学习功能: {agent?.learningConfig.enabled ? '启用' : '禁用'}</p>
+          <p>编排模式: {agent?.orchestrationConfig?.mode}</p>
+          <p>知识图谱: {agent?.knowledgeGraph?.enabled ? '启用' : '禁用'}</p>
+          <p>学习功能: {agent?.learningConfig?.enabled ? '启用' : '禁用'}</p>
         </div>
       </Modal>
     );
@@ -1574,7 +2065,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
           <Button 
             type="text" 
             icon={<ArrowLeftOutlined />}
-            onClick={() => navigate('/agent-manager')}
+            onClick={() => onBack ? onBack() : navigate('/agent-manager')}
           >
             返回
           </Button>
@@ -1641,6 +2132,36 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
               </Button>
             </Tooltip>
             
+            <Tooltip title="智能能力配置">
+              <Button 
+                icon={<ExperimentOutlined />}
+                onClick={() => setIntelligentConfigVisible(true)}
+                className="fade-in"
+              >
+                智能配置
+              </Button>
+            </Tooltip>
+            
+            <Tooltip title="增强能力库">
+              <Button 
+                icon={<DatabaseOutlined />}
+                onClick={() => setEnhancedLibraryVisible(true)}
+                className="fade-in"
+              >
+                能力库
+              </Button>
+            </Tooltip>
+            
+            <Tooltip title="可视化编排">
+              <Button 
+                icon={<ThunderboltOutlined />}
+                onClick={() => setVisualOrchestratorVisible(true)}
+                className="fade-in"
+              >
+                可视化编排
+              </Button>
+            </Tooltip>
+            
             <Button 
               type="primary"
               icon={<PlusOutlined />}
@@ -1683,32 +2204,58 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
         <div className="content-left">
           {/* 能力流程图 */}
           <div className="flow-container">
-            <ReactFlow
-              nodes={nodes}
-              edges={edges}
-              onNodesChange={onNodesChange}
-              onEdgesChange={onEdgesChange}
-              onSelectionChange={(params: OnSelectionChangeParams) => {
-                if (params.nodes.length > 0) {
-                  const selectedNode = params.nodes[0];
-                  const capability = selectedNode.data?.capability;
-                  if (capability) {
-                    setSelectedCapability(capability);
-                  }
-                }
-              }}
-              fitView
-              attributionPosition="bottom-left"
+            {/* ReactFlow 组件用于显示能力流程图 */}
+            <div style={{ height: '600px', border: '1px solid #d9d9d9', borderRadius: '6px', marginBottom: '16px' }}>
+              <ReactFlowProvider>
+                <ReactFlow
+                  nodes={nodes}
+                  edges={edges}
+                  onNodesChange={onNodesChange}
+                  onEdgesChange={onEdgesChange}
+                  onConnect={onConnect}
+                  onNodeClick={onNodeClick}
+                  onEdgeClick={onEdgeClick}
+                  onInit={setReactFlowInstance}
+                  nodeTypes={nodeTypes}
+                  edgeTypes={edgeTypes}
+                  fitView
+                  attributionPosition="bottom-left"
+                >
+                  <Background color="#f0f0f0" gap={20} />
+                  <Controls />
+                  <MiniMap 
+                    nodeColor={(node) => {
+                      const nodeData = node.data;
+                      const status = nodeData?.status || 'idle';
+                      return status === 'success' ? '#52c41a' :
+                             status === 'error' ? '#ff4d4f' :
+                             status === 'running' ? '#1890ff' : '#8c8c8c';
+                    }}
+                    maskColor="rgba(255, 255, 255, 0.8)"
+                  />
+                </ReactFlow>
+              </ReactFlowProvider>
+            </div>
+            
+            <Button type="primary" onClick={() => setVisualOrchestratorVisible(true)}>
+              打开可视化能力编排器
+            </Button>
+            <Drawer
+              title="可视化能力编排器"
+              placement="right"
+              width={800}
+              open={visualOrchestratorVisible}
+              onClose={() => setVisualOrchestratorVisible(false)}
             >
-              <Background />
-              <Controls />
-              <MiniMap 
-                nodeColor={(node) => {
-                  const capability = node.data?.capability;
-                  return capability ? CAPABILITY_COLORS[capability.type as CoreCapabilityType] : '#ddd';
-                }}
+              <VisualCapabilityOrchestrator
+                visible={visualOrchestratorVisible}
+                onClose={() => setVisualOrchestratorVisible(false)}
+                capabilities={capabilities}
+                orchestrationConfig={agent?.orchestrationConfig}
+                onOrchestrationConfigChange={updateOrchestrationConfig}
+                onCapabilitiesChange={setCapabilities}
               />
-            </ReactFlow>
+            </Drawer>
           </div>
         </div>
         
@@ -1747,12 +2294,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
                       编排配置
                     </span>
                   ),
-                  children: (
-                    <div className="orchestration-panel">
-                      <p>编排器配置面板</p>
-                      {/* TODO: 实现编排器配置界面 */}
-                    </div>
-                  )
+                  children: renderOrchestrationPanel()
                 },
                 {
                   key: 'knowledge',
@@ -1762,12 +2304,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
                       知识图谱
                     </span>
                   ),
-                  children: (
-                    <div className="knowledge-panel">
-                      <p>知识图谱配置面板</p>
-                      {/* TODO: 实现知识图谱配置界面 */}
-                    </div>
-                  )
+                  children: renderKnowledgeGraphPanel()
                 },
                 {
                   key: 'learning',
@@ -1777,12 +2314,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
                       学习配置
                     </span>
                   ),
-                  children: (
-                    <div className="learning-panel">
-                      <p>学习配置面板</p>
-                      {/* TODO: 实现学习配置界面 */}
-                    </div>
-                  )
+                  children: renderLearningPanel()
                 },
                 {
                   key: 'deployment',
@@ -1792,12 +2324,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
                       部署配置
                     </span>
                   ),
-                  children: (
-                    <div className="deployment-panel">
-                      <p>部署配置面板</p>
-                      {/* TODO: 实现部署配置界面 */}
-                    </div>
-                  )
+                  children: renderDeploymentPanel()
                 }
               ]}
             />
@@ -1817,15 +2344,76 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
         onClose={() => setAiAssistantVisible(false)}
         agent={agent}
         capabilities={capabilities}
-        onApplyRecommendation={(recommendation) => {
-          // 应用AI推荐
-          if (recommendation.type === 'capability') {
-            setCapabilities(prev => [...prev, recommendation.capability]);
-          } else if (recommendation.type === 'template') {
-            setAgent(recommendation.agent);
-            setCapabilities(recommendation.capabilities);
+        availableCapabilities={[]}
+        onCapabilityRecommend={(capability) => {
+          setCapabilities(prev => [...prev, capability]);
+          message.success('已添加推荐能力');
+        }}
+        onTemplateApply={(template) => {
+          try {
+            // 应用模板到当前Agent配置
+            const newAgent: Agent2_0 = {
+              id: template.id,
+              name: template.name,
+              description: template.description,
+              version: template.version || '1.0.0',
+              type: template.type,
+              status: AgentStatus.IDLE,
+              capabilities: template.capabilities?.map(cap => ({
+                id: cap.capabilityId,
+                name: cap.capabilityId,
+                type: CoreCapabilityType.COGNITIVE, // 默认类型，需要根据实际情况映射
+                category: CapabilityCategory.CORE,
+                description: '',
+                version: '1.0.0',
+                maturityLevel: CapabilityMaturityLevel.DEFINED,
+                dependencies: [],
+                interfaces: { inputs: [], outputs: [] },
+                implementation: { type: CapabilitySourceType.BUILTIN, source: '' },
+                configuration: cap.config || {},
+                enabled: cap.enabled
+              })) || [],
+              orchestrator: {
+                mode: CapabilityOrchestrationMode.SEQUENTIAL,
+                rules: [],
+                priorities: {},
+                constraints: []
+              },
+              metadata: {
+                category: template.category || 'general',
+                difficulty: template.difficulty,
+                tags: template.tags || [],
+                author: template.author || 'Unknown',
+                version: template.version || '1.0.0',
+                createdAt: new Date(),
+                updatedAt: new Date()
+              }
+            };
+            
+            // 更新Agent状态
+            setAgent(newAgent);
+            setCapabilities(newAgent.capabilities);
+            setOrchestrator(newAgent.orchestrator);
+            setMetadata(newAgent.metadata);
+            
+            // 更新表单数据
+            form.setFieldsValue({
+              name: newAgent.name,
+              description: newAgent.description,
+              version: newAgent.version,
+              category: newAgent.metadata?.category || '',
+              difficulty: newAgent.metadata?.difficulty || 'beginner',
+              tags: newAgent.metadata?.tags || []
+            });
+            
+            // 关闭AI助手
+            setAiAssistantVisible(false);
+            
+            message.success(`已成功应用模板: ${template.name}`);
+          } catch (error) {
+            console.error('应用模板失败:', error);
+            message.error('应用模板失败，请重试');
           }
-          message.success('已应用AI推荐');
         }}
       />
       
@@ -1835,12 +2423,12 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
         onClose={() => setValidatorVisible(false)}
         agent={agent}
         capabilities={capabilities}
-        orchestrator={orchestrator}
-        onValidationComplete={(result) => {
-          if (result.isValid) {
+        orchestrator={agent?.orchestrationConfig}
+        onValidationChange={(isValid, errors) => {
+          if (isValid) {
             message.success('验证通过');
           } else {
-            message.warning(`发现 ${result.issues.length} 个问题`);
+            message.warning(`发现 ${errors.length} 个问题`);
           }
         }}
       />
@@ -1854,6 +2442,39 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
           message.success('核心能力模块已添加');
         }}
         selectedCapabilities={capabilities}
+      />
+      
+      {/* 智能能力配置 */}
+      {intelligentConfigVisible && agent && (
+        <IntelligentCapabilityConfig
+          visible={intelligentConfigVisible}
+          onClose={() => setIntelligentConfigVisible(false)}
+          agent={agent}
+          capabilities={capabilities}
+          onCapabilitiesChange={setCapabilities}
+          onAgentChange={setAgent}
+        />
+      )}
+      
+      {/* 增强能力库 */}
+      <EnhancedCapabilityLibrary
+        visible={enhancedLibraryVisible}
+        onClose={() => setEnhancedLibraryVisible(false)}
+        onCapabilitySelect={(capability) => {
+          setCapabilities(prev => [...prev, capability]);
+          message.success('能力已添加到Agent');
+        }}
+        selectedCapabilities={capabilities}
+      />
+      
+      {/* 可视化能力编排器 */}
+      <VisualCapabilityOrchestrator
+        visible={visualOrchestratorVisible}
+        onClose={() => setVisualOrchestratorVisible(false)}
+        capabilities={capabilities}
+        orchestrationConfig={agent?.orchestrationConfig}
+        onOrchestrationConfigChange={updateOrchestrationConfig}
+        onCapabilitiesChange={setCapabilities}
       />
     </div>
   );

@@ -79,19 +79,19 @@ const DesignCanvas: React.FC<DesignCanvasProps> = ({
           // 创建能力组件
           const newComponent: Component = {
             id: `capability_${Date.now()}`,
-            name: capability.name,
-            type: capability.type as unknown as ComponentType,
+            name: capability?.name || '未知能力',
+            type: capability?.type as unknown as ComponentType || 'unknown' as ComponentType,
             category: NodeCategory.CAPABILITY,
-            description: capability.description,
+            description: capability?.description || '',
             position: { x, y },
-            properties: capability.properties || [],
+            properties: capability?.properties || [],
             data: {
-              capabilityId: capability.id
+              capabilityId: capability?.id || ''
             }
           };
           
           onAddComponent(newComponent);
-          message.success(`添加能力: ${capability.name}`);
+          message.success(`添加能力: ${capability?.name || '未知能力'}`);
         }
       } catch (error) {
         console.error('解析能力数据失败:', error);

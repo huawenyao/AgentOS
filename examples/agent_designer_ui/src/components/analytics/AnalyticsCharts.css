@@ -1,0 +1,569 @@
+/**
+ * 分析洞察图表组件样式
+ * 提供现代化、响应式的图表界面设计
+ * 基于EFIAgent产品设计文档实现
+ */
+
+/* 图表卡片基础样式 */
+.analytics-chart-card {
+  margin-bottom: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  background: #ffffff;
+}
+
+.analytics-chart-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.analytics-chart-card .ant-card-head {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 16px 24px;
+}
+
+.analytics-chart-card .ant-card-head-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #262626;
+}
+
+.analytics-chart-card .ant-card-body {
+  padding: 24px;
+}
+
+/* 图表加载状态 */
+.chart-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  width: 100%;
+}
+
+/* 自定义Tooltip样式 */
+.analytics-chart-tooltip {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(8px);
+  font-size: 12px;
+}
+
+.tooltip-label {
+  font-weight: 600;
+  color: #262626;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 4px;
+}
+
+.tooltip-item {
+  margin: 4px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tooltip-name {
+  margin-right: 8px;
+  color: #595959;
+}
+
+.tooltip-value {
+  font-weight: 600;
+  color: #262626;
+}
+
+/* 指标卡片样式 */
+.metric-card {
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.metric-card:hover {
+  border-color: #1890ff;
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.15);
+}
+
+.metric-card-content {
+  padding: 4px 0;
+}
+
+.metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.metric-title {
+  font-size: 14px;
+  color: #8c8c8c;
+  margin: 0;
+}
+
+.metric-value {
+  margin-bottom: 8px;
+}
+
+.metric-number {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #262626;
+  line-height: 1.2;
+}
+
+.metric-change {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.change-tag {
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 4px;
+  margin: 0;
+}
+
+/* 实时指标仪表盘样式 */
+.realtime-metrics-dashboard {
+  padding: 16px 0;
+}
+
+.realtime-metric-card {
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.realtime-metric-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.realtime-metric-card .ant-card-body {
+  padding: 16px;
+}
+
+.metric-indicator {
+  border-left: 4px solid #1890ff;
+  padding-left: 12px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.metric-name {
+  font-size: 14px;
+  color: #8c8c8c;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.metric-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #262626;
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+
+.metric-thresholds {
+  margin-top: 8px;
+}
+
+.threshold-text {
+  font-size: 11px;
+  color: #bfbfbf;
+}
+
+/* 图表容器响应式设计 */
+@media (max-width: 768px) {
+  .analytics-chart-card .ant-card-body {
+    padding: 16px;
+  }
+  
+  .metric-number {
+    font-size: 24px;
+  }
+  
+  .realtime-metric-card .ant-card-body {
+    padding: 12px;
+  }
+  
+  .metric-value {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .analytics-chart-card {
+    margin-bottom: 16px;
+  }
+  
+  .analytics-chart-card .ant-card-body {
+    padding: 12px;
+  }
+  
+  .metric-number {
+    font-size: 20px;
+  }
+  
+  .metric-value {
+    font-size: 18px;
+  }
+  
+  .analytics-chart-tooltip {
+    font-size: 11px;
+    padding: 8px;
+  }
+}
+
+/* 图表特定样式 */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: #f0f0f0;
+  stroke-width: 1;
+}
+
+.recharts-tooltip-wrapper {
+  z-index: 1000;
+}
+
+.recharts-legend-wrapper {
+  padding-top: 16px;
+}
+
+.recharts-legend-item {
+  margin-right: 16px;
+}
+
+.recharts-brush {
+  fill: rgba(24, 144, 255, 0.1);
+}
+
+.recharts-brush .recharts-brush-slide {
+  fill: rgba(24, 144, 255, 0.2);
+  stroke: #1890ff;
+}
+
+/* 图表动画效果 */
+.recharts-line,
+.recharts-area,
+.recharts-bar {
+  transition: all 0.3s ease;
+}
+
+.recharts-line:hover,
+.recharts-area:hover,
+.recharts-bar:hover {
+  filter: brightness(1.1);
+}
+
+/* 异常点高亮 */
+.anomaly-point {
+  fill: #ff4d4f;
+  stroke: #ff4d4f;
+  stroke-width: 2;
+  r: 5;
+}
+
+.normal-point {
+  fill: #1890ff;
+  stroke: #1890ff;
+  stroke-width: 1;
+  r: 3;
+}
+
+/* 预测数据样式 */
+.prediction-line {
+  stroke-dasharray: 5, 5;
+  opacity: 0.8;
+}
+
+.prediction-area {
+  fill-opacity: 0.2;
+  stroke-dasharray: 5, 5;
+}
+
+/* 阈值线样式 */
+.threshold-warning {
+  stroke: #faad14;
+  stroke-dasharray: 5, 5;
+  stroke-width: 2;
+}
+
+.threshold-critical {
+  stroke: #ff4d4f;
+  stroke-dasharray: 5, 5;
+  stroke-width: 2;
+}
+
+/* 图表标题样式 */
+.chart-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #262626;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chart-subtitle {
+  font-size: 14px;
+  color: #8c8c8c;
+  margin-bottom: 12px;
+}
+
+/* 图表工具栏样式 */
+.chart-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.chart-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.chart-export-btn {
+  border: none;
+  background: transparent;
+  color: #1890ff;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.chart-export-btn:hover {
+  background: rgba(24, 144, 255, 0.1);
+  color: #096dd9;
+}
+
+/* 深色主题支持 */
+@media (prefers-color-scheme: dark) {
+  .analytics-chart-card {
+    background: #1f1f1f;
+    border-color: #303030;
+  }
+  
+  .analytics-chart-card .ant-card-head {
+    border-bottom-color: #303030;
+  }
+  
+  .analytics-chart-card .ant-card-head-title {
+    color: #ffffff;
+  }
+  
+  .analytics-chart-tooltip {
+    background: rgba(31, 31, 31, 0.95);
+    border-color: #434343;
+  }
+  
+  .tooltip-label {
+    color: #ffffff;
+    border-bottom-color: #434343;
+  }
+  
+  .tooltip-name {
+    color: #bfbfbf;
+  }
+  
+  .tooltip-value {
+    color: #ffffff;
+  }
+  
+  .metric-card {
+    background: #1f1f1f;
+    border-color: #303030;
+  }
+  
+  .metric-number {
+    color: #ffffff;
+  }
+  
+  .realtime-metric-card {
+    background: #1f1f1f;
+    border-color: #303030;
+  }
+  
+  .metric-value {
+    color: #ffffff;
+  }
+  
+  .chart-title {
+    color: #ffffff;
+  }
+  
+  .recharts-cartesian-grid-horizontal line,
+  .recharts-cartesian-grid-vertical line {
+    stroke: #434343;
+  }
+}
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+  .analytics-chart-card {
+    border-width: 2px;
+    border-color: #000000;
+  }
+  
+  .metric-card {
+    border-width: 2px;
+    border-color: #000000;
+  }
+  
+  .realtime-metric-card {
+    border-width: 2px;
+    border-color: #000000;
+  }
+  
+  .recharts-cartesian-grid-horizontal line,
+  .recharts-cartesian-grid-vertical line {
+    stroke: #000000;
+    stroke-width: 2;
+  }
+}
+
+/* 打印样式 */
+@media print {
+  .analytics-chart-card {
+    box-shadow: none;
+    border: 1px solid #000000;
+    break-inside: avoid;
+    margin-bottom: 20px;
+  }
+  
+  .chart-toolbar {
+    display: none;
+  }
+  
+  .analytics-chart-tooltip {
+    display: none;
+  }
+  
+  .recharts-brush {
+    display: none;
+  }
+}
+
+/* 加载动画 */
+@keyframes chartFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.analytics-chart-card {
+  animation: chartFadeIn 0.6s ease-out;
+}
+
+/* 数据更新动画 */
+@keyframes dataUpdate {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.metric-number.updating {
+  animation: dataUpdate 0.5s ease-in-out;
+}
+
+/* 状态指示器 */
+.status-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.status-indicator.normal {
+  background-color: #52c41a;
+}
+
+.status-indicator.warning {
+  background-color: #faad14;
+}
+
+.status-indicator.critical {
+  background-color: #ff4d4f;
+}
+
+.status-indicator.unknown {
+  background-color: #d9d9d9;
+}
+
+/* 图表图例自定义样式 */
+.custom-legend {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #595959;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+/* 空状态样式 */
+.chart-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: #bfbfbf;
+}
+
+.chart-empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.chart-empty-text {
+  font-size: 14px;
+  color: #8c8c8c;
+}
