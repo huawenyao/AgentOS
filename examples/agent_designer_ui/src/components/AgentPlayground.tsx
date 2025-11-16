@@ -508,7 +508,7 @@ const AgentPlayground: React.FC = () => {
 
   const getStepIcon = (status: string) => {
     switch (status) {
-      case 'running': return <Spin size="small" />;
+      case 'running': return <Spin  />;
       case 'completed': return <CheckCircleOutlined style={{ color: '#52c41a' }} />;
       case 'error': return <BugOutlined style={{ color: '#ff4d4f' }} />;
       default: return <div className="step-pending" />;
@@ -556,7 +556,7 @@ const AgentPlayground: React.FC = () => {
               </Select>
 
               {selectedScenario && (
-                <Card size="small" className="scenario-detail">
+                <Card  className="scenario-detail">
                   {(() => {
                     const scenario = AGENT_SCENARIOS.find(s => s.id === selectedScenario);
                     return scenario ? (
@@ -642,7 +642,7 @@ const AgentPlayground: React.FC = () => {
                             {step.status === 'running' && (
                               <Progress 
                                 percent={step.progress} 
-                                size="small" 
+                                 
                                 status="active"
                                 showInfo={false}
                               />

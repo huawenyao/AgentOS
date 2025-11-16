@@ -460,7 +460,7 @@ const Dashboard: React.FC = () => {
           </div>
           <div style={{ marginTop: '16px' }}>
             <Link to="/agent-manager">
-              <Button type="primary" size="small" icon={<RobotOutlined />}>
+              <Button type="primary"  icon={<RobotOutlined />}>
                 管理Agent
               </Button>
             </Link>
@@ -509,7 +509,7 @@ const Dashboard: React.FC = () => {
           </div>
           <div style={{ marginTop: '16px' }}>
             <Link to="/agent-monitor">
-              <Button type="default" size="small" icon={<MonitorOutlined />}>
+              <Button type="default"  icon={<MonitorOutlined />}>
                 查看监控
               </Button>
             </Link>

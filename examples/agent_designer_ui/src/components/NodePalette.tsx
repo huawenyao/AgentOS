@@ -208,7 +208,7 @@ const NodePalette: React.FC<NodePaletteProps> = ({ onAddNode, onDragStart, onDra
     <Card 
       className={`node-palette ${className || ''}`}
       title="节点库"
-      size="small"
+      
       extra={
         <Badge 
           count={filteredNodes.length} 
@@ -224,7 +224,7 @@ const NodePalette: React.FC<NodePaletteProps> = ({ onAddNode, onDragStart, onDra
           onChange={(e) => setSearchText(e.target.value)}
           prefix={<SearchOutlined />}
           allowClear
-          size="small"
+          
         />
       </div>
 
@@ -232,7 +232,7 @@ const NodePalette: React.FC<NodePaletteProps> = ({ onAddNode, onDragStart, onDra
       <Collapse 
         activeKey={activeKey}
         onChange={setActiveKey}
-        size="small"
+        
         ghost
       >
         {Object.entries(filteredNodesByCategory).map(([category, nodes]) => {
@@ -245,7 +245,7 @@ const NodePalette: React.FC<NodePaletteProps> = ({ onAddNode, onDragStart, onDra
                   <span className="category-title">{config.title}</span>
                   <Badge 
                     count={nodes.length} 
-                    size="small" 
+                     
                     style={{ backgroundColor: '#f0f0f0', color: '#666' }}
                   />
                 </div>

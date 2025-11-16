@@ -489,7 +489,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
       <Card 
         className={`property-panel ${className || ''}`}
         title="属性配置"
-        size="small"
+        
       >
         <Empty 
           image={Empty.PRESENTED_IMAGE_SIMPLE}
@@ -513,13 +513,13 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
           )}
         </Space>
       }
-      size="small"
+      
       extra={
         <Space>
           <Tooltip title={previewMode ? '编辑模式' : '预览模式'}>
             <Button 
               type="text" 
-              size="small" 
+               
               icon={previewMode ? <CodeOutlined /> : <EyeOutlined />}
               onClick={() => setPreviewMode(!previewMode)}
             />
@@ -527,7 +527,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
           <Tooltip title="重置">
             <Button 
               type="text" 
-              size="small" 
+               
               icon={<ReloadOutlined />}
               onClick={handleReset}
               disabled={!isModified}
@@ -536,7 +536,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
           <Tooltip title="保存">
             <Button 
               type="text" 
-              size="small" 
+               
               icon={<SaveOutlined />}
               onClick={handleSave}
               disabled={!isModified}
@@ -582,7 +582,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
           <Collapse 
             activeKey={activeKey}
             onChange={setActiveKey}
-            size="small"
+            
             ghost
           >
             {Object.entries(grouped).map(([groupKey, properties]) => {
@@ -654,14 +654,14 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
                 type="primary" 
                 icon={<SaveOutlined />}
                 onClick={handleSave}
-                size="small"
+                
               >
                 保存更改
               </Button>
               <Button 
                 icon={<ReloadOutlined />}
                 onClick={handleReset}
-                size="small"
+                
               >
                 重置
               </Button>

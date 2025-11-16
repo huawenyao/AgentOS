@@ -748,7 +748,7 @@ const KnowledgeGraph: React.FC = () => {
         key: 'tags',
         render: (tags: string[]) => (
           <Space wrap>
-            {tags.map(tag => <Tag key={tag} size="small">{tag}</Tag>)}
+            {tags.map(tag => <Tag key={tag} >{tag}</Tag>)}
           </Space>
         )
       },
@@ -759,7 +759,7 @@ const KnowledgeGraph: React.FC = () => {
         render: (confidence: number) => (
           <Progress 
             percent={Math.round(confidence * 100)} 
-            size="small" 
+             
             status={confidence > 0.8 ? 'success' : confidence > 0.6 ? 'normal' : 'exception'}
           />
         )
@@ -828,7 +828,7 @@ const KnowledgeGraph: React.FC = () => {
               {renderGraphVisualization()}
             </Col>
             <Col span={8}>
-              <Card title="节点详情" size="small">
+              <Card title="节点详情" >
                 {selectedNode ? (
                   <div>
                     <Title level={4}>{selectedNode.name}</Title>
@@ -847,7 +847,7 @@ const KnowledgeGraph: React.FC = () => {
                       <Text strong>置信度：</Text>
                       <Progress 
                         percent={Math.round(selectedNode.confidence * 100)} 
-                        size="small" 
+                         
                         style={{ marginTop: 8 }}
                       />
                     </div>

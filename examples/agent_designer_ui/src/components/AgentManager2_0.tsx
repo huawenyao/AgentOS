@@ -396,7 +396,7 @@ const AgentManager2_0: React.FC<AgentManager2_0Props> = ({ onEditAgent }) => {
 
     return (
       <Dropdown menu={{ items: menuItems }} trigger={['click']}>
-        <Button type="text" size="small" icon={<SettingOutlined />} />
+        <Button type="text"  icon={<SettingOutlined />} />
       </Dropdown>
     );
   };
@@ -516,7 +516,7 @@ const AgentManager2_0: React.FC<AgentManager2_0Props> = ({ onEditAgent }) => {
           <Tooltip title="查看详情">
             <Button 
               type="text" 
-              size="small" 
+               
               icon={<EyeOutlined />}
               onClick={() => handleViewAgent(record)}
             />
@@ -524,7 +524,7 @@ const AgentManager2_0: React.FC<AgentManager2_0Props> = ({ onEditAgent }) => {
           <Tooltip title="编辑">
             <Button 
               type="text" 
-              size="small" 
+               
               icon={<EditOutlined />}
               onClick={() => handleEditAgent(record)}
             />
@@ -803,7 +803,7 @@ const AgentManager2_0: React.FC<AgentManager2_0Props> = ({ onEditAgent }) => {
             }
           }}
           scroll={{ x: 1200 }}
-          size="small"
+          
         />
       </div>
 

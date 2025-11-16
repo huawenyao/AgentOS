@@ -4,7 +4,6 @@ const userRoutes = require('./userRoutes')
 const agentTemplateRoutes = require('./agentTemplateRoutes')
 const agentConfigRoutes = require('./agentConfigRoutes')
 const agentRoutes = require('./agentRoutes')
-const workflowRoutes = require('./workflowRoutes')
 const capabilityRoutes = require('./capabilityRoutes')
 const componentRoutes = require('./componentRoutes')
 const monitoringRoutes = require('./monitoringRoutes')
@@ -12,7 +11,6 @@ const systemRoutes = require('./systemRoutes')
 const statisticsRoutes = require('./statisticsRoutes')
 const settingsRoutes = require('./settings')
 // 新增的路由模块
-const workflowEngineRoutes = require('./workflowEngine')
 const realTimeDataRoutes = require('./realTimeData')
 const systemManagementRoutes = require('./systemManagement')
 
@@ -33,15 +31,13 @@ router.get('/', (req, res) => {
         agentTemplates: '/api/agent-templates',
         agentConfigs: '/api/agent-configs',
         agents: '/api/agents',
-        workflows: '/api/workflows',
-        capabilities: '/api/capabilities',
+                capabilities: '/api/capabilities',
         components: '/api/components',
         monitoring: '/api/monitoring',
         system: '/api/system',
         statistics: '/api/statistics',
         settings: '/api/settings',
-        workflowEngine: '/api/workflow-engine',
-        realTimeData: '/api/realtime-data',
+                realTimeData: '/api/realtime-data',
         systemManagement: '/api/system-management'
       }
     },
@@ -70,7 +66,6 @@ router.use('/users', userRoutes)
 router.use('/agent-templates', agentTemplateRoutes)
 router.use('/agent-configs', agentConfigRoutes)
 router.use('/agents', agentRoutes)
-router.use('/workflows', workflowRoutes)
 router.use('/capabilities', capabilityRoutes)
 router.use('/components', componentRoutes)
 router.use('/monitoring', monitoringRoutes)
@@ -78,7 +73,6 @@ router.use('/system', systemRoutes)
 router.use('/statistics', statisticsRoutes)
 router.use('/settings', settingsRoutes)
 // 新增的路由注册
-router.use('/workflow-engine', workflowEngineRoutes)
 router.use('/realtime-data', realTimeDataRoutes)
 router.use('/system-management', systemManagementRoutes)
 

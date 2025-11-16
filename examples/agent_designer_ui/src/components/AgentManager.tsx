@@ -1284,7 +1284,7 @@ const AgentManager: React.FC<AgentManagerProps> = ({ onEditAgent }) => {
       key: 'actions',
       width: 200,
       render: (record: Agent) => (
-        <Space size="small">
+        <Space >
           {record.status === AgentStatus.IDLE && (
             <Tooltip title="启动">
               <Button 
@@ -1616,7 +1616,7 @@ const AgentManager: React.FC<AgentManagerProps> = ({ onEditAgent }) => {
         {viewingAgent && (
           <div style={{ maxHeight: '70vh', overflowY: 'auto' }}>
             {/* 基本信息 */}
-            <Card size="small" title="基本信息" style={{ marginBottom: 16 }}>
+            <Card  title="基本信息" style={{ marginBottom: 16 }}>
               <Row gutter={16}>
                 <Col span={12}>
                   <div style={{ marginBottom: 8 }}>
@@ -1672,7 +1672,7 @@ const AgentManager: React.FC<AgentManagerProps> = ({ onEditAgent }) => {
             </Card>
 
             {/* 运行指标 */}
-            <Card size="small" title="运行指标" style={{ marginBottom: 16 }}>
+            <Card  title="运行指标" style={{ marginBottom: 16 }}>
               <Row gutter={16}>
                 <Col span={8}>
                   <Statistic
@@ -1704,7 +1704,7 @@ const AgentManager: React.FC<AgentManagerProps> = ({ onEditAgent }) => {
 
             {/* LLM配置 */}
             {viewingAgent.llmConfig && (
-              <Card size="small" title="LLM配置" style={{ marginBottom: 16 }}>
+              <Card  title="LLM配置" style={{ marginBottom: 16 }}>
                 <Row gutter={16}>
                   <Col span={12}>
                     <div style={{ marginBottom: 8 }}>
@@ -1740,7 +1740,7 @@ const AgentManager: React.FC<AgentManagerProps> = ({ onEditAgent }) => {
 
             {/* 能力配置 */}
             {viewingAgent.capabilities && viewingAgent.capabilities.length > 0 && (
-              <Card size="small" title="能力配置" style={{ marginBottom: 16 }}>
+              <Card  title="能力配置" style={{ marginBottom: 16 }}>
                 {viewingAgent.capabilities.map((capability, index) => (
                   <div key={index} style={{ 
                     marginBottom: 12, 
@@ -1768,7 +1768,7 @@ const AgentManager: React.FC<AgentManagerProps> = ({ onEditAgent }) => {
 
             {/* 工作流配置 */}
             {viewingAgent.workflow && (
-              <Card size="small" title="工作流配置" style={{ marginBottom: 16 }}>
+              <Card  title="工作流配置" style={{ marginBottom: 16 }}>
                 <Row gutter={16}>
                   <Col span={12}>
                     <Text strong>节点数量: </Text>
@@ -1801,7 +1801,7 @@ const AgentManager: React.FC<AgentManagerProps> = ({ onEditAgent }) => {
 
             {/* 其他配置 */}
             {viewingAgent.config && (
-              <Card size="small" title="其他配置">
+              <Card  title="其他配置">
                 <div style={{ fontSize: 12 }}>
                   <Text strong>属性配置: </Text>
                   <pre style={{ 
@@ -1844,7 +1844,7 @@ const AgentManager: React.FC<AgentManagerProps> = ({ onEditAgent }) => {
               <div key={agent.id} style={{ padding: '4px 0', borderBottom: '1px solid #f0f0f0' }}>
                 <Checkbox checked disabled style={{ marginRight: 8 }} />
                 <Avatar 
-                  size="small" 
+                   
                   icon={<RobotOutlined />} 
                   style={{ marginRight: 8, backgroundColor: getTypeColor(agent.type) }}
                 />

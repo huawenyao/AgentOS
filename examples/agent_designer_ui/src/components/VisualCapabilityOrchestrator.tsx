@@ -33,8 +33,14 @@ import 'reactflow/dist/style.css';
 import {
   CoreCapabilityType, CapabilityMaturityLevel, CoreCapabilityModule
 } from './CapabilitySystemTypes';
-import { ExecutionStrategy } from './WorkflowExecutionEngine';
 import './VisualCapabilityOrchestrator.css';
+
+// 本地执行策略定义（移除工作流依赖）
+enum ExecutionStrategy {
+  SEQUENTIAL = 'sequential',
+  PARALLEL = 'parallel',
+  CONDITIONAL = 'conditional'
+}
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -184,12 +190,12 @@ const CapabilityNodeComponent: React.FC<{ data: CapabilityNode['data'] }> = ({ d
           </div>
           <div className="metric-item">
             <CheckCircleOutlined style={{ fontSize: 10 }} />
-            <span>{(data.metrics.successRate * 100).toFixed(1)}%</span>
+            <span>{((data.metrics?.successRate || 0) * 100).toFixed(1)}%</span>
           </div>
         </div>
         
         <div className="node-tags">
-          <Tag size="small" color={data.capability.type === CoreCapabilityType.COGNITIVE ? 'blue' : 
+          <Tag  color={data.capability.type === CoreCapabilityType.COGNITIVE ? 'blue' : 
                                    data.capability.type === CoreCapabilityType.REASONING ? 'green' :
                                    data.capability.type === CoreCapabilityType.DECISION ? 'orange' : 'purple'}>
             {data.capability.type}
@@ -609,7 +615,7 @@ const VisualCapabilityOrchestrator: React.FC<VisualCapabilityOrchestratorProps> 
             {executionStatus === 'running' && (
               <Progress 
                 percent={executionProgress} 
-                size="small" 
+                 
                 style={{ width: 100 }}
               />
             )}
@@ -750,7 +756,7 @@ const VisualCapabilityOrchestrator: React.FC<VisualCapabilityOrchestratorProps> 
                     <Col span={12}>
                       <Statistic 
                         title="成功率" 
-                        value={selectedNode.data.metrics.successRate * 100} 
+                        value={(selectedNode.data.metrics?.successRate || 0) * 100} 
                         suffix="%"
                         precision={1}
                         prefix={<CheckCircleOutlined />}
@@ -829,7 +835,7 @@ const VisualCapabilityOrchestrator: React.FC<VisualCapabilityOrchestratorProps> 
                         <Text>错误率：</Text>
                         <Progress 
                           percent={(selectedEdge.data?.errorRate || 0) * 100}
-                          size="small"
+                          
                           status={selectedEdge.data?.errorRate > 0.1 ? 'exception' : 'success'}
                         />
                       </div>
@@ -851,7 +857,7 @@ const VisualCapabilityOrchestrator: React.FC<VisualCapabilityOrchestratorProps> 
     return (
       <Panel position="bottom-right" className="execution-panel">
         <Card 
-          size="small" 
+           
           title="执行日志" 
           style={{ width: 300, maxHeight: 200 }}
           bodyStyle={{ padding: 8, maxHeight: 150, overflow: 'auto' }}

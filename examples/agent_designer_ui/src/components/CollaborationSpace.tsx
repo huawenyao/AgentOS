@@ -545,7 +545,7 @@ const CollaborationSpace: React.FC = () => {
               <div style={{ flex: '0 0 120px' }}>
                 <Progress 
                   percent={project.progress} 
-                  size="small" 
+                   
                   showInfo={true}
                   format={(percent) => `${percent}%`}
                   style={{ margin: 0 }}
@@ -570,7 +570,7 @@ const CollaborationSpace: React.FC = () => {
                   <Tooltip title="编辑">
                     <Button 
                       type="text" 
-                      size="small"
+                      
                       icon={<EditOutlined />} 
                       onClick={(e) => {
                         e.stopPropagation();
@@ -581,10 +581,10 @@ const CollaborationSpace: React.FC = () => {
                     />
                   </Tooltip>
                   <Tooltip title="分享">
-                    <Button type="text" size="small" icon={<ShareAltOutlined />} />
+                    <Button type="text"  icon={<ShareAltOutlined />} />
                   </Tooltip>
                   <Tooltip title="复制">
-                    <Button type="text" size="small" icon={<CopyOutlined />} />
+                    <Button type="text"  icon={<CopyOutlined />} />
                   </Tooltip>
                 </Space>
               </div>
@@ -637,7 +637,7 @@ const CollaborationSpace: React.FC = () => {
                 value={filterType}
                 onChange={setFilterType}
                 style={{ width: '100%' }}
-                size="small"
+                
               >
                 <Option value="all">全部类型</Option>
                 <Option value="agent_design">Agent设计</Option>
@@ -651,7 +651,7 @@ const CollaborationSpace: React.FC = () => {
                 value={filterStatus}
                 onChange={setFilterStatus}
                 style={{ width: '100%' }}
-                size="small"
+                
               >
                 <Option value="all">全部状态</Option>
                 <Option value="active">进行中</Option>
@@ -705,7 +705,7 @@ const CollaborationSpace: React.FC = () => {
                 </Col>
                 
                 <Col span={8}>
-                  <Card size="small" title="项目信息">
+                  <Card  title="项目信息">
                     <div style={{ marginBottom: 12 }}>
                       <Text strong>项目类型：</Text>
                       <Text>{getProjectTypeText(selectedProject.type)}</Text>

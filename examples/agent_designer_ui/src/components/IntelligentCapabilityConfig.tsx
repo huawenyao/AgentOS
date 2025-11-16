@@ -90,44 +90,148 @@ const IntelligentCapabilityConfig: React.FC<IntelligentCapabilityConfigProps> = 
   onClose,
   mode = 'wizard'
 }) => {
-  // 如果agent为null，不渲染组件
-  if (!agent) {
-    return null;
-  }
-  
+  // ===== 所有React Hooks必须在条件检查之前调用 =====
+
   // 核心状态
   const [currentMode, setCurrentMode] = useState(mode);
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedScenario, setSelectedScenario] = useState<ScenarioTemplate | null>(null);
-  const [selectedCapabilities, setSelectedCapabilities] = useState<CoreCapabilityModule[]>(
-    (agent?.capabilities || []).filter(cap => 
-      cap && 
-      typeof cap === 'object' && 
-      cap.id && 
-      typeof cap.id === 'string' && 
-      cap.id.trim() !== ''
-    )
-  );
+  const [selectedCapabilities, setSelectedCapabilities] = useState<CoreCapabilityModule[]>([]);
   const [aiRecommendations, setAiRecommendations] = useState<AIRecommendation[]>([]);
   const [loading, setLoading] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
-  
+
   // UI状态
   const [aiAssistantVisible, setAiAssistantVisible] = useState(true);
   const [capabilityLibraryVisible, setCapabilityLibraryVisible] = useState(false);
   const [configPanelVisible, setConfigPanelVisible] = useState(false);
   const [selectedCapability, setSelectedCapability] = useState<CoreCapabilityModule | null>(null);
-  
+
   // 搜索和过滤状态
   const [searchText, setSearchText] = useState('');
   const [filterType, setFilterType] = useState<CoreCapabilityType | 'all'>('all');
   const [filterMaturity, setFilterMaturity] = useState<CapabilityMaturityLevel | 'all'>('all');
   const [filterSource, setFilterSource] = useState<CapabilitySourceType | 'all'>('all');
-  
+
   // ReactFlow状态
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  
+
+  // 初始化selectedCapabilities - agent存在时初始化数据
+  useEffect(() => {
+    if (agent) {
+      const validCapabilities = (agent?.capabilities || []).filter(cap =>
+        cap &&
+        typeof cap === 'object' &&
+        cap.id &&
+        typeof cap.id === 'string' &&
+        cap.id.trim() !== ''
+      );
+      setSelectedCapabilities(validCapabilities);
+    }
+  }, [agent?.capabilities]);
+
+  // 加载AI推荐的回调函数
+  const loadAIRecommendations = useCallback(async () => {
+    if (!agent) return;
+
+    setLoading(true);
+    try {
+      // 模拟AI推荐API调用
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      const recommendations: AIRecommendation[] = [
+        {
+          id: 'rec_1',
+          type: 'capability',
+          title: '建议添加情感分析能力',
+          description: '基于当前配置，添加情感分析能力可以提升用户体验质量',
+          confidence: 0.85,
+          reasoning: '检测到对话管理能力，情感分析可以帮助更好地理解用户情绪',
+          impact: 'high',
+          effort: 'medium',
+          benefits: ['提升用户满意度', '改善对话质量', '增强个性化体验']
+        },
+        {
+          id: 'rec_2',
+          type: 'optimization',
+          title: '优化能力执行顺序',
+          description: '调整能力执行顺序可以提升30%的响应速度',
+          confidence: 0.92,
+          reasoning: '分析发现当前配置存在不必要的依赖等待',
+          impact: 'medium',
+          effort: 'low',
+          benefits: ['提升响应速度', '降低资源消耗', '改善用户体验']
+        },
+        {
+          id: 'rec_3',
+          type: 'combination',
+          title: '推荐能力组合方案',
+          description: '基于最佳实践，推荐一套经过验证的能力组合',
+          confidence: 0.78,
+          reasoning: '该组合在类似场景中表现优异，成功率达到95%',
+          impact: 'high',
+          effort: 'medium',
+          benefits: ['降低配置复杂度', '提高成功率', '减少调试时间']
+        }
+      ];
+
+      setAiRecommendations(recommendations);
+    } catch (error) {
+      message.error('加载AI推荐失败');
+    } finally {
+      setLoading(false);
+    }
+  }, [agent, selectedCapabilities]);
+
+  // 从能力生成流程图的回调函数
+  const generateFlowFromCapabilities = useCallback(() => {
+    if (selectedCapabilities.length === 0) {
+      setNodes([]);
+      setEdges([]);
+      return;
+    }
+
+    // 过滤掉null、undefined或没有id的能力对象
+    const validCapabilities = selectedCapabilities.filter(capability =>
+      capability &&
+      capability.id &&
+      typeof capability.id === 'string'
+    );
+
+    const newNodes = validCapabilities.map((capability, index) => ({
+      id: capability.id,
+      type: 'capabilityNode',
+      position: { x: (index % 3) * 200, y: Math.floor(index / 3) * 120 },
+      data: { capability }
+    }));
+
+    const newEdges = validCapabilities.slice(0, -1).map((capability, index) => ({
+      id: `edge-${capability.id}-${validCapabilities[index + 1].id}`,
+      source: capability.id,
+      target: validCapabilities[index + 1].id,
+      type: 'smoothstep'
+    }));
+
+    setNodes(newNodes);
+    setEdges(newEdges);
+  }, [selectedCapabilities, setNodes, setEdges]);
+
+  // 初始化组件
+  useEffect(() => {
+    if (agent) {
+      loadAIRecommendations();
+      generateFlowFromCapabilities();
+    }
+  }, [agent, selectedCapabilities, loadAIRecommendations, generateFlowFromCapabilities]);
+
+  // ===== 条件检查必须在所有Hook之后 =====
+
+  // 如果agent为null，不渲染组件
+  if (!agent) {
+    return null;
+  }
+
   /**
    * 获取指定类型的能力数量
    */
@@ -150,7 +254,7 @@ const IntelligentCapabilityConfig: React.FC<IntelligentCapabilityConfigProps> = 
     return (
       <div className="capability-dimension">
         {mockCapabilities.map(cap => (
-          <Card key={cap.id} size="small" style={{ marginBottom: 8 }}>
+          <Card key={cap.id}  style={{ marginBottom: 8 }}>
             <div className="capability-item">
               <div className="capability-info">
                 <Text strong>{cap?.name || '未知能力'}</Text>
@@ -158,7 +262,7 @@ const IntelligentCapabilityConfig: React.FC<IntelligentCapabilityConfigProps> = 
                 <Text type="secondary" style={{ fontSize: 12 }}>{cap.description}</Text>
               </div>
               <div className="capability-actions">
-                <Button type="link" size="small">添加</Button>
+                <Button type="link" >添加</Button>
               </div>
             </div>
           </Card>
@@ -183,7 +287,7 @@ const IntelligentCapabilityConfig: React.FC<IntelligentCapabilityConfigProps> = 
     );
     
     return (
-      <Card title="已选择的能力" size="small" className="selected-capabilities">
+      <Card title="已选择的能力"  className="selected-capabilities">
         {validCapabilities.length === 0 ? (
           <Empty 
             image={Empty.PRESENTED_IMAGE_SIMPLE} 
@@ -192,7 +296,7 @@ const IntelligentCapabilityConfig: React.FC<IntelligentCapabilityConfigProps> = 
           />
         ) : (
           <List
-            size="small"
+            
             dataSource={validCapabilities}
             renderItem={capability => {
               // 确保capability不为null
@@ -206,13 +310,13 @@ const IntelligentCapabilityConfig: React.FC<IntelligentCapabilityConfigProps> = 
                   actions={[
                     <Button 
                       type="text" 
-                      size="small" 
+                       
                       icon={<EditOutlined />}
                       onClick={() => handleEditCapability(capability)}
                     />,
                     <Button 
                       type="text" 
-                      size="small" 
+                       
                       danger
                       icon={<DeleteOutlined />}
                       onClick={() => handleRemoveCapability(capability?.id || '')}
@@ -224,12 +328,12 @@ const IntelligentCapabilityConfig: React.FC<IntelligentCapabilityConfigProps> = 
                       <Avatar 
                         icon={getCapabilityIcon(capability?.type as CoreCapabilityType || CoreCapabilityType.COGNITIVE)}
                         style={{ backgroundColor: getCapabilityColor(capability?.type as CoreCapabilityType || CoreCapabilityType.COGNITIVE) }}
-                        size="small"
+                        
                       />
                     }
                     title={<Text style={{ fontSize: 12 }}>{capability?.name || '未知能力'}</Text>}
                     description={
-                      <Tag size="small" color={getCapabilityColor(capability?.type as CoreCapabilityType || CoreCapabilityType.COGNITIVE)}>
+                      <Tag  color={getCapabilityColor(capability?.type as CoreCapabilityType || CoreCapabilityType.COGNITIVE)}>
                         {capability?.type || 'unknown'}
                       </Tag>
                     }
@@ -396,140 +500,7 @@ const IntelligentCapabilityConfig: React.FC<IntelligentCapabilityConfigProps> = 
       component: renderOptimizationConfig(),
       validation: () => true
     }
-  ];
-  
-  /**
-   * 初始化组件
-   */
-  useEffect(() => {
-    loadAIRecommendations();
-    generateFlowFromCapabilities();
-  }, [selectedCapabilities]);
-  
-  /**
-   * 加载AI推荐
-   */
-  const loadAIRecommendations = useCallback(async () => {
-    setLoading(true);
-    try {
-      // 模拟AI推荐API调用
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const recommendations: AIRecommendation[] = [
-        {
-          id: 'rec_1',
-          type: 'capability',
-          title: '建议添加情感分析能力',
-          description: '基于当前配置，添加情感分析能力可以提升用户体验质量',
-          confidence: 0.85,
-          reasoning: '检测到对话管理能力，情感分析可以帮助更好地理解用户情绪',
-          impact: 'high',
-          effort: 'medium',
-          benefits: ['提升用户满意度', '改善对话质量', '增强个性化体验']
-        },
-        {
-          id: 'rec_2',
-          type: 'optimization',
-          title: '优化能力执行顺序',
-          description: '调整能力执行顺序可以提升30%的响应速度',
-          confidence: 0.92,
-          reasoning: '分析发现当前配置存在不必要的依赖等待',
-          impact: 'medium',
-          effort: 'low',
-          benefits: ['提升响应速度', '降低资源消耗', '改善用户体验']
-        },
-        {
-          id: 'rec_3',
-          type: 'combination',
-          title: '推荐能力组合方案',
-          description: '基于最佳实践，推荐一套经过验证的能力组合',
-          confidence: 0.78,
-          reasoning: '该组合在类似场景中表现优异，成功率达到95%',
-          impact: 'high',
-          effort: 'medium',
-          benefits: ['降低配置复杂度', '提高成功率', '减少调试时间']
-        }
-      ];
-      
-      setAiRecommendations(recommendations);
-    } catch (error) {
-      message.error('加载AI推荐失败');
-    } finally {
-      setLoading(false);
-    }
-  }, [selectedCapabilities]);
-  
-  /**
-   * 从能力生成流程图
-   */
-  const generateFlowFromCapabilities = useCallback(() => {
-    if (selectedCapabilities.length === 0) {
-      setNodes([]);
-      setEdges([]);
-      return;
-    }
-    
-    // 过滤掉null、undefined或没有id的能力对象
-    const validCapabilities = selectedCapabilities.filter(capability => 
-      capability && 
-      capability.id && 
-      typeof capability.id === 'string' && 
-      capability.id.trim() !== ''
-    );
-    
-    if (validCapabilities.length === 0) {
-      setNodes([]);
-      setEdges([]);
-      return;
-    }
-    
-    const newNodes: Node[] = validCapabilities.map((capability, index) => ({
-      id: capability.id,
-      type: 'default',
-      position: { x: 100 + (index % 3) * 200, y: 100 + Math.floor(index / 3) * 150 },
-      data: {
-        label: (
-          <div className="capability-node">
-            <div className="node-header">
-              {getCapabilityIcon(capability?.type as CoreCapabilityType || CoreCapabilityType.COGNITIVE)}
-              <span className="node-title">{capability?.name || '未知能力'}</span>
-            </div>
-            <div className="node-content">
-              <Tag size="small" color={getCapabilityColor(capability?.type as CoreCapabilityType || CoreCapabilityType.COGNITIVE)}>
-                {capability?.type || 'unknown'}
-              </Tag>
-            </div>
-          </div>
-        )
-      },
-      style: {
-        background: '#fff',
-        border: `2px solid ${getCapabilityColor(capability?.type as CoreCapabilityType || CoreCapabilityType.COGNITIVE)}`,
-        borderRadius: 8,
-        padding: 0
-      }
-    }));
-    
-    // 生成简单的顺序连接
-    const newEdges: Edge[] = [];
-    for (let i = 0; i < newNodes.length - 1; i++) {
-      newEdges.push({
-        id: `edge_${i}`,
-        source: newNodes[i].id,
-        target: newNodes[i + 1].id,
-        type: 'smoothstep',
-        style: { stroke: '#1890ff', strokeWidth: 2 }
-      });
-    }
-    
-    setNodes(newNodes);
-    setEdges(newEdges);
-  }, [selectedCapabilities]);
-  
-
-  
-
-  
+  ];  
   /**
    * 渲染场景选择步骤
    */
@@ -570,7 +541,7 @@ const IntelligentCapabilityConfig: React.FC<IntelligentCapabilityConfigProps> = 
                   <Space direction="vertical" style={{ width: '100%' }}>
                     <div className="scenario-tags">
                       {scenario.tags.map(tag => (
-                        <Tag key={tag} size="small">{tag}</Tag>
+                        <Tag key={tag} >{tag}</Tag>
                       ))}
                     </div>
                     <div className="scenario-meta">
@@ -723,7 +694,7 @@ const IntelligentCapabilityConfig: React.FC<IntelligentCapabilityConfigProps> = 
         <div className="orchestration-config">
           <Row gutter={16}>
             <Col span={8}>
-              <Card size="small" title="执行模式">
+              <Card  title="执行模式">
                 <Radio.Group defaultValue="sequential">
                   <Space direction="vertical">
                     <Radio value="sequential">顺序执行</Radio>
@@ -736,7 +707,7 @@ const IntelligentCapabilityConfig: React.FC<IntelligentCapabilityConfigProps> = 
             </Col>
             
             <Col span={8}>
-              <Card size="small" title="性能配置">
+              <Card  title="性能配置">
                 <Space direction="vertical" style={{ width: '100%' }}>
                   <div>
                     <Text>超时时间 (秒)</Text>
@@ -755,7 +726,7 @@ const IntelligentCapabilityConfig: React.FC<IntelligentCapabilityConfigProps> = 
             </Col>
             
             <Col span={8}>
-              <Card size="small" title="监控配置">
+              <Card  title="监控配置">
                 <Space direction="vertical">
                   <div>
                     <Switch defaultChecked /> 启用性能监控
@@ -788,7 +759,7 @@ const IntelligentCapabilityConfig: React.FC<IntelligentCapabilityConfigProps> = 
         
         <Row gutter={[16, 16]}>
           <Col span={12}>
-            <Card title="资源配置" size="small">
+            <Card title="资源配置" >
               <Space direction="vertical" style={{ width: '100%' }}>
                 <div>
                   <Text>CPU限制 (%)</Text>
@@ -807,7 +778,7 @@ const IntelligentCapabilityConfig: React.FC<IntelligentCapabilityConfigProps> = 
           </Col>
           
           <Col span={12}>
-            <Card title="缓存配置" size="small">
+            <Card title="缓存配置" >
               <Space direction="vertical" style={{ width: '100%' }}>
                 <div>
                   <Switch defaultChecked /> 启用结果缓存
@@ -833,7 +804,7 @@ const IntelligentCapabilityConfig: React.FC<IntelligentCapabilityConfigProps> = 
           </Col>
           
           <Col span={12}>
-            <Card title="自动扩缩容" size="small">
+            <Card title="自动扩缩容" >
               <Space direction="vertical" style={{ width: '100%' }}>
                 <div>
                   <Switch defaultChecked /> 启用自动扩缩容
@@ -855,7 +826,7 @@ const IntelligentCapabilityConfig: React.FC<IntelligentCapabilityConfigProps> = 
           </Col>
           
           <Col span={12}>
-            <Card title="安全配置" size="small">
+            <Card title="安全配置" >
               <Space direction="vertical">
                 <div>
                   <Switch defaultChecked /> 启用访问控制
@@ -877,7 +848,7 @@ const IntelligentCapabilityConfig: React.FC<IntelligentCapabilityConfigProps> = 
         {/* 优化建议 */}
         <Card title="优化建议" style={{ marginTop: 16 }}>
           <List
-            size="small"
+            
             dataSource={[
               { title: '建议启用结果缓存', description: '可提升30%的响应速度', type: 'success' },
               { title: '建议调整并发限制', description: '当前配置可能导致资源竞争', type: 'warning' },
@@ -922,10 +893,10 @@ const IntelligentCapabilityConfig: React.FC<IntelligentCapabilityConfigProps> = 
           <Space>
             <RobotOutlined style={{ color: '#1890ff' }} />
             <span>AI智能推荐</span>
-            {loading && <Spin size="small" />}
+            {loading && <Spin  />}
           </Space>
         }
-        size="small"
+        
         className="ai-recommendation-panel"
       >
         {aiRecommendations.length === 0 ? (
@@ -936,7 +907,7 @@ const IntelligentCapabilityConfig: React.FC<IntelligentCapabilityConfigProps> = 
           />
         ) : (
           <List
-            size="small"
+            
             dataSource={aiRecommendations}
             renderItem={recommendation => (
               <List.Item className="recommendation-item">
@@ -945,7 +916,7 @@ const IntelligentCapabilityConfig: React.FC<IntelligentCapabilityConfigProps> = 
                     <Text strong style={{ fontSize: 12 }}>{recommendation.title}</Text>
                     <Progress 
                       percent={Math.round(recommendation.confidence * 100)} 
-                      size="small" 
+                       
                       style={{ width: 60 }}
                       strokeColor={recommendation.confidence > 0.8 ? '#52c41a' : '#faad14'}
                     />
@@ -957,9 +928,9 @@ const IntelligentCapabilityConfig: React.FC<IntelligentCapabilityConfigProps> = 
                     {recommendation.description}
                   </Paragraph>
                   <div className="recommendation-actions">
-                    <Space size="small">
-                      <Button type="link" size="small">应用</Button>
-                      <Button type="link" size="small">详情</Button>
+                    <Space >
+                      <Button type="link" >应用</Button>
+                      <Button type="link" >详情</Button>
                     </Space>
                   </div>
                 </div>
@@ -1132,7 +1103,7 @@ const IntelligentCapabilityConfig: React.FC<IntelligentCapabilityConfigProps> = 
             <Radio.Group 
               value={currentMode} 
               onChange={(e) => setCurrentMode(e.target.value)}
-              size="small"
+              
             >
               <Radio.Button value="wizard">向导模式</Radio.Button>
               <Radio.Button value="visual">可视化模式</Radio.Button>
@@ -1189,7 +1160,7 @@ const IntelligentCapabilityConfig: React.FC<IntelligentCapabilityConfigProps> = 
             {/* 这里可以集成聊天界面 */}
             <div className="chat-messages">
               <div className="message ai-message">
-                <Avatar icon={<RobotOutlined />} size="small" />
+                <Avatar icon={<RobotOutlined />}  />
                 <div className="message-content">
                   <Text>您好！我是AI配置助手。基于您当前的配置，我建议添加情感分析能力来提升用户体验。</Text>
                 </div>

@@ -296,7 +296,7 @@ const EnhancedNodeLibrary: React.FC<EnhancedNodeLibraryProps> = ({
       <Card
         key={template.id}
         className={`node-template-card ${viewMode}`}
-        size="small"
+        
         hoverable
         draggable
         onDragStart={(e) => handleDragStart(template, e)}
@@ -305,7 +305,7 @@ const EnhancedNodeLibrary: React.FC<EnhancedNodeLibraryProps> = ({
           <Tooltip title={isFavorite ? '取消收藏' : '添加收藏'}>
             <Button
               type="text"
-              size="small"
+              
               icon={isFavorite ? <StarFilled style={{ color: '#faad14' }} /> : <StarOutlined />}
               onClick={(e) => handleToggleFavorite(template.id, e)}
             />
@@ -313,7 +313,7 @@ const EnhancedNodeLibrary: React.FC<EnhancedNodeLibraryProps> = ({
           <Tooltip title="预览详情">
             <Button
               type="text"
-              size="small"
+              
               icon={<EyeOutlined />}
               onClick={(e) => handleShowPreview(template, e)}
             />
@@ -321,7 +321,7 @@ const EnhancedNodeLibrary: React.FC<EnhancedNodeLibraryProps> = ({
           <Tooltip title="添加到画布">
             <Button
               type="text"
-              size="small"
+              
               icon={<PlusOutlined />}
               onClick={(e) => {
                 e.stopPropagation();
@@ -357,10 +357,10 @@ const EnhancedNodeLibrary: React.FC<EnhancedNodeLibraryProps> = ({
                   {template.complexity}
                 </Tag>
                 {template.tags.slice(0, 2).map(tag => (
-                  <Tag key={tag} size="small">{tag}</Tag>
+                  <Tag key={tag} >{tag}</Tag>
                 ))}
                 {template.tags.length > 2 && (
-                  <Tag size="small">+{template.tags.length - 2}</Tag>
+                  <Tag >+{template.tags.length - 2}</Tag>
                 )}
               </Space>
             </div>
@@ -543,7 +543,7 @@ const EnhancedNodeLibrary: React.FC<EnhancedNodeLibraryProps> = ({
             <div>
               <Title level={4}>输入端口</Title>
               <List
-                size="small"
+                
                 dataSource={selectedTemplate.inputPorts}
                 renderItem={(port) => (
                   <List.Item>
@@ -565,7 +565,7 @@ const EnhancedNodeLibrary: React.FC<EnhancedNodeLibraryProps> = ({
             <div>
               <Title level={4}>输出端口</Title>
               <List
-                size="small"
+                
                 dataSource={selectedTemplate.outputPorts}
                 renderItem={(port) => (
                   <List.Item>

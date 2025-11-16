@@ -212,6 +212,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
     
     if (Object.keys(updates).length > 0) {
       updateOrchestrator(updates);
+    }
   }, [orchestrationConfig, updateOrchestrator]);
   
   /**
@@ -595,7 +596,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
    */
   const renderModeConfig = () => {
     return (
-      <Card title="编排模式" size="small">
+      <Card title="编排模式" >
         <Form.Item name="mode" label="执行模式">
           <Select disabled={readonly}>
             <Option value={CapabilityOrchestrationMode.SEQUENTIAL}>顺序执行</Option>
@@ -631,7 +632,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
    */
   const renderExecutionStrategy = () => {
     return (
-      <Card title="执行策略" size="small">
+      <Card title="执行策略" >
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item name="loadBalancing" label="负载均衡">
@@ -697,7 +698,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
    */
   const renderOptimizationConfig = () => {
     return (
-      <Card title="性能优化" size="small">
+      <Card title="性能优化" >
         <Form.Item name="optimizationEnabled" label="启用优化" valuePropName="checked">
           <Switch disabled={readonly} />
         </Form.Item>
@@ -809,10 +810,10 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
         key: 'actions',
         render: (_: any, record: OrchestrationRule) => (
           <Space>
-            <Button size="small" onClick={() => handleEditRule(record)} disabled={readonly}>
+            <Button  onClick={() => handleEditRule(record)} disabled={readonly}>
               编辑
             </Button>
-            <Button size="small" danger onClick={() => handleDeleteRule(record.id)} disabled={readonly}>
+            <Button  danger onClick={() => handleDeleteRule(record.id)} disabled={readonly}>
               删除
             </Button>
           </Space>
@@ -823,10 +824,10 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
     return (
       <Card 
         title="编排规则" 
-        size="small"
+        
         extra={
           !readonly && (
-            <Button type="primary" size="small" onClick={handleAddRule}>
+            <Button type="primary"  onClick={handleAddRule}>
               添加规则
             </Button>
           )
@@ -836,7 +837,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
           columns={columns}
           dataSource={orchestrator.rules}
           rowKey="id"
-          size="small"
+          
           pagination={false}
         />
       </Card>
@@ -899,10 +900,10 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
         key: 'actions',
         render: (_: any, record: CapabilityMapping) => (
           <Space>
-            <Button size="small" onClick={() => handleEditMapping(record)} disabled={readonly}>
+            <Button  onClick={() => handleEditMapping(record)} disabled={readonly}>
               编辑
             </Button>
-            <Button size="small" danger onClick={() => handleDeleteMapping(record.id)} disabled={readonly}>
+            <Button  danger onClick={() => handleDeleteMapping(record.id)} disabled={readonly}>
               删除
             </Button>
           </Space>
@@ -913,10 +914,10 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
     return (
       <Card 
         title="能力映射" 
-        size="small"
+        
         extra={
           !readonly && (
-            <Button type="primary" size="small" onClick={handleAddMapping}>
+            <Button type="primary"  onClick={handleAddMapping}>
               添加映射
             </Button>
           )
@@ -926,7 +927,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
           columns={columns}
           dataSource={orchestrator.capabilityMapping}
           rowKey="id"
-          size="small"
+          
           pagination={false}
         />
       </Card>
@@ -938,7 +939,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
    */
   const renderExecutionStatus = () => {
     return (
-      <Card title="执行状态" size="small">
+      <Card title="执行状态" >
         <Row gutter={[16, 16]}>
           <Col span={6}>
             <Statistic
@@ -1064,7 +1065,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
    */
   const renderMetrics = () => {
     return (
-      <Card title="性能指标" size="small">
+      <Card title="性能指标" >
         <Row gutter={[16, 16]}>
           <Col span={6}>
             <Statistic
@@ -1131,19 +1132,19 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
             <Col span={8}>
               <div>
                 <span>CPU使用率</span>
-                <Progress percent={65} size="small" />
+                <Progress percent={65}  />
               </div>
             </Col>
             <Col span={8}>
               <div>
                 <span>内存使用率</span>
-                <Progress percent={78} size="small" status="active" />
+                <Progress percent={78}  status="active" />
               </div>
             </Col>
             <Col span={8}>
               <div>
                 <span>网络带宽</span>
-                <Progress percent={45} size="small" />
+                <Progress percent={45}  />
               </div>
             </Col>
           </Row>
@@ -1311,14 +1312,14 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
 
         <Row gutter={[16, 16]}>
           <Col span={12}>
-            <Card title="可用能力" size="small">
+            <Card title="可用能力" >
               <List
                 dataSource={capabilities}
                 renderItem={(capability) => (
                   <List.Item
                     actions={[
                       <Button 
-                        size="small" 
+                         
                         type="link"
                         onClick={() => message.info(`查看${capability?.name || '未知能力'}详情`)}
                       >
@@ -1348,7 +1349,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
           </Col>
           
           <Col span={12}>
-            <Card title="能力分配" size="small">
+            <Card title="能力分配" >
               {capabilityAllocations.length > 0 ? (
                 <List
                   dataSource={capabilityAllocations}
@@ -1364,7 +1365,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
                             <div>预估成本: {allocation.estimatedCost}</div>
                             <Progress 
                               percent={allocation.resourceAllocation.cpu} 
-                              size="small" 
+                               
                               format={() => `CPU: ${allocation.resourceAllocation.cpu}%`}
                             />
                           </div>
@@ -1545,10 +1546,10 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
 
         <Row gutter={[16, 16]}>
           <Col span={14}>
-            <Card title="协作网络" size="small" extra={
+            <Card title="协作网络"  extra={
               <Space>
                 <Tag color="blue">实时更新</Tag>
-                <Button size="small" icon={<ReloadOutlined />} onClick={() => message.info('刷新网络状态')}>刷新</Button>
+                <Button  icon={<ReloadOutlined />} onClick={() => message.info('刷新网络状态')}>刷新</Button>
               </Space>
             }>
               {renderCollaborationNetwork()}
@@ -1556,11 +1557,11 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
           </Col>
           
           <Col span={10}>
-            <Card title="协调策略" size="small" extra={
-              <Button size="small" type="link" onClick={() => message.info('配置策略')}>配置</Button>
+            <Card title="协调策略"  extra={
+              <Button  type="link" onClick={() => message.info('配置策略')}>配置</Button>
             }>
               <List
-                size="small"
+                
                 dataSource={[
                   { name: '资源竞争解决', status: 'active', description: '解决多个能力对同一资源的竞争', priority: 'high', conflicts: 2 },
                   { name: '数据流协调', status: 'pending', description: '协调能力间的数据传递', priority: 'medium', conflicts: 0 },
@@ -1571,11 +1572,11 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
                 renderItem={(strategy) => (
                   <List.Item actions={[
                     strategy.conflicts > 0 && (
-                      <Badge count={strategy.conflicts} size="small">
+                      <Badge count={strategy.conflicts} >
                         <ExclamationCircleOutlined style={{ color: '#fa541c' }} />
                       </Badge>
                     ),
-                    <Tag color={strategy.priority === 'high' ? 'red' : strategy.priority === 'medium' ? 'orange' : 'green'} size="small">
+                    <Tag color={strategy.priority === 'high' ? 'red' : strategy.priority === 'medium' ? 'orange' : 'green'} >
                       {strategy.priority === 'high' ? '高' : strategy.priority === 'medium' ? '中' : '低'}
                     </Tag>
                   ]}>
@@ -1585,7 +1586,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
                           status={strategy.status === 'active' ? 'success' : strategy.status === 'pending' ? 'processing' : 'default'}
                           dot
                         >
-                          <Avatar size="small" icon={<InteractionOutlined />} />
+                          <Avatar  icon={<InteractionOutlined />} />
                         </Badge>
                       }
                       title={strategy?.name || '未命名策略'}
@@ -1661,8 +1662,8 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
               
               <Row gutter={[16, 16]}>
                 <Col span={12}>
-                  <Card title="协调时间线" size="small">
-                    <Timeline size="small">
+                  <Card title="协调时间线" >
+                    <Timeline >
                       <Timeline.Item color="green" dot={<CheckCircleOutlined />}>
                         <div>
                           <Text strong>协调启动</Text>
@@ -1695,7 +1696,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
                   </Card>
                 </Col>
                 <Col span={12}>
-                  <Card title="性能指标" size="small">
+                  <Card title="性能指标" >
                     <Space direction="vertical" style={{ width: '100%' }} size={12}>
                       <div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
@@ -1704,7 +1705,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
                         </div>
                         <Progress 
                           percent={95} 
-                          size="small" 
+                           
                           status="success"
                           strokeColor="#52c41a"
                         />
@@ -1716,7 +1717,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
                         </div>
                         <Progress 
                           percent={coordinationResult.estimatedPerformance.resourceUtilization} 
-                          size="small" 
+                           
                           strokeColor="#1890ff"
                         />
                       </div>
@@ -1727,7 +1728,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
                         </div>
                         <Progress 
                           percent={Math.max(0, 100 - coordinationResult.estimatedPerformance.totalDuration / 10)} 
-                          size="small" 
+                           
                           strokeColor="#fa8c16"
                         />
                       </div>
@@ -1738,7 +1739,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
                         </div>
                         <Progress 
                           percent={88} 
-                          size="small" 
+                           
                           strokeColor="#722ed1"
                         />
                       </div>
@@ -1796,7 +1797,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
 
         <Row gutter={[16, 16]}>
           <Col span={12}>
-            <Card title="优化策略" size="small">
+            <Card title="优化策略" >
               <List
                 dataSource={[
                   { name: '自动扩缩容', enabled: orchestrator.optimization.autoScaling.enabled, description: '根据负载自动调整实例数量' },
@@ -1811,7 +1812,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
                       title={
                         <Space>
                           {strategy?.name || '未命名策略'}
-                          <Switch size="small" checked={strategy.enabled} disabled={readonly} />
+                          <Switch  checked={strategy.enabled} disabled={readonly} />
                         </Space>
                       }
                       description={strategy.description}
@@ -1823,7 +1824,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
           </Col>
           
           <Col span={12}>
-            <Card title="优化指标" size="small">
+            <Card title="优化指标" >
               <Row gutter={[16, 16]}>
                 <Col span={12}>
                   <Statistic
@@ -2099,7 +2100,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
           <div className="error-warnings">
             <h4>错误信息</h4>
             <List
-              size="small"
+              
               dataSource={[]}
               renderItem={error => (
                 <List.Item>
@@ -2114,7 +2115,7 @@ const CapabilityOrchestrator: React.FC<CapabilityOrchestratorProps> = ({
             
             <h4 style={{ marginTop: 16 }}>警告信息</h4>
             <List
-              size="small"
+              
               dataSource={[]}
               renderItem={(warning: string) => (
                 <List.Item>

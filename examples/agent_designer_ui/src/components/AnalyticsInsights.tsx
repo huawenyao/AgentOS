@@ -409,7 +409,7 @@ const AnalyticsInsights: React.FC<AnalyticsInsightsProps> = ({ visible, onClose 
       <Row gutter={[16, 16]} className="metrics-cards">
         {performanceMetrics.map((metric) => (
           <Col xs={24} sm={12} lg={8} xl={4} key={metric.id}>
-            <Card className="metric-card" size="small">
+            <Card className="metric-card" >
               <Statistic
                 title={
                   <Space>
@@ -444,7 +444,7 @@ const AnalyticsInsights: React.FC<AnalyticsInsightsProps> = ({ visible, onClose 
       {/* 性能趋势图表 */}
       <Row gutter={[16, 16]} className="performance-charts">
         <Col xs={24} lg={12}>
-          <Card title="系统性能趋势" size="small">
+          <Card title="系统性能趋势" >
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={systemPerformance}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -480,7 +480,7 @@ const AnalyticsInsights: React.FC<AnalyticsInsightsProps> = ({ visible, onClose 
         </Col>
         
         <Col xs={24} lg={12}>
-          <Card title="Agent性能分析" size="small">
+          <Card title="Agent性能分析" >
             <ResponsiveContainer width="100%" height={300}>
               <AreaChart data={agentPerformance}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -565,7 +565,7 @@ const AnalyticsInsights: React.FC<AnalyticsInsightsProps> = ({ visible, onClose 
       {/* 使用趋势图表 */}
       <Row gutter={[16, 16]} className="usage-charts">
         <Col xs={24} lg={16}>
-          <Card title="使用趋势分析" size="small">
+          <Card title="使用趋势分析" >
             <ResponsiveContainer width="100%" height={400}>
               <LineChart data={usageData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -601,7 +601,7 @@ const AnalyticsInsights: React.FC<AnalyticsInsightsProps> = ({ visible, onClose 
         </Col>
         
         <Col xs={24} lg={8}>
-          <Card title="用户留存分析" size="small">
+          <Card title="用户留存分析" >
             <div className="retention-analysis">
               <div className="retention-metric">
                 <Progress 
@@ -658,7 +658,7 @@ const AnalyticsInsights: React.FC<AnalyticsInsightsProps> = ({ visible, onClose 
       <Row gutter={[16, 16]} className="trend-overview">
         {trendAnalysis.map((trend, index) => (
           <Col xs={24} lg={8} key={index}>
-            <Card title={trend.metric} size="small">
+            <Card title={trend.metric} >
               <div className="trend-summary">
                 <div className="trend-indicator">
                   {getTrendIcon(trend.trend)}
@@ -671,7 +671,7 @@ const AnalyticsInsights: React.FC<AnalyticsInsightsProps> = ({ visible, onClose 
                 <div className="confidence-score">
                   <Progress 
                     percent={trend.confidence * 100} 
-                    size="small"
+                    
                     format={percent => `置信度 ${percent}%`}
                   />
                 </div>
@@ -680,7 +680,7 @@ const AnalyticsInsights: React.FC<AnalyticsInsightsProps> = ({ visible, onClose 
                     <Alert
                       message={`检测到 ${trend.anomalies.length} 个异常点`}
                       type="warning"
-                      size="small"
+                      
                       showIcon
                     />
                   </div>
@@ -694,7 +694,7 @@ const AnalyticsInsights: React.FC<AnalyticsInsightsProps> = ({ visible, onClose 
       {/* 预测分析图表 */}
       <Row gutter={[16, 16]} className="prediction-charts">
         <Col xs={24} lg={16}>
-          <Card title="趋势预测分析" size="small">
+          <Card title="趋势预测分析" >
             <ResponsiveContainer width="100%" height={400}>
               <LineChart data={predictions}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -732,7 +732,7 @@ const AnalyticsInsights: React.FC<AnalyticsInsightsProps> = ({ visible, onClose 
         </Col>
         
         <Col xs={24} lg={8}>
-          <Card title="异常检测" size="small">
+          <Card title="异常检测" >
             <div className="anomaly-detection">
               {anomalies.length > 0 ? (
                 <div className="anomaly-list">
@@ -811,19 +811,19 @@ const AnalyticsInsights: React.FC<AnalyticsInsightsProps> = ({ visible, onClose 
                 <Switch 
                   checked={autoRefresh}
                   onChange={setAutoRefresh}
-                  size="small"
+                  
                 />
                 <InputNumber
                   value={refreshInterval}
                   onChange={(value) => value && setRefreshInterval(value)}
                   min={10}
                   max={300}
-                  size="small"
+                  
                   addonAfter="秒"
                   style={{ width: 80 }}
                   disabled={!autoRefresh}
                 />
-                <Button icon={<DownloadOutlined />} size="small">
+                <Button icon={<DownloadOutlined />} >
                   导出
                 </Button>
               </Space>

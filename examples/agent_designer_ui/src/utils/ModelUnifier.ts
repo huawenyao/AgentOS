@@ -260,7 +260,7 @@ export class ModelUnifier {
         metrics: {
           avgResponseTime: backend.metrics?.avg_response_time || 0,
           throughput: backend.metrics?.throughput || 0,
-          successRate: 1 - (backend.metrics?.error_rate || 0),
+          successRate: backend.metrics ? (1 - (backend.metrics.error_rate || 0)) : 1,
           errorRate: backend.metrics?.error_rate || 0,
           accuracy: 0.95,
           precision: 0.95,

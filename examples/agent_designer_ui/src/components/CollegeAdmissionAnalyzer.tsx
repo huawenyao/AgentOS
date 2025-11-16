@@ -435,7 +435,7 @@ const CollegeAdmissionAnalyzer: React.FC = () => {
       render: (rate: number) => (
         <Progress 
           percent={Math.round(rate * 100)} 
-          size="small" 
+           
           status={rate > 0.05 ? 'success' : rate > 0.03 ? 'normal' : 'exception'}
         />
       )
@@ -562,7 +562,7 @@ const CollegeAdmissionAnalyzer: React.FC = () => {
                             {step.status === 'running' && (
                               <Progress 
                                 percent={step.progress} 
-                                size="small" 
+                                 
                                 status="active"
                                 showInfo={false}
                               />
@@ -574,7 +574,7 @@ const CollegeAdmissionAnalyzer: React.FC = () => {
                             )}
                           </div>
                           <div className="step-status">
-                            {step.status === 'running' && <Spin size="small" />}
+                            {step.status === 'running' && <Spin  />}
                             {step.status === 'completed' && <TrophyOutlined style={{ color: '#52c41a' }} />}
                           </div>
                         </div>
@@ -606,19 +606,19 @@ const CollegeAdmissionAnalyzer: React.FC = () => {
             <Card title="📋 分析结果" className="result-card">
               <Row gutter={[16, 16]}>
                 <Col xs={24} lg={12}>
-                  <Card size="small" title="推荐高校" className="recommendation-card">
+                  <Card  title="推荐高校" className="recommendation-card">
                     <Table
                       dataSource={analysisResult.recommendedColleges}
                       columns={collegeColumns}
                       pagination={{ pageSize: 5 }}
-                      size="small"
+                      
                       rowKey="id"
                     />
                   </Card>
                 </Col>
                 
                 <Col xs={24} lg={12}>
-                  <Card size="small" title="风险分析" className="risk-card">
+                  <Card  title="风险分析" className="risk-card">
                     <Space direction="vertical" style={{ width: '100%' }}>
                       <div>
                         <Tag color="green">安全院校 ({analysisResult.riskAnalysis.safe.length}所)</Tag>
@@ -635,7 +635,7 @@ const CollegeAdmissionAnalyzer: React.FC = () => {
                     </Space>
                   </Card>
                   
-                  <Card size="small" title="策略建议" className="advice-card" style={{ marginTop: 16 }}>
+                  <Card  title="策略建议" className="advice-card" style={{ marginTop: 16 }}>
                     <Space direction="vertical">
                       {analysisResult.strategicAdvice.map((advice, index) => (
                         <div key={index} className="advice-item">

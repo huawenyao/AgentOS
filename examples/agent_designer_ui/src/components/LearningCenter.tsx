@@ -389,7 +389,7 @@ const LearningCenter: React.FC = () => {
               <Paragraph ellipsis={{ rows: 2 }}>{resource.description}</Paragraph>
               <div style={{ marginTop: 12 }}>
                 <Space>
-                  <Avatar size="small" src={resource.authorAvatar} icon={<UserOutlined />} />
+                  <Avatar  src={resource.authorAvatar} icon={<UserOutlined />} />
                   <Text type="secondary">{resource.author}</Text>
                 </Space>
                 <div style={{ marginTop: 8 }}>
@@ -402,7 +402,7 @@ const LearningCenter: React.FC = () => {
                   <div style={{ marginTop: 8 }}>
                     <Progress 
                       percent={resource.progress} 
-                      size="small" 
+                       
                       status={resource.isCompleted ? 'success' : 'active'}
                     />
                   </div>
@@ -561,7 +561,7 @@ const LearningCenter: React.FC = () => {
                         <br />
                         <Text type="secondary">{resource.category}</Text>
                         <div style={{ marginTop: 8 }}>
-                          <Progress percent={resource.progress} size="small" />
+                          <Progress percent={resource.progress}  />
                         </div>
                       </div>
                     </Timeline.Item>
@@ -640,7 +640,7 @@ const LearningCenter: React.FC = () => {
                 </div>
               </Col>
               <Col span={8}>
-                <Card size="small">
+                <Card >
                   <Statistic
                     title="评分"
                     value={selectedResource.rating}

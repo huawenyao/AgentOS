@@ -1,0 +1,125 @@
+version: '3.8'
+
+services:
+  # 后端API服务
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://efiagent:password@db:5432/efiagent
+      - REDIS_URL=redis://redis:6379
+      - ENVIRONMENT=development
+      - DEBUG=true
+    volumes:
+      - ../backend:/app
+      - ../backend/requirements.txt:/app/requirements.txt
+    depends_on:
+      - db
+      - redis
+    networks:
+      - efiagent-network
+    restart: unless-stopped
+
+  # 前端服务
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+      - REACT_APP_ENVIRONMENT=development
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - efiagent-network
+    restart: unless-stopped
+
+  # PostgreSQL数据库
+  db:
+    image: postgres:14-alpine
+    environment:
+      - POSTGRES_DB=efiagent
+      - POSTGRES_USER=efiagent
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - efiagent-network
+    restart: unless-stopped
+
+  # Redis缓存
+  redis:
+    image: redis:6-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - efiagent-network
+    restart: unless-stopped
+
+  # 向量数据库 (FAISS兼容的Weaviate)
+  vector_db:
+    image: semitechnologies/weaviate:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - QUERY_DEFAULTS_LIMIT=25
+      - AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED=true
+      - PERSISTENCE_DATA_PATH=/var/lib/weaviate
+      - DEFAULT_VECTORIZER_MODULE=none
+    volumes:
+      - vector_data:/var/lib/weaviate
+    networks:
+      - efiagent-network
+    restart: unless-stopped
+
+  # 监控服务
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - efiagent-network
+    restart: unless-stopped
+
+  # 可视化监控
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+    networks:
+      - efiagent-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+  vector_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  efiagent-network:
+    driver: bridge

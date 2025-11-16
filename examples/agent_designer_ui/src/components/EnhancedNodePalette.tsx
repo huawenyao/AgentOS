@@ -1801,7 +1801,7 @@ const EnhancedNodePalette: React.FC<EnhancedNodePaletteProps> = ({
     <Card 
       className={`enhanced-node-palette ${className || ''}`}
       title="组件库"
-      size="small"
+      
       extra={
         <Badge 
           count={filteredNodes.length} 
@@ -1817,7 +1817,7 @@ const EnhancedNodePalette: React.FC<EnhancedNodePaletteProps> = ({
           onChange={(e) => setSearchText(e.target.value)}
           prefix={<SearchOutlined />}
           allowClear
-          size="small"
+          
         />
       </div>
 
@@ -1825,7 +1825,7 @@ const EnhancedNodePalette: React.FC<EnhancedNodePaletteProps> = ({
       <div className="palette-filters">
         <Space wrap>
           <Button 
-            size="small" 
+             
             type={selectedCategory === 'all' ? 'primary' : 'default'}
             onClick={() => setSelectedCategory('all')}
           >
@@ -1834,7 +1834,7 @@ const EnhancedNodePalette: React.FC<EnhancedNodePaletteProps> = ({
           {Object.entries(categoryConfig).map(([category, config]) => (
             <Button 
               key={category}
-              size="small" 
+               
               type={selectedCategory === category ? 'primary' : 'default'}
               icon={config.icon}
               onClick={() => setSelectedCategory(category)}
@@ -1852,7 +1852,7 @@ const EnhancedNodePalette: React.FC<EnhancedNodePaletteProps> = ({
         <Collapse 
           activeKey={activeKey}
           onChange={setActiveKey}
-          size="small"
+          
           ghost
         >
           {Object.entries(nodesByCategory).map(([category, nodes]) => {
@@ -1870,7 +1870,7 @@ const EnhancedNodePalette: React.FC<EnhancedNodePaletteProps> = ({
                     </Space>
                     <Badge 
                       count={nodes.length} 
-                      size="small" 
+                       
                       style={{ backgroundColor: '#f0f0f0', color: '#666' }}
                     />
                   </div>

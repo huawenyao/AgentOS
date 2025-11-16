@@ -258,7 +258,7 @@ const AgentMonitor: React.FC<AgentMonitorProps> = ({
                     columns={columns}
                     rowKey={(record) => record.id}
                     pagination={false}
-                    size="small"
+                    
                     scroll={{ y: 300 }}
                   />
                   <div ref={logsEndRef} />

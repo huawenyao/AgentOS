@@ -675,7 +675,7 @@ const RealTimeValidator: React.FC<RealTimeValidatorProps> = ({
     return (
       <div className="validation-results">
         {/* 总体评分 */}
-        <Card size="small" className="score-card">
+        <Card  className="score-card">
           <div className="score-display">
             <Progress
               type="circle"
@@ -704,13 +704,13 @@ const RealTimeValidator: React.FC<RealTimeValidatorProps> = ({
               key="errors"
             >
               <List
-                size="small"
+                
                 dataSource={errors}
                 renderItem={(error) => (
                   <List.Item
                     actions={[
                       error.autoFix && (
-                        <Button size="small" onClick={error.autoFix}>
+                        <Button  onClick={error.autoFix}>
                           自动修复
                         </Button>
                       )
@@ -754,7 +754,7 @@ const RealTimeValidator: React.FC<RealTimeValidatorProps> = ({
               key="warnings"
             >
               <List
-                size="small"
+                
                 dataSource={warnings}
                 renderItem={(warning) => (
                   <List.Item>
@@ -787,7 +787,7 @@ const RealTimeValidator: React.FC<RealTimeValidatorProps> = ({
         </Collapse>
 
         {/* 性能指标 */}
-        <Card size="small" title="性能指标" className="metrics-card">
+        <Card  title="性能指标" className="metrics-card">
           <div className="metrics-grid">
             <div className="metric-item">
               <span className="metric-label">预计响应时间</span>
@@ -815,7 +815,7 @@ const RealTimeValidator: React.FC<RealTimeValidatorProps> = ({
         </Card>
 
         {/* 安全指标 */}
-        <Card size="small" title="安全指标" className="security-card">
+        <Card  title="安全指标" className="security-card">
           <div className="security-info">
             <div className="security-level">
               <span>安全级别: </span>
@@ -827,7 +827,7 @@ const RealTimeValidator: React.FC<RealTimeValidatorProps> = ({
               <span>合规评分: </span>
               <Progress 
                 percent={security.complianceScore} 
-                size="small" 
+                 
                 strokeColor={security.complianceScore >= 80 ? '#52c41a' : '#faad14'}
               />
             </div>
@@ -850,7 +850,7 @@ const RealTimeValidator: React.FC<RealTimeValidatorProps> = ({
 
     return (
       <div className="preview-content">
-        <Card size="small" title="执行路径" className="execution-path-card">
+        <Card  title="执行路径" className="execution-path-card">
           <div className="execution-path">
             {previewData.executionPath.map((step, index) => (
               <div key={index} className="path-step">
@@ -864,7 +864,7 @@ const RealTimeValidator: React.FC<RealTimeValidatorProps> = ({
           </div>
         </Card>
 
-        <Card size="small" title="数据流" className="data-flow-card">
+        <Card  title="数据流" className="data-flow-card">
           <div className="data-flow">
             <div className="flow-stage">
               <h4>输入</h4>
@@ -873,7 +873,7 @@ const RealTimeValidator: React.FC<RealTimeValidatorProps> = ({
             <div className="flow-stage">
               <h4>处理</h4>
               <List
-                size="small"
+                
                 dataSource={previewData.dataFlow.processing}
                 renderItem={(item: any) => (
                   <List.Item>
@@ -889,7 +889,7 @@ const RealTimeValidator: React.FC<RealTimeValidatorProps> = ({
           </div>
         </Card>
 
-        <Card size="small" title="成本估算" className="cost-card">
+        <Card  title="成本估算" className="cost-card">
           <div className="cost-breakdown">
             <div className="cost-item">
               <span>计算成本:</span>
@@ -932,7 +932,7 @@ const RealTimeValidator: React.FC<RealTimeValidatorProps> = ({
       </div>
 
       {simulationResults.length > 0 && (
-        <Card size="small" title="模拟结果" className="simulation-results">
+        <Card  title="模拟结果" className="simulation-results">
           <List
             dataSource={simulationResults}
             renderItem={(result: any) => (

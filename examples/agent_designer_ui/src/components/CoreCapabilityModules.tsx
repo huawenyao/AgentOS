@@ -888,14 +888,14 @@ const CoreCapabilityModules: React.FC<CoreCapabilityModulesProps> = ({
           <List.Item
             actions={[
               <Button 
-                size="small" 
+                 
                 icon={<PlayCircleOutlined />}
                 onClick={() => testConnection('llm', provider)}
               >
                 测试连接
               </Button>,
               <Button 
-                size="small" 
+                 
                 icon={<SettingOutlined />}
                 onClick={() => {
                   setSelectedProvider(provider);
@@ -926,7 +926,7 @@ const CoreCapabilityModules: React.FC<CoreCapabilityModulesProps> = ({
               description={
                 <div>
                   <p>支持 {provider.models.length} 个模型</p>
-                  <Collapse size="small">
+                  <Collapse >
                     <Panel header="模型列表" key="models">
                       {provider.models.map(model => (
                         <div key={model.id} className="model-item">
@@ -934,7 +934,7 @@ const CoreCapabilityModules: React.FC<CoreCapabilityModulesProps> = ({
                             <Space>
                               <strong>{model.name}</strong>
                               <Button 
-                                size="small" 
+                                 
                                 type="link"
                                 onClick={() => {
                                   const capability = createLLMCapability(provider, model);
@@ -999,14 +999,14 @@ const CoreCapabilityModules: React.FC<CoreCapabilityModulesProps> = ({
           <List.Item
             actions={[
               <Button 
-                size="small" 
+                 
                 icon={<PlayCircleOutlined />}
                 onClick={() => testConnection('kg', kg)}
               >
                 测试连接
               </Button>,
               <Button 
-                size="small" 
+                 
                 icon={<ThunderboltOutlined />}
                 onClick={() => {
                   const capability = createKGCapability(kg);
@@ -1017,7 +1017,7 @@ const CoreCapabilityModules: React.FC<CoreCapabilityModulesProps> = ({
                 创建能力
               </Button>,
               <Button 
-                size="small" 
+                 
                 icon={<SettingOutlined />}
                 onClick={() => {
                   setSelectedKG(kg);
@@ -1097,14 +1097,14 @@ const CoreCapabilityModules: React.FC<CoreCapabilityModulesProps> = ({
           <List.Item
             actions={[
               <Button 
-                size="small" 
+                 
                 icon={<BugOutlined />}
                 onClick={() => testConnection('tool', tool)}
               >
                 测试
               </Button>,
               <Button 
-                size="small" 
+                 
                 icon={<ThunderboltOutlined />}
                 onClick={() => {
                   const capability = createToolCapability(tool);
@@ -1115,7 +1115,7 @@ const CoreCapabilityModules: React.FC<CoreCapabilityModulesProps> = ({
                 创建能力
               </Button>,
               <Button 
-                size="small" 
+                 
                 icon={<MonitorOutlined />}
                 onClick={() => {
                   Modal.info({
@@ -1123,7 +1123,7 @@ const CoreCapabilityModules: React.FC<CoreCapabilityModulesProps> = ({
                     content: (
                       <div>
                         <p>调用次数: {tool.metrics.calls}</p>
-                        <p>成功率: {tool.metrics.successRate}%</p>
+                        <p>成功率: {tool.metrics?.successRate || 0}%</p>
                         <p>平均响应时间: {tool.metrics.avgResponseTime}ms</p>
                       </div>
                     )
@@ -1158,7 +1158,7 @@ const CoreCapabilityModules: React.FC<CoreCapabilityModulesProps> = ({
                   <div className="tool-metrics">
                     <Space>
                       <span>调用: {tool.metrics.calls}</span>
-                      <span>成功率: {tool.metrics.successRate}%</span>
+                      <span>成功率: {tool.metrics?.successRate || 0}%</span>
                       <span>响应时间: {tool.metrics.avgResponseTime}ms</span>
                     </Space>
                   </div>
@@ -1198,7 +1198,7 @@ const CoreCapabilityModules: React.FC<CoreCapabilityModulesProps> = ({
               <Space>
                 <BulbOutlined />
                 <span>大语言模型</span>
-                <Badge count={llmProviders.length} size="small" />
+                <Badge count={llmProviders.length}  />
               </Space>
             } 
             key="llm"
@@ -1211,7 +1211,7 @@ const CoreCapabilityModules: React.FC<CoreCapabilityModulesProps> = ({
               <Space>
                 <DatabaseOutlined />
                 <span>知识图谱</span>
-                <Badge count={knowledgeGraphs.length} size="small" />
+                <Badge count={knowledgeGraphs.length}  />
               </Space>
             } 
             key="kg"
@@ -1224,7 +1224,7 @@ const CoreCapabilityModules: React.FC<CoreCapabilityModulesProps> = ({
               <Space>
                 <ApiOutlined />
                 <span>工具集成</span>
-                <Badge count={toolIntegrations.length} size="small" />
+                <Badge count={toolIntegrations.length}  />
               </Space>
             } 
             key="tools"

@@ -188,7 +188,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
           </div>
           
           <div className="node-tags">
-            <Tag size="small" color={data.capability?.type === CoreCapabilityType.COGNITIVE ? 'blue' : 
+            <Tag  color={data.capability?.type === CoreCapabilityType.COGNITIVE ? 'blue' : 
                                      data.capability?.type === CoreCapabilityType.REASONING ? 'green' :
                                      data.capability?.type === CoreCapabilityType.DECISION ? 'orange' : 'purple'}>
               {data.capability?.type || 'unknown'}
@@ -358,7 +358,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
           
           // 生成能力流程图
           if (existingAgent.capabilities && existingAgent.capabilities.length > 0) {
-            (existingAgent.capabilities);
+            console.log('Found capabilities:', existingAgent.capabilities.length);
           }
           
           console.log('Agent loaded successfully:', {
@@ -950,7 +950,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
       <div className="basic-config-panel">
         <Form 
           layout="vertical" 
-          size="small"
+          
           initialValues={{
             name: agent?.name || '',
             description: agent?.description || '',
@@ -1071,7 +1071,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
     return (
       <div className="capability-panel">
         {/* 已选择能力列表 */}
-        <Card title="已选择的能力模块" size="small" style={{ marginBottom: 16 }}>
+        <Card title="已选择的能力模块"  style={{ marginBottom: 16 }}>
           {capabilities.length === 0 ? (
             <div className="empty-capabilities">
               <BulbOutlined style={{ fontSize: 24, color: '#d9d9d9' }} />
@@ -1082,7 +1082,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
               {capabilities.map(capability => (
                 <Card 
                   key={capability.id}
-                  size="small"
+                  
                   className={`capability-item ${selectedCapability?.id === capability.id ? 'selected' : ''}`}
                   style={{ 
                     marginBottom: 8, 
@@ -1096,7 +1096,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
                         {CAPABILITY_ICONS[capability.type as CoreCapabilityType]}
                       </span>
                       <span>{capability?.name || '未知能力'}</span>
-                      <Tag color={CAPABILITY_COLORS[capability.type as CoreCapabilityType]} size="small">
+                      <Tag color={CAPABILITY_COLORS[capability.type as CoreCapabilityType]} >
                         {capability.type}
                       </Tag>
                     </div>
@@ -1158,7 +1158,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
               style={{ marginBottom: 16 }}
             />
             <div className="filter-tabs">
-              <Tabs defaultActiveKey="all" size="small">
+              <Tabs defaultActiveKey="all" >
                 <TabPane tab="全部" key="all" />
                 <TabPane tab="认知" key="cognitive" />
                 <TabPane tab="推理" key="reasoning" />
@@ -1172,7 +1172,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
             {availableCapabilities.map(capability => (
               <Card 
                 key={capability.id}
-                size="small"
+                
                 className="capability-card"
                 title={
                   <div className="card-title">
@@ -1186,7 +1186,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
                 extra={
                   <Button 
                     type="primary" 
-                    size="small"
+                    
                     icon={<PlusOutlined />}
                     onClick={() => handleAddCapability(capability)}
                   >
@@ -1204,8 +1204,8 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
                   <span className="author">by {capability.author}</span>
                 </div>
                 <div className="capability-stats">
-                  <span>成功率: {(capability.metrics.successRate * 100).toFixed(1)}%</span>
-                  <span>使用次数: {capability.metrics.usageCount}</span>
+                  <span>成功率: {((capability.metrics?.successRate || 0) * 100).toFixed(1)}%</span>
+                  <span>使用次数: {capability.metrics?.usageCount || 0}</span>
                 </div>
               </Card>
             ))}
@@ -1223,7 +1223,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
 
     return (
       <div className="orchestration-panel">
-        <Card title="编排模式配置" size="small" style={{ marginBottom: 16 }}>
+        <Card title="编排模式配置"  style={{ marginBottom: 16 }}>
           <Form.Item label="编排模式">
             <Select
               value={agent.orchestrationConfig.mode}
@@ -1248,7 +1248,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
           </Form.Item>
         </Card>
 
-        <Card title="能力映射规则" size="small" style={{ marginBottom: 16 }}>
+        <Card title="能力映射规则"  style={{ marginBottom: 16 }}>
           <div style={{ marginBottom: 12 }}>
             <Button 
               type="primary" 
@@ -1272,7 +1272,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
           </div>
           
           {(agent?.orchestrationConfig?.capabilityMapping || []).map((mapping, index) => (
-            <Card key={mapping.id} size="small" style={{ marginBottom: 8 }}>
+            <Card key={mapping.id}  style={{ marginBottom: 8 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <Select
                   placeholder="源能力"
@@ -1320,7 +1320,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
           ))}
         </Card>
 
-        <Card title="执行策略" size="small">
+        <Card title="执行策略" >
           <Form.Item label="超时设置 (秒)">
             <InputNumber
               value={agent?.orchestrationConfig?.executionTimeout}
@@ -1364,7 +1364,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
 
     return (
       <div className="knowledge-graph-panel">
-        <Card title="本体层配置" size="small" style={{ marginBottom: 16 }}>
+        <Card title="本体层配置"  style={{ marginBottom: 16 }}>
           <Form.Item label="本体层数量">
             <InputNumber
               value={knowledgeGraph.ontologyLayers?.length || 0}
@@ -1413,7 +1413,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
           </div>
           
           {knowledgeGraph.ontologyLayers?.map((layer, index) => (
-            <Card key={layer.id} size="small" style={{ marginBottom: 8 }}>
+            <Card key={layer.id}  style={{ marginBottom: 8 }}>
               <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                 <Input
                   placeholder="本体层名称"
@@ -1447,7 +1447,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
           )) || []}
         </Card>
 
-        <Card title="事实层配置" size="small" style={{ marginBottom: 16 }}>
+        <Card title="事实层配置"  style={{ marginBottom: 16 }}>
           <Form.Item label="事实层数量">
             <InputNumber
               value={knowledgeGraph.factLayers?.length || 0}
@@ -1480,7 +1480,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
           </Form.Item>
         </Card>
 
-        <Card title="规则层配置" size="small">
+        <Card title="规则层配置" >
           <Form.Item label="规则层数量">
             <InputNumber
               value={knowledgeGraph.ruleLayers?.length || 0}
@@ -1509,7 +1509,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
 
     return (
       <div className="learning-panel">
-        <Card title="学习策略" size="small" style={{ marginBottom: 16 }}>
+        <Card title="学习策略"  style={{ marginBottom: 16 }}>
           <Form.Item label="学习模式">
             <Radio.Group
               value={learning.mode || 'supervised'}
@@ -1558,7 +1558,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
           </Form.Item>
         </Card>
         
-        <Card title="模型配置" size="small" style={{ marginBottom: 16 }}>
+        <Card title="模型配置"  style={{ marginBottom: 16 }}>
           <Form.Item label="模型类型">
             <Select
               value={learning.modelType || 'neural_network'}
@@ -1593,7 +1593,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
           </Form.Item>
         </Card>
         
-        <Card title="训练配置" size="small">
+        <Card title="训练配置" >
           <Form.Item label="最大轮数">
             <InputNumber
               value={learning.maxEpochs || 100}
@@ -1651,7 +1651,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
 
     return (
       <div className="deployment-panel">
-        <Card title="环境配置" size="small" style={{ marginBottom: 16 }}>
+        <Card title="环境配置"  style={{ marginBottom: 16 }}>
           <Form.Item label="部署环境">
             <Radio.Group
               value={deployment.environment || 'development'}
@@ -1686,7 +1686,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
           </Form.Item>
         </Card>
         
-        <Card title="资源配置" size="small" style={{ marginBottom: 16 }}>
+        <Card title="资源配置"  style={{ marginBottom: 16 }}>
           <Form.Item label="CPU请求 (核)">
             <InputNumber
               value={deployment.infrastructure?.resources?.cpu?.request || 1}
@@ -1734,7 +1734,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
           </Form.Item>
         </Card>
         
-        <Card title="扩缩容配置" size="small">
+        <Card title="扩缩容配置" >
           <Form.Item label="启用水平扩缩容">
             <Switch
               checked={deployment.scaling?.horizontal?.enabled || false}
@@ -1805,7 +1805,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
 
     return (
       <div className="learning-panel">
-        <Card title="学习策略" size="small" style={{ marginBottom: 16 }}>
+        <Card title="学习策略"  style={{ marginBottom: 16 }}>
           <Form.Item label="学习类型">
             <Checkbox.Group
               value={learning.strategies?.map(s => s.type) || []}
@@ -1851,7 +1851,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
           </Form.Item>
         </Card>
 
-        <Card title="数据收集配置" size="small" style={{ marginBottom: 16 }}>
+        <Card title="数据收集配置"  style={{ marginBottom: 16 }}>
           <Form.Item label="数据源类型">
             <Select
               mode="multiple"
@@ -1914,7 +1914,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
           </Form.Item>
         </Card>
 
-        <Card title="模型配置" size="small">
+        <Card title="模型配置" >
           <Form.Item label="模型类型">
             <Select
               value={learning.modelConfig.type}
@@ -2086,7 +2086,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
                 onChange={setPreviewMode}
                 checkedChildren={<EyeOutlined />}
                 unCheckedChildren={<SettingOutlined />}
-                size="small"
+                
               />
             </Tooltip>
             
@@ -2096,7 +2096,7 @@ const AgentDesigner2_0: React.FC<AgentDesigner2_0Props> = ({ mode = 'create', ag
                 onChange={setDarkMode}
                 checkedChildren={<MoonOutlined />}
                 unCheckedChildren={<SunOutlined />}
-                size="small"
+                
               />
             </Tooltip>
           </div>

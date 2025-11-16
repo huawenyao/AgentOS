@@ -724,7 +724,7 @@ const EnhancedCapabilityLibrary: React.FC<EnhancedCapabilityLibraryProps> = ({
         key={capability.id}
         className={`capability-card ${isSelected ? 'selected' : ''} ${viewMode}`}
         hoverable
-        size="small"
+        
         cover={
           viewMode === 'grid' ? (
             <div className="capability-cover">
@@ -778,11 +778,11 @@ const EnhancedCapabilityLibrary: React.FC<EnhancedCapabilityLibraryProps> = ({
               <Paragraph ellipsis={{ rows: 2 }}>{capability.description}</Paragraph>
               <div>
                 <Text type="secondary">评分：</Text>
-                <Rate disabled defaultValue={capability.metadata.rating} size="small" />
+                <Rate disabled defaultValue={capability.metadata.rating}  />
               </div>
               <div style={{ marginTop: 4 }}>
                 {capability.metadata.tags.map(tag => (
-                  <Tag key={tag} size="small" color="blue">{tag}</Tag>
+                  <Tag key={tag}  color="blue">{tag}</Tag>
                 ))}
               </div>
             </div>
@@ -1076,7 +1076,7 @@ const EnhancedCapabilityLibrary: React.FC<EnhancedCapabilityLibraryProps> = ({
               <div className="performance-content">
                 <Row gutter={[16, 16]}>
                   <Col span={12}>
-                    <Card size="small" title="响应时间">
+                    <Card  title="响应时间">
                       <Space direction="vertical" style={{ width: '100%' }}>
                         <div>平均：{selectedCapability.metrics.avgResponseTime}ms</div>
                         <div>响应时间：{selectedCapability.metrics.performance.responseTime}ms</div>
@@ -1085,7 +1085,7 @@ const EnhancedCapabilityLibrary: React.FC<EnhancedCapabilityLibraryProps> = ({
                   </Col>
                   
                   <Col span={12}>
-                    <Card size="small" title="吞吐量">
+                    <Card  title="吞吐量">
                       <Space direction="vertical" style={{ width: '100%' }}>
                         <div>当前：{selectedCapability.metrics.throughput}/s</div>
                         <div>性能吞吐量：{selectedCapability.metrics.performance.throughput}/s</div>
@@ -1094,13 +1094,13 @@ const EnhancedCapabilityLibrary: React.FC<EnhancedCapabilityLibraryProps> = ({
                   </Col>
                   
                   <Col span={12}>
-                    <Card size="small" title="错误率">
+                    <Card  title="错误率">
                       <Space direction="vertical" style={{ width: '100%' }}>
                         <div>当前：{selectedCapability.metrics.errorRate}%</div>
                         <div>成功率：{selectedCapability.metrics.successRate}%</div>
                         <Progress 
                           percent={selectedCapability.metrics.errorRate} 
-                          size="small"
+                          
                           status={selectedCapability.metrics.errorRate > 1 ? 'exception' : 'success'}
                         />
                       </Space>
@@ -1108,13 +1108,13 @@ const EnhancedCapabilityLibrary: React.FC<EnhancedCapabilityLibraryProps> = ({
                   </Col>
                   
                   <Col span={12}>
-                    <Card size="small" title="可用性">
+                    <Card  title="可用性">
                       <Space direction="vertical" style={{ width: '100%' }}>
                         <div>可靠性：{selectedCapability.metrics.performance.reliability}%</div>
                         <div>准确性：{selectedCapability.metrics.performance.accuracy}%</div>
                         <Progress 
                           percent={selectedCapability.metrics.performance.reliability} 
-                          size="small"
+                          
                           status={selectedCapability.metrics.performance.reliability > 99 ? 'success' : 'normal'}
                         />
                       </Space>
@@ -1413,7 +1413,7 @@ const EnhancedCapabilityLibrary: React.FC<EnhancedCapabilityLibraryProps> = ({
                   actions={[
                     <Button 
                       type="primary" 
-                      size="small"
+                      
                       onClick={() => handleCapabilitySelect(rec.capability)}
                     >
                       添加
@@ -1435,13 +1435,13 @@ const EnhancedCapabilityLibrary: React.FC<EnhancedCapabilityLibraryProps> = ({
                           <Text type="secondary">匹配度：</Text>
                           <Progress 
                             percent={rec.score * 100} 
-                            size="small" 
+                             
                             style={{ width: 100, display: 'inline-block', marginLeft: 8 }}
                           />
                         </div>
                         <div style={{ marginTop: 4 }}>
                           {rec.tags.map(tag => (
-                            <Tag key={tag} size="small" color="blue">{tag}</Tag>
+                            <Tag key={tag}  color="blue">{tag}</Tag>
                           ))}
                         </div>
                       </div>

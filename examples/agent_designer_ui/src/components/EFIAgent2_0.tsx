@@ -1,7 +1,7 @@
 /**
  * EFIAgent 2.0 主界面
  * 基于能力系统模型的智能协作平台
- * 整合Agent设计器、能力库、工作流设计器等核心功能
+ * 整合Agent设计器、能力库等核心功能
  */
 
 import React, { useState, useEffect } from 'react';
@@ -27,7 +27,6 @@ import AgentDesigner2_0 from './AgentDesigner2_0';
 import AgentManager2_0 from './AgentManager2_0';
 import CapabilityLibrary2_0 from './CapabilityLibrary2_0';
 
-import WorkflowDesignerWrapper from './WorkflowDesignerWrapper';
 import KnowledgeGraph from './KnowledgeGraph';
 import LearningCenter from './LearningCenter';
 import CollaborationSpace from './CollaborationSpace';
@@ -53,7 +52,6 @@ interface SystemStats {
   totalAgents: number;
   activeAgents: number;
   totalCapabilities: number;
-  totalWorkflows: number;
   systemLoad: number;
   memoryUsage: number;
   networkLatency: number;
@@ -86,7 +84,6 @@ const EFIAgent2_0: React.FC<EFIAgent2_0Props> = ({
     totalAgents: 0,
     activeAgents: 0,
     totalCapabilities: 0,
-    totalWorkflows: 0,
     systemLoad: 0,
     memoryUsage: 0,
     networkLatency: 0
@@ -135,13 +132,10 @@ const EFIAgent2_0: React.FC<EFIAgent2_0Props> = ({
       // TODO: 从API加载实际数据
       const agents = JSON.parse(localStorage.getItem('agents_2_0') || '[]');
       const capabilities = JSON.parse(localStorage.getItem('capabilities_2_0') || '[]');
-      const workflows = JSON.parse(localStorage.getItem('workflows_global') || '[]');
-      
       setSystemStats({
         totalAgents: agents.length,
         activeAgents: agents.length, // 暂时使用总数，因为Agent2_0类型中没有status属性
         totalCapabilities: capabilities.length,
-        totalWorkflows: workflows.length,
         systemLoad: Math.random() * 100,
         memoryUsage: 60 + Math.random() * 30,
         networkLatency: 10 + Math.random() * 50
@@ -226,18 +220,7 @@ const EFIAgent2_0: React.FC<EFIAgent2_0Props> = ({
           </Menu.Item>
         </SubMenu>
         
-        <SubMenu key="workflows" icon={<BranchesOutlined />} title="工作流">
-          <Menu.Item key="workflow-designer" icon={<ExperimentOutlined />}>
-            工作流设计
-          </Menu.Item>
-          <Menu.Item key="workflow-templates" icon={<FunctionOutlined />}>
-            模板库
-          </Menu.Item>
-          <Menu.Item key="workflow-execution" icon={<RocketOutlined />}>
-            执行历史
-          </Menu.Item>
-        </SubMenu>
-        
+          
         <SubMenu key="collaboration" icon={<InteractionOutlined />} title="协作平台">
           <Menu.Item key="knowledge-graph" icon={<DatabaseOutlined />}>
             知识图谱
@@ -339,7 +322,7 @@ const EFIAgent2_0: React.FC<EFIAgent2_0Props> = ({
         />
         {notifications.length > 5 && (
           <div style={{ padding: '8px 16px', textAlign: 'center', borderTop: '1px solid #f0f0f0' }}>
-            <Button type="link" size="small">查看全部通知</Button>
+            <Button type="link" >查看全部通知</Button>
           </div>
         )}
       </div>
@@ -347,7 +330,7 @@ const EFIAgent2_0: React.FC<EFIAgent2_0Props> = ({
     
     return (
       <Dropdown overlay={menu} placement="bottomRight" trigger={['click']}>
-        <Badge count={unreadCount} size="small">
+        <Badge count={unreadCount} >
           <Button type="text" icon={<BellOutlined />} style={{ color: '#fff' }} />
         </Badge>
       </Dropdown>
@@ -389,15 +372,7 @@ const EFIAgent2_0: React.FC<EFIAgent2_0Props> = ({
                     valueStyle={{ color: '#faad14' }}
                   />
                 </Col>
-                <Col span={6}>
-                  <Statistic
-                    title="工作流"
-                    value={systemStats.totalWorkflows}
-                    prefix={<BranchesOutlined />}
-                    valueStyle={{ color: '#722ed1' }}
-                  />
-                </Col>
-              </Row>
+                              </Row>
             </Card>
           </Col>
           
@@ -449,13 +424,7 @@ const EFIAgent2_0: React.FC<EFIAgent2_0Props> = ({
                     <small style={{ color: '#999' }}>30分钟前</small>
                   </div>
                 </Timeline.Item>
-                <Timeline.Item color="orange">
-                  <div>
-                    <div>工作流执行完成</div>
-                    <small style={{ color: '#999' }}>1小时前</small>
-                  </div>
-                </Timeline.Item>
-                <Timeline.Item>
+                                <Timeline.Item>
                   <div>
                     <div>系统备份完成</div>
                     <small style={{ color: '#999' }}>2小时前</small>
@@ -479,16 +448,7 @@ const EFIAgent2_0: React.FC<EFIAgent2_0Props> = ({
                     创建新Agent
                   </Button>
                 </Col>
-                <Col span={6}>
-                  <Button 
-                    block 
-                    icon={<BranchesOutlined />}
-                    onClick={() => setCurrentView('workflow-designer')}
-                  >
-                    设计工作流
-                  </Button>
-                </Col>
-                <Col span={6}>
+                                <Col span={6}>
                   <Button 
                     block 
                     icon={<BookOutlined />}
@@ -535,8 +495,6 @@ const EFIAgent2_0: React.FC<EFIAgent2_0Props> = ({
         return <AgentManager2_0 onEditAgent={handleEditAgent} />;
       case 'capability-library':
         return <CapabilityLibrary2_0 />;
-      case 'workflow-designer':
-        return <WorkflowDesignerWrapper />;
       case 'knowledge-graph':
         return <KnowledgeGraph />;
       case 'learning-center':

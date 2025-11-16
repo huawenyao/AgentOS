@@ -1,8 +1,22 @@
-# EFIAgent - 企业级多智能体协作系统
+# EFIAgent: 企业级多智能体协作系统
 
-## 系统概述
+[![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green.svg)](https://fastapi.tiangolo.com)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-EFIAgent（Evolutionary Force Intelligence Agent）是一个具备动态分工、认知协同、弹性扩展、安全可控的多智能体（Multi-Agent）系统，旨在满足工业控制、金融风控、智能运维等高复杂度场景需求。
+## 🎯 项目概述
+
+EFIAgent是一个**以能力为中心的企业级多智能体协作系统**，采用分层联邦架构设计，实现了动态分工、认知协同、弹性扩展、安全可控的智能体协作框架。
+
+### 核心创新特性
+
+🧠 **三层记忆架构**：工作记忆 → 长期记忆 → 元记忆
+🔄 **增强OODA循环**：Observe → Orient → Decide → Act → Reflect → Learn
+🏗️ **分层联邦架构**：协调层 → 认知层 → 数据层
+🔒 **零信任安全**：动态权限、决策上链、实时审计
+⚡ **技能向量匹配**：精准智能体-任务匹配
+
+## 🚀 MVP开发计划
 
 ### 核心指标
 

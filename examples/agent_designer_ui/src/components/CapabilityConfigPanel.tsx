@@ -141,7 +141,7 @@ const CapabilityConfigPanel: React.FC<CapabilityConfigPanelProps> = ({
           <h4>输入参数配置</h4>
           <Button 
             type="primary" 
-            size="small" 
+             
             onClick={addInputParameter}
             icon={<ExperimentOutlined />}
           >
@@ -152,7 +152,7 @@ const CapabilityConfigPanel: React.FC<CapabilityConfigPanelProps> = ({
         {capability.inputs && capability.inputs.length > 0 ? (
           <div className="input-list">
             {capability.inputs.map((input, index) => (
-              <Card key={input.id} size="small" style={{ marginBottom: 12 }}>
+              <Card key={input.id}  style={{ marginBottom: 12 }}>
                 <Form.Item label="参数名称" style={{ marginBottom: 8 }}>
                   <Input 
                     value={input.name} 
@@ -226,7 +226,7 @@ const CapabilityConfigPanel: React.FC<CapabilityConfigPanelProps> = ({
           <h4>输出参数配置</h4>
           <Button 
             type="primary" 
-            size="small" 
+             
             onClick={addOutputParameter}
             icon={<ExperimentOutlined />}
           >
@@ -237,7 +237,7 @@ const CapabilityConfigPanel: React.FC<CapabilityConfigPanelProps> = ({
         {capability.outputs && capability.outputs.length > 0 ? (
           <div className="output-list">
             {capability.outputs.map((output, index) => (
-              <Card key={output.id} size="small" style={{ marginBottom: 12 }}>
+              <Card key={output.id}  style={{ marginBottom: 12 }}>
                 <Form.Item label="参数名称" style={{ marginBottom: 8 }}>
                   <Input 
                     value={output.name} 
@@ -801,7 +801,7 @@ const CapabilityConfigPanel: React.FC<CapabilityConfigPanelProps> = ({
               <Button
                 type="text"
                 danger
-                size="small"
+                
                 icon={<DeleteOutlined />}
                 onClick={onRemove}
                 title="移除此能力"
@@ -811,7 +811,7 @@ const CapabilityConfigPanel: React.FC<CapabilityConfigPanelProps> = ({
             )}
           </div>
         }
-        size="small"
+        
       >
         <Alert
           message="配置说明"

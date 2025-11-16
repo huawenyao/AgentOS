@@ -1,0 +1,427 @@
+/**
+ * EFIAgent 核心概念模型
+ * 基于AI原生架构的精炼、稳定、可扩展的数据模型定义
+ */
+
+// ===== 核心枚举定义 =====
+
+/**
+ * Agent状态枚举
+ */
+enum AgentState {
+  IDLE = 'idle',
+  RUNNING = 'running',
+  PAUSED = 'paused',
+  STOPPED = 'stopped',
+  ERROR = 'error',
+  DEPLOYING = 'deploying'
+}
+
+/**
+ * Agent类型枚举
+ */
+enum AgentType {
+  COGNITIVE = 'cognitive',      // 认知型Agent
+  EXECUTIVE = 'executive',      // 执行型Agent
+  COORDINATOR = 'coordinator',  // 协调型Agent
+  SPECIALIST = 'specialist'     // 专家型Agent
+}
+
+/**
+ * 核心能力类型枚举
+ */
+enum CapabilityType {
+  COGNITIVE = 'cognitive',     // 认知能力
+  REASONING = 'reasoning',     // 推理能力
+  DECISION = 'decision',       // 决策能力
+  LEARNING = 'learning'        // 学习能力
+}
+
+/**
+ * 能力成熟度等级
+ */
+enum MaturityLevel {
+  INITIAL = 'initial',     // 初始级
+  DEVELOPING = 'developing', // 开发级
+  PRODUCTIVE = 'productive', // 生产级
+  OPTIMIZED = 'optimized'    // 优化级
+}
+
+/**
+ * 执行策略枚举
+ */
+enum ExecutionStrategy {
+  SEQUENTIAL = 'sequential',   // 顺序执行
+  PARALLEL = 'parallel',       // 并行执行
+  CONDITIONAL = 'conditional'  // 条件执行
+}
+
+// ===== 核心接口定义 =====
+
+/**
+ * 简化的能力模块接口
+ */
+export interface CoreCapability {
+  id: string;
+  name: string;
+  description: string;
+  type: CapabilityType;
+  version: string;
+  maturityLevel: MaturityLevel;
+  config: CapabilityConfig;
+  inputs: DataPort[];
+  outputs: DataPort[];
+  dependencies: string[]; // 依赖的能力ID列表
+  performance: PerformanceMetrics;
+  metadata: CapabilityMetadata;
+}
+
+/**
+ * 能力配置接口
+ */
+export interface CapabilityConfig {
+  timeout: number;
+  maxConcurrency: number;
+  retryAttempts: number;
+  features: Record<string, boolean>;
+  resources: ResourceRequirement;
+}
+
+/**
+ * 数据端口接口（统一输入输出）
+ */
+export interface DataPort {
+  id: string;
+  name: string;
+  dataType: DataType;
+  required: boolean;
+  description: string;
+  validation?: ValidationRule;
+}
+
+/**
+ * 数据类型枚举
+ */
+enum DataType {
+  STRING = 'string',
+  NUMBER = 'number',
+  BOOLEAN = 'boolean',
+  OBJECT = 'object',
+  ARRAY = 'array',
+  BINARY = 'binary'
+}
+
+/**
+ * 验证规则接口
+ */
+export interface ValidationRule {
+  pattern?: string;
+  minLength?: number;
+  maxLength?: number;
+  min?: number;
+  max?: number;
+  enum?: any[];
+}
+
+/**
+ * 性能指标接口
+ */
+export interface PerformanceMetrics {
+  latency: number;      // 响应时间(ms)
+  throughput: number;  // 吞吐量(req/s)
+  accuracy: number;    // 准确率(0-1)
+  reliability: number; // 可靠性(0-1)
+  resourceUsage: ResourceUsage;
+}
+
+/**
+ * 资源需求接口
+ */
+export interface ResourceRequirement {
+  cpu: string;
+  memory: string;
+  storage?: string;
+  gpu?: string;
+  network?: string;
+}
+
+/**
+ * 资源使用情况接口
+ */
+export interface ResourceUsage {
+  cpu: number;    // 0-1
+  memory: number; // 0-1
+  gpu?: number;   // 0-1
+}
+
+/**
+ * 能力元数据接口
+ */
+export interface CapabilityMetadata {
+  author: string;
+  organization: string;
+  license: string;
+  tags: string[];
+  category: string;
+  complexity: 'simple' | 'moderate' | 'complex';
+  rating: number;        // 1-5
+  downloads: number;
+  verified: boolean;
+  documentation?: string;
+  lastUpdated: Date;
+}
+
+/**
+ * 简化的Agent接口
+ */
+export interface Agent {
+  id: string;
+  name: string;
+  description: string;
+  type: AgentType;
+  state: AgentState;
+  capabilities: string[]; // 能力ID列表
+
+  // 核心配置
+  config: AgentConfig;
+
+  // 执行统计
+  metrics: AgentMetrics;
+
+  // 元数据
+  metadata: AgentMetadata;
+}
+
+/**
+ * Agent配置接口
+ */
+export interface AgentConfig {
+  maxConcurrency: number;
+  timeout: number;
+  retryPolicy: RetryPolicy;
+  logging: LoggingConfig;
+  resources: ResourceRequirement;
+}
+
+/**
+ * 重试策略接口
+ */
+export interface RetryPolicy {
+  maxAttempts: number;
+  backoffStrategy: 'linear' | 'exponential';
+  baseDelay: number;
+}
+
+/**
+ * 日志配置接口
+ */
+export interface LoggingConfig {
+  level: 'debug' | 'info' | 'warn' | 'error';
+  enableMetrics: boolean;
+  enableTracing: boolean;
+}
+
+/**
+ * Agent运行指标接口
+ */
+export interface AgentMetrics {
+  totalExecutions: number;
+  successRate: number;
+  averageExecutionTime: number;
+  lastExecution?: Date;
+  errorCount: number;
+  uptime: number;
+}
+
+/**
+ * Agent元数据接口
+ */
+export interface AgentMetadata {
+  version: string;
+  author: string;
+  organization: string;
+  createdAt: Date;
+  updatedAt: Date;
+  tags: string[];
+  description?: string;
+  usageCount: number;
+  lastUsed?: Date;
+}
+
+// ===== 协作相关接口 =====
+
+/**
+ * 协作配置接口
+ */
+export interface CollaborationConfig {
+  enabled: boolean;
+  maxParticipants: number;
+  communicationProtocol: 'message_queue' | 'direct' | 'event_driven';
+  coordinationStrategy: 'centralized' | 'decentralized' | 'hybrid';
+}
+
+/**
+ * 消息接口
+ */
+export interface Message {
+  id: string;
+  senderId: string;
+  receiverId: string;
+  type: MessageType;
+  content: any;
+  priority: MessagePriority;
+  timestamp: Date;
+  status: MessageStatus;
+}
+
+/**
+ * 消息类型枚举
+ */
+enum MessageType {
+  REQUEST = 'request',
+  RESPONSE = 'response',
+  NOTIFICATION = 'notification',
+  BROADCAST = 'broadcast'
+}
+
+/**
+ * 消息优先级枚举
+ */
+enum MessagePriority {
+  LOW = 'low',
+  NORMAL = 'normal',
+  HIGH = 'high',
+  URGENT = 'urgent'
+}
+
+/**
+ * 消息状态枚举
+ */
+enum MessageStatus {
+  PENDING = 'pending',
+  DELIVERED = 'delivered',
+  PROCESSING = 'processing',
+  COMPLETED = 'completed',
+  FAILED = 'failed'
+}
+
+// ===== 学习相关接口 =====
+
+/**
+ * 学习配置接口
+ */
+export interface LearningConfig {
+  enabled: boolean;
+  strategy: LearningStrategy[];
+  dataCollection: DataCollectionConfig;
+  modelManagement: ModelManagementConfig;
+  evaluation: EvaluationConfig;
+}
+
+/**
+ * 学习策略接口
+ */
+export interface LearningStrategy {
+  type: string;
+  config: Record<string, any>;
+  priority: number;
+  enabled: boolean;
+}
+
+/**
+ * 数据收集配置接口
+ */
+export interface DataCollectionConfig {
+  enabled: boolean;
+  anonymize: boolean;
+  retention: number; // 天数
+  compression: boolean;
+}
+
+/**
+ * 模型管理配置接口
+ */
+export interface ModelManagementConfig {
+  autoUpdate: boolean;
+  validationSet: string;
+  performanceThreshold: number;
+  rollbackEnabled: boolean;
+}
+
+/**
+ * 评估配置接口
+ */
+export interface EvaluationConfig {
+  metrics: string[];
+  frequency: 'real_time' | 'batch' | 'periodic';
+  reportGeneration: boolean;
+}
+
+// ===== 监控相关接口 =====
+
+/**
+ * 监控指标接口
+ */
+export interface MonitoringMetric {
+  id: string;
+  name: string;
+  value: number;
+  unit: string;
+  category: MetricCategory;
+  timestamp: Date;
+  threshold?: {
+    min?: number;
+    max?: number;
+    warning?: number;
+    critical?: number;
+  };
+}
+
+/**
+ * 指标类别枚举
+ */
+enum MetricCategory {
+  PERFORMANCE = 'performance',
+  RESOURCE = 'resource',
+  ERROR = 'error',
+  BUSINESS = 'business',
+  CUSTOM = 'custom'
+}
+
+/**
+ * 健康状态接口
+ */
+export interface HealthStatus {
+  status: 'healthy' | 'degraded' | 'unhealthy';
+  checks: HealthCheck[];
+  timestamp: Date;
+}
+
+/**
+ * 健康检查接口
+ */
+export interface HealthCheck {
+  name: string;
+  status: 'pass' | 'fail' | 'warn';
+  message?: string;
+  duration: number;
+  timestamp: Date;
+}
+
+// ===== 导出所有类型 =====
+
+// 导出所有枚举
+export {
+  AgentState,
+  AgentType,
+  CapabilityType,
+  DataType,
+  ExecutionStrategy,
+  MaturityLevel,
+  MessageType,
+  MessagePriority,
+  MessageStatus,
+  MetricCategory
+};
+
+// 接口已在定义时导出，无需重复导出

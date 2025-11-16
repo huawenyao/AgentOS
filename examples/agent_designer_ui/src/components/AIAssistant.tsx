@@ -377,7 +377,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({
           icon={<ReloadOutlined />} 
           onClick={generateRecommendations}
           loading={loading}
-          size="small"
+          
         >
           刷新推荐
         </Button>
@@ -396,7 +396,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({
               actions={[
                 <Button 
                   type="primary" 
-                  size="small"
+                  
                   onClick={() => onCapabilityRecommend(rec.capability)}
                 >
                   添加能力
@@ -445,7 +445,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({
         <div className="design-suggestions">
           <h4>设计建议</h4>
           <List
-            size="small"
+            
             dataSource={suggestions}
             renderItem={(suggestion) => (
               <List.Item>
@@ -475,7 +475,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({
           placeholder="筛选分类"
           style={{ width: 120 }}
           allowClear
-          size="small"
+          
         >
           <Option value="analytics">数据分析</Option>
           <Option value="service">客户服务</Option>
@@ -489,7 +489,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({
         renderItem={(template) => (
           <List.Item>
             <Card
-              size="small"
+              
               title={
                 <Space>
                   <span>{template.name}</span>
@@ -507,7 +507,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({
               actions={[
                 <Button 
                   type="primary" 
-                  size="small"
+                  
                   onClick={() => onTemplateApply(template)}
                 >
                   应用模板
@@ -555,7 +555,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({
         {chatLoading && (
           <div className="chat-message assistant">
             <div className="message-content">
-              <Spin size="small" /> 正在思考...
+              <Spin  /> 正在思考...
             </div>
           </div>
         )}
