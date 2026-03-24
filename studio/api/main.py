@@ -1,4 +1,4 @@
-"""Agentic Work Studio — FastAPI application entry point."""
+"""Agentic Work Studio — FastAPI application."""
 
 from contextlib import asynccontextmanager
 
@@ -12,12 +12,10 @@ from studio.models.base import engine, Base
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Startup / shutdown lifecycle."""
     logger.info(f"Starting {settings.app_name}")
-    # Create tables (dev convenience — use Alembic in production)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    logger.info("Database tables ready")
+    logger.info("Database ready")
     yield
     logger.info("Shutting down")
     await engine.dispose()
@@ -25,42 +23,36 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title=settings.app_name,
-    version="0.1.0",
-    description="Design, Run, and Measure AI Agent Workflows",
+    version="0.2.0",
+    description="Say what you need. AI works. Visuals help you think.",
     lifespan=lifespan,
 )
 
-# CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=["*"], allow_credentials=True,
+    allow_methods=["*"], allow_headers=["*"],
 )
 
-
-# ── Health ──
 
 @app.get("/health")
 async def health():
     return {"status": "ok", "app": settings.app_name}
 
 
-# ── Register routers ──
-
+# ── Primary: Session (the main user interface) ──
 from studio.api.sessions import router as sessions_router
-from studio.api.connections import router as connections_router, tools_router
-from studio.api.agents import router as agents_router
-from studio.api.workflows import router as workflows_router, runs_router
-from studio.api.approvals import router as approvals_router
-from studio.api.metrics_api import router as metrics_router
-
 app.include_router(sessions_router)
+
+# ── Config backstage: data sources & tools ──
+from studio.api.connections import router as connections_router, tools_router
 app.include_router(connections_router)
 app.include_router(tools_router)
+
+# ── Config backstage: agent management ──
+from studio.api.agents import router as agents_router
 app.include_router(agents_router)
-app.include_router(workflows_router)
-app.include_router(runs_router)
-app.include_router(approvals_router)
+
+# ── Observability: runs & metrics ──
+from studio.api.metrics_api import router as metrics_router
 app.include_router(metrics_router)

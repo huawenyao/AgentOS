@@ -1,192 +1,80 @@
-# EFIAgent: 企业级多智能体协作系统
+# Agentic Work Studio
 
-[![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://python.org)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green.svg)](https://fastapi.tiangolo.com)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+**Say what you need. AI works. Visuals help you think.**
 
-## 🎯 项目概述
+An AI workspace where business professionals describe tasks in natural language. The AI autonomously plans, executes, and generates dynamic visualizations as thinking aids — revealing structure, trends, relationships, and options the user might not see on their own.
 
-EFIAgent是一个**以能力为中心的企业级多智能体协作系统**，采用分层联邦架构设计，实现了动态分工、认知协同、弹性扩展、安全可控的智能体协作框架。
+## Quick Start
 
-### 核心创新特性
+```bash
+# 1. Start infrastructure
+docker-compose up -d
 
-🧠 **三层记忆架构**：工作记忆 → 长期记忆 → 元记忆
-🔄 **增强OODA循环**：Observe → Orient → Decide → Act → Reflect → Learn
-🏗️ **分层联邦架构**：协调层 → 认知层 → 数据层
-🔒 **零信任安全**：动态权限、决策上链、实时审计
-⚡ **技能向量匹配**：精准智能体-任务匹配
+# 2. Start backend
+pip install -e .
+uvicorn studio.api.main:app --reload --port 8000
 
-## 🚀 MVP开发计划
+# 3. Start frontend
+cd web && npm install && npm start
+```
 
-### 核心指标
+Open http://localhost:3000 and start talking.
 
-| 指标 | 目标值 | 验证场景 |
-| --- | --- | --- |
-| 任务完成率 | ≥98% | 千级节点并发任务 |
-| 任务响应延迟 | <300ms | 边缘实时控制场景 |
-| 系统容错率 | 99.5% | 单节点故障模拟测试 |
-| 资源利用率提升 | 40% | 动态负载调度实验 |
+## How it works
 
-## 整体架构设计
+```
+You say: "分析上月客户投诉，找出主要问题"
 
-### 分层联邦架构
+AI does:
+  1. Queries your complaint database
+  2. Categorizes 847 complaints
+  3. Generates a mind map → shows problem structure
+  4. Generates a bar chart → shows category distribution
+  5. Generates a causal network → shows root causes
+  6. Summarizes findings and recommends actions
 
-系统采用三层架构：
-- **协调层**：元调度中心、动态角色引擎、进化控制器
-- **认知层**：规划Agent、执行Agent组、审核Agent组
-- **数据层**：分布式记忆体、知识图谱、规则库
+You see: text explanation + 3 dynamic visualizations
+You say: "产品质量那个分支展开看看"
+AI goes deeper...
+```
 
-### 角色分工模型
+## Architecture
 
-| 智能体类型 | 核心职责 | 技术实现 |
-| --- | --- | --- |
-| 规划Agent | 任务拆解/DAG构建 | GPT-4 + 规则引擎 |
-| 执行Agent组 | 原子任务处理 | 微服务集群 + 技能画像 |
-| 审核Agent组 | 结果校验/冲突仲裁 | NLP检测 + BFT共识 |
-| 记忆Agent | 状态同步/经验复用 | 向量数据库 + 差分RAG |
+| Layer | Tech | Purpose |
+|-------|------|---------|
+| **Frontend** | React + Ant Design + Recharts + ReactFlow | Conversation + dynamic visual panel |
+| **API** | FastAPI (async) | Session streaming (SSE) + config CRUD |
+| **Engine** | Session Engine + Agent Runtime | LLM orchestration + tool execution |
+| **Gateway** | Anthropic + OpenAI SDK | Multi-model routing + rate limiting + cost tracking |
+| **Storage** | PostgreSQL + Redis | Persistent state + caching |
 
-## 创新点
+## Product Philosophy
 
-- **动态角色引擎**：基于实时负载与能力画像动态重组分工
-- **混合通信拓扑**：星型协调层 + 局部P2P网络降低40%通信开销
-- **三阶段进化协议**：提示词微调、工作流重构、模型热替换
+- **Conversation is primary.** Users don't draw workflows. They talk.
+- **Visuals are AI's externalized thinking.** Generated proactively to serve a thinking purpose.
+- **Click-to-ask.** Every visualization element is a doorway to deeper analysis.
+- **Zero setup to start.** Type a question on first visit. Configuration comes later.
 
-## 部署与性能
+## Project Structure
 
-### 分层部署方案
+```
+studio/           Backend (Python)
+├── api/          FastAPI routes
+├── engine/       Session engine, agent runtime, tool executor
+├── gateway/      LLM gateway
+├── connect/      OpenAPI importer
+├── observe/      Audit, tracing, metrics
+└── models/       Database models
 
-| 层级 | 硬件要求 | 承载智能体类型 |
-| --- | --- | --- |
-| 边缘层 | ARM芯片+8GB内存 | 执行Agent/轻量审核 |
-| 协调层 | CPU 16核+64GB内存 | 规划Agent/调度中心 |
-| 云端 | GPU V100×4 | 训练/进化模块 |
+web/              Frontend (React + TypeScript)
+├── pages/        Workbench, Connect, Agents, Measure
+└── components/   DynamicVisual (10 chart types)
 
-## 实施路线图
+docs/             Product design documents
+docker-compose.yml
+pyproject.toml
+```
 
-- **2025Q4**：基础协作引擎上线（支持DAG任务流）
-- **2026Q2**：接入企业ERP/工业物联网平台
-- **2027Q1**：实现跨组织Agent协作网络
+## License
 
-针对多Agent系统（MAS）未来演进中面临的通信瓶颈、资源分配冲突、认知协同障碍及工程化落地难点，结合前沿技术趋势与产业实践，提出以下系统化解决方案与核心技术设计：
-
-一、通信效率优化：低延迟与语义对齐
-1. 分层通信协议设计
-
-轻量级消息协议：在KQML基础上，开发分层协议：
-
-控制层：二进制头部（2B）压缩指令类型（如任务分配ACK/重试）
-语义层：结构化JSON-LD格式标注意图（如{"action": "split_module", "params": {"granularity": "function"}}）
-数据层：差分传输技术，仅传递状态变化量（如Δ资源占用率）
-
-
-通信拓扑优化：采用星型+网状混合拓扑，核心节点（Orchestrator）处理全局协调，局部Agent组通过P2P通信降低延迟。
-
-2. 意图消歧与共识机制
-
-动态本体库（Dynamic Ontology）：Agent共享领域本体库，实时更新术语映射（如“负载均衡”在电力与交通场景的差异定义）
-共识验证算法：基于BFT的快速投票机制，3/4以上Agent确认语义理解一致性后方执行任务
-
-
-技术指标：协议优化后通信开销降低40%，语义歧义率<5%（基准测试数据集：Cooperative-SQuAD 2.0）
-
-
-二、资源调度与性能稳定性
-1. 弹性资源池化
-
-边缘-云分层调度：
-
-边缘层：轻量Agent处理实时任务（延迟敏感型，如交通信号控制）
-云端层：重型Agent执行批处理任务（计算密集如电网预测）
-
-
-动态资源配给算法：pythondef dynamic_allocation(task_priority, agent_trust):    # 基于任务关键度与Agent信用评分分配资源    if task_priority > 0.8 and agent_trust > 0.9:        return "GPU_Cluster"  # 高优先级高信任任务分配加速资源    else:        return "CPU_Pool"     # 常规资源池
-
-2. 抗资源争用设计
-
-博弈论激励模型：设计贡献-收益函数，激励Agent共享闲置资源：
-
-贡献值 = (共享CPU时间 × 任务关键度权重)
-收益值 = (任务加速比 + 信用积分奖励)
-
-
-抢占式回滚机制：低优先级任务被抢占时自动保存状态至分布式内存（如Redis集群），5ms内恢复执行
-
-
-性能提升：资源利用率提升35%，高负载下任务阻塞率从15%降至3%
-
-
-三、认知协同与长时一致性
-1. 分布式记忆体架构
-
-三层记忆存储：
-
-层级
-存储内容
-技术实现
-
-
-
-
-工作记忆
-当前任务上下文
-共享内存（RAM）
-
-
-短期记忆
-任务链状态快照
-分布式KV存储（etcd）
-
-
-长期记忆
-领域知识/历史决策
-图数据库（Neo4j）
-
-
-
-记忆同步协议：基于向量时钟（Vector Clock） 的事件排序，解决状态冲突
-
-2. 集体决策纠错机制
-
-反思-回溯工作流：mermaidgraph LRA[任务执行] --> B{Reviewer校验失败}B --> C[启动反思代理]C --> D[分析错误类型]D -->|逻辑错误| E[重规划任务链]D -->|数据错误| F[请求数据Agent补全]
-跨Agent知识蒸馏：定期抽取各Agent决策模式，训练轻量校验模型部署至边缘节点
-
-
-效果验证：长流程任务（>10步）完成率从68%提升至92%，幻觉传播抑制率87%
-
-
-四、工程落地与安全治理
-1. 异构集成框架
-
-跨平台适配器：
-
-接口标准化：强制实现IMessageBus（通信）、ITaskScheduler（调度）核心接口
-运行时沙箱：WebAssembly隔离执行环境，支持Python/JS/Rust多语言Agent混部
-
-
-动态组织建模：通过角色拓扑图（Role Topology Graph） 显式定义Agent职责边界
-
-2. 可验证安全体系
-
-零信任审计链：
-
-所有决策签名后上链（私有链Hyperledger Fabric）
-审计Agent实时检测异常行为（如资源超限访问）
-
-
-差分隐私注入：在数据传递时添加拉普拉斯噪声（ε=0.3），保护原始数据
-
-
-五、未来突破方向
-
-量子通信集成：实验性QKD（量子密钥分发）通道传输高敏感指令，防中间人攻击
-神经符号融合：符号规则约束下的神经网络决策（如Neuro-Symbolic Agent），提升可解释性
-人-Agent共进化机制：人类反馈强化学习（RLHF）动态调整Agent目标函数
-
-
-工业落地路径：
-
-短期（2026）：通信协议标准化（IEEE P2851）、故障预测准确率>90%的工业级调度器
-长期（2030）：构建跨企业Agent协作市场，支持API经济下的自动服务组合
-
-
-多Agent系统的核心演进逻辑是从“能协作”到“会进化”，需在通信轻量化、资源弹性化、认知持续化、架构标准化四维突破，方能实现工业场景下“分布式智能交响曲”的愿景。
+MIT

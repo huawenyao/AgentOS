@@ -1,64 +1,57 @@
 /**
- * App layout — Workbench is the primary interface.
- *
- * The main screen is a conversation workspace with dynamic visualization.
- * Configuration pages (Connect, Agents, Measure) are secondary via top nav.
+ * App — Workbench-first layout.
+ * Workbench is the product. Config pages are backstage.
  */
 import React from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Layout, Menu, ConfigProvider, theme } from 'antd';
-import {
-  ThunderboltOutlined, ApiOutlined, RobotOutlined,
-  DashboardOutlined, SettingOutlined,
-} from '@ant-design/icons';
+import { ConfigProvider, theme } from 'antd';
 
 import Workbench from './pages/Workbench';
 import ConnectHub from './pages/ConnectHub';
 import AgentDesigner from './pages/AgentDesigner';
-import RunMonitor from './pages/RunMonitor';
 import MeasureDashboard from './pages/MeasureDashboard';
 
-const { Content, Header } = Layout;
-
 export default function App() {
-  const location = useLocation();
-  const path = location.pathname;
+  const { pathname } = useLocation();
+  const isWorkbench = pathname === '/' || pathname === '/workbench';
 
-  const navItems = [
-    { key: '/', icon: <ThunderboltOutlined />, label: <Link to="/">Workbench</Link> },
-    { key: '/connect', icon: <ApiOutlined />, label: <Link to="/connect">Connect</Link> },
-    { key: '/agents', icon: <RobotOutlined />, label: <Link to="/agents">Agents</Link> },
-    { key: '/runs', icon: <SettingOutlined />, label: <Link to="/runs">Runs</Link> },
-    { key: '/measure', icon: <DashboardOutlined />, label: <Link to="/measure">Measure</Link> },
+  const navLinks = [
+    { path: '/', label: '⚡ Workbench' },
+    { path: '/connect', label: '🔌 Connect' },
+    { path: '/agents', label: '🤖 Agents' },
+    { path: '/measure', label: '📊 Measure' },
   ];
-
-  const isWorkbench = path === '/' || path === '/workbench';
 
   return (
     <ConfigProvider theme={{ algorithm: theme.defaultAlgorithm, token: { borderRadius: 8 } }}>
-      <Layout style={{ minHeight: '100vh' }}>
-        <Header style={{ background: '#fff', borderBottom: '1px solid #f0f0f0', padding: '0 24px', display: 'flex', alignItems: 'center', height: 48 }}>
-          <div style={{ fontWeight: 700, fontSize: 15, marginRight: 32, color: '#1890ff' }}>
-            <ThunderboltOutlined /> AWS
-          </div>
-          <Menu
-            mode="horizontal"
-            selectedKeys={[path === '/workbench' ? '/' : path]}
-            items={navItems}
-            style={{ flex: 1, border: 'none', lineHeight: '46px' }}
-          />
-        </Header>
-        <Content style={{ background: isWorkbench ? '#fff' : '#f5f5f5', padding: isWorkbench ? 0 : 24 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+        {/* Top nav — minimal */}
+        <nav style={{
+          height: 44, display: 'flex', alignItems: 'center', gap: 4,
+          padding: '0 16px', borderBottom: '1px solid #e8e8e8', background: '#fff',
+          fontSize: 13,
+        }}>
+          {navLinks.map(l => (
+            <Link key={l.path} to={l.path} style={{
+              padding: '6px 12px', borderRadius: 6, textDecoration: 'none',
+              color: (pathname === l.path || (l.path === '/' && pathname === '/workbench')) ? '#1890ff' : '#666',
+              background: (pathname === l.path || (l.path === '/' && pathname === '/workbench')) ? '#e6f7ff' : 'transparent',
+              fontWeight: (pathname === l.path || (l.path === '/' && pathname === '/workbench')) ? 600 : 400,
+            }}>{l.label}</Link>
+          ))}
+        </nav>
+
+        {/* Content */}
+        <div style={{ flex: 1, overflow: 'hidden', background: isWorkbench ? '#fff' : '#f5f5f5' }}>
           <Routes>
             <Route path="/" element={<Workbench />} />
             <Route path="/workbench" element={<Workbench />} />
-            <Route path="/connect" element={<ConnectHub />} />
-            <Route path="/agents" element={<AgentDesigner />} />
-            <Route path="/runs" element={<RunMonitor />} />
-            <Route path="/measure" element={<MeasureDashboard />} />
+            <Route path="/connect" element={<div style={{ padding: 24 }}><ConnectHub /></div>} />
+            <Route path="/agents" element={<div style={{ padding: 24 }}><AgentDesigner /></div>} />
+            <Route path="/measure" element={<div style={{ padding: 24 }}><MeasureDashboard /></div>} />
           </Routes>
-        </Content>
-      </Layout>
+        </div>
+      </div>
     </ConfigProvider>
   );
 }
