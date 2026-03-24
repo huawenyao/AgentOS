@@ -49,12 +49,14 @@ async def health():
 
 # ── Register routers ──
 
+from studio.api.sessions import router as sessions_router
 from studio.api.connections import router as connections_router, tools_router
 from studio.api.agents import router as agents_router
 from studio.api.workflows import router as workflows_router, runs_router
 from studio.api.approvals import router as approvals_router
 from studio.api.metrics_api import router as metrics_router
 
+app.include_router(sessions_router)
 app.include_router(connections_router)
 app.include_router(tools_router)
 app.include_router(agents_router)
